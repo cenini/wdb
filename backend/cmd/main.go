@@ -37,8 +37,7 @@ func main() {
 }
 
 func initDB() *bun.DB {
-	dsn := "postgres://postgres:@localhost:5432/test?sslmode=disable"
-	// dsn := "unix://user:pass@dbname/var/run/postgresql/.s.PGSQL.5432"
+	dsn := "postgres://psql:password@localhost:5432/psql?sslmode=disable"
 	sqldb := sql.OpenDB(pgdriver.NewConnector(pgdriver.WithDSN(dsn)))
 
 	db := bun.NewDB(sqldb, pgdialect.New())
