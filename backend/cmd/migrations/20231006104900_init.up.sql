@@ -19,13 +19,13 @@ CREATE TABLE items (
 CREATE TABLE photos (
     id UUID DEFAULT uuid_generate_v4() PRIMARY KEY,
     item_id UUID REFERENCES items(id),
-    url VARCHAR(256) NOT NULL,
+    url VARCHAR(256) NOT NULL
     -- Add other fields as needed (e.g., file_path, description, etc.)
 );
 
 CREATE TABLE item_photos (
     item_id UUID REFERENCES items(id),
-    photo_id UUID REFERENCES photographs(id),
+    photo_id UUID REFERENCES photos(id),
     PRIMARY KEY (item_id, photo_id)
 );
 
