@@ -7,6 +7,8 @@ require (
 	github.com/uptrace/bun/driver/pgdriver v1.1.16
 )
 
+require github.com/google/uuid v1.4.0 // indirect
+
 require (
 	github.com/bytedance/sonic v1.9.1 // indirect
 	github.com/chenzhuoyu/base64x v0.0.0-20221115062448-fe3a3abad311 // indirect
