@@ -4,6 +4,7 @@ import (
 	"net/http"
 
 	"github.com/gin-gonic/gin"
+	"github.com/google/uuid"
 
 	"wdb/internal/repository"
 	"wdb/models"
@@ -41,6 +42,22 @@ func (h *Handler) CreateUser(c *gin.Context) {
 	c.IndentedJSON(http.StatusCreated, createdUser)
 }
 
-func (h *Handler) GetUsers(c *gin.Context) {
-	// return h.repo.GetUsers()
+// func (h *Handler) GetUserByHandle(c *gin.Context) {
+// 	handle := c.Query("handle")
+// 	c.IndentedJSON()
+// 	// return h.repo.GetUserByHandle(handle), err
+// }
+
+func (h *Handler) GetUser(c *gin.Context) {
+	id, err := uuid.Parse(c.Param("id"))
+	if err != nil {
+		c.Status(http.StatusBadRequest)
+		return
+	}
+	user, err := h.repo.GetUser(id, c)
+	if err != nil {
+		c.Status(http.StatusNotFound)
+		return
+	}
+	c.IndentedJSON(http.StatusOK, user)
 }

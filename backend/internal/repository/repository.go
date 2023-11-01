@@ -27,6 +27,15 @@ func (r *Repository) GetUsers(c *gin.Context) ([]models.User, error) {
 	return users, nil
 }
 
+func (r *Repository) GetUser(id uuid.UUID, c *gin.Context) (models.User, error) {
+	var user models.User
+	err := r.db.NewSelect().Model(&user).Where("id = ?", id).Scan(c)
+	if err != nil {
+		return user, err
+	}
+	return user, nil
+}
+
 func (r *Repository) CreateUser(user models.User, c *gin.Context) (models.CreatedUser, error) {
 	var createdUser models.CreatedUser
 	statement, err := r.db.Prepare(`INSERT INTO users(email, handle) VALUES ($1, $2) returning id`)

@@ -12,7 +12,7 @@ func SetupRoutes(r *gin.RouterGroup, repo *repository.Repository) {
 	{
 		h := handler.NewHandler(repo)
 		v1.GET("/hello", h.HelloWorld)
-		v1.GET("/users", h.GetUsers)
+		v1.GET("/users/:id", h.GetUser)
 		v1.POST("/users", h.CreateUser)
 	}
 }
