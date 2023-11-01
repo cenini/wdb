@@ -4,6 +4,7 @@ import (
 	"wdb/models"
 
 	"github.com/gin-gonic/gin"
+	"github.com/google/uuid"
 	"github.com/uptrace/bun"
 )
 
@@ -26,20 +27,24 @@ func (r *Repository) GetUsers(c *gin.Context) ([]models.User, error) {
 	return users, nil
 }
 
-func (r *Repository) CreateUser(user models.User, c *gin.Context) (models.User, error) {
-	res, err := r.db.NewInsert().Model(&user).Exec(c)
+func (r *Repository) CreateUser(user models.User, c *gin.Context) (models.CreatedUser, error) {
+	var createdUser models.CreatedUser
+	statement, err := r.db.Prepare(`INSERT INTO users(email, handle) VALUES ($1, $2) returning id`)
 	if err != nil {
-		return user, err
+		return createdUser, err
 	}
-	oid, err := res.LastInsertId()
+	defer statement.Close()
+
+	var id uuid.UUID
+	err = statement.QueryRow(
+		user.Email,
+		user.Handle,
+	).Scan(&id)
+
 	if err != nil {
-		return user, err
+		return createdUser, err
 	}
-	var createdUser models.User
-	err = r.db.NewSelect().Model(createdUser).Where("oid = ?", oid).Scan(c)
-	if err != nil {
-		return user, err
-	}
+	createdUser.Id = id
 	return createdUser, nil
 }
 

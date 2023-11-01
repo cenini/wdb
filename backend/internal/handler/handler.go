@@ -30,17 +30,15 @@ func (h *Handler) CreateUser(c *gin.Context) {
 
 	err := c.BindJSON(&user)
 	if err != nil {
-		// log some error or something! unless it's already handled by middleware
-		// or maybe return it
 		c.Status(http.StatusBadRequest)
 		return
 	}
-	user, err = h.repo.CreateUser(user, c)
+	createdUser, err := h.repo.CreateUser(user, c)
 	if err != nil {
 		c.Status(http.StatusBadRequest)
 		return
 	}
-	c.IndentedJSON(http.StatusOK, user)
+	c.IndentedJSON(http.StatusCreated, createdUser)
 }
 
 func (h *Handler) GetUsers(c *gin.Context) {

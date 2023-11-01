@@ -10,3 +10,7 @@ type User struct {
 	// Handle must be no more than 32 characters
 	Handle string
 }
+
+type CreatedUser struct {
+	Id uuid.UUID
+}
