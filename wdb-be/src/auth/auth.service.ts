@@ -10,7 +10,10 @@ export class AuthService {
   ) {}
 
   async signIn(email) {
-    const user = await this.userService.user(email);
+    const user = await this.userService.user({ email: String(email) });
+    if (user == null) {
+      throw new UnauthorizedException();
+    }
     // if (user?.password !== pass) {
     //   throw new UnauthorizedException();
     // }

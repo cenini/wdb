@@ -11,10 +11,12 @@ datasource db {
 }
 
 model User {
-  id     Int    @id @default(autoincrement())
-  email  String @unique
-  handle String @unique
-  Item   Item[]
+  id       Int    @id @default(autoincrement())
+  email    String @unique
+  handle   String @unique @default(uuid())
+  salt     String @db.VarChar(32)
+  passhash String
+  Item     Item[]
 }
 
 model Item {

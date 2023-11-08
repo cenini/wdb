@@ -19,10 +19,11 @@ export class UserController {
   @Public()
   @Post('')
   async signupUser(@Body() userData: { email: string }): Promise<UserModel> {
-    console.log(userData.email);
     return this.userService.createUser({
       email: userData.email,
       handle: 'random-string-here',
+      salt: 'salt here',
+      passhash: 'passhash here',
     });
   }
 }
