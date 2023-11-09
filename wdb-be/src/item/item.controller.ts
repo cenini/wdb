@@ -55,6 +55,17 @@ export class ItemController {
     });
   }
 
+  @Delete(':itemId/photos/:photoId')
+  async createPhoto(
+    @Request() req,
+    @Param('itemId') itemId,
+    @Param('photoId') photoId,
+  ): Promise<PhotoModel> {
+    return await this.photoService.deletePhoto({
+      id: photoId,
+    });
+  }
+
   @Post('photos')
   async createPhotoForNewItem(
     @Request() req,
