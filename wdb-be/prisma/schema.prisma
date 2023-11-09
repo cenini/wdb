@@ -19,32 +19,23 @@ model User {
 }
 
 model Item {
-  id        String      @id @default(uuid())
+  id        String    @id @default(uuid())
   ownerId   Int
-  createdAt DateTime    @default(now())
+  createdAt DateTime  @default(now())
   title     String
   updatedAt DateTime?
-  owner     User        @relation(fields: [ownerId], references: [id])
-  ItemPhoto ItemPhoto[]
+  owner     User      @relation(fields: [ownerId], references: [id])
+  Photo     Photo[]
   ItemTag   ItemTag[]
 }
 
 model Photo {
-  id        String      @id @default(uuid())
-  url       String      @unique @db.VarChar(256)
-  createdAt DateTime    @default(now())
+  id        String    @id @default(uuid())
+  url       String    @unique @db.VarChar(256)
+  itemId    String
+  createdAt DateTime  @default(now())
   updatedAt DateTime?
-  ItemPhoto ItemPhoto[]
-}
-
-model ItemPhoto {
-  id      Int    @id @default(autoincrement())
-  itemId  String
-  photoId String
-  item    Item   @relation(fields: [itemId], references: [id])
-  photo   Photo  @relation(fields: [photoId], references: [id])
-
-  @@unique([itemId, photoId])
+  item      Item      @relation(fields: [itemId], references: [id])
 }
 
 model Tag {
