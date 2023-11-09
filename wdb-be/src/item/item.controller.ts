@@ -1,6 +1,7 @@
 import {
   Body,
   Controller,
+  Delete,
   ExecutionContext,
   Get,
   HttpCode,
@@ -33,6 +34,11 @@ export class ItemController {
         connect: { id: req.user.sub },
       },
     });
+  }
+
+  @Delete(':itemId')
+  async Item(@Request() req, @Param('itemId') itemId): Promise<ItemModel> {
+    return await this.itemService.deleteItem({ id: itemId });
   }
 
   @Post(':itemId/photos')
