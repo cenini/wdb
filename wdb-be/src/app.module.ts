@@ -7,9 +7,17 @@ import { ConfigModule } from '@nestjs/config';
 import { PrismaService } from './prisma/prisma.service';
 import { ItemModule } from './item/item.module';
 import { PhotoModule } from './photo/photo.module';
+import { OpenAIModule } from './openai/openai.module';
 
 @Module({
-  imports: [AuthModule, UserModule, ConfigModule.forRoot({ isGlobal: true }), ItemModule, PhotoModule],
+  imports: [
+    AuthModule,
+    UserModule,
+    ConfigModule.forRoot({ isGlobal: true }),
+    ItemModule,
+    PhotoModule,
+    OpenAIModule,
+  ],
   controllers: [AppController],
   providers: [AppService, PrismaService],
 })
