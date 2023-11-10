@@ -40,4 +40,6 @@ export class TagController {
       name: tagData.name,
     });
   }
+
+  // Add also endpoints for creating tags batch-wise
 }

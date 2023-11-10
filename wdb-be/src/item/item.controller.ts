@@ -12,15 +12,25 @@ import {
   UseGuards,
 } from '@nestjs/common';
 import { ItemService } from './item.service';
-import { Item as ItemModel, Photo as PhotoModel } from '@prisma/client';
+import {
+  Item as ItemModel,
+  Photo as PhotoModel,
+  Tag as TagModel,
+  ItemTag as ItemTagModel,
+  TagType,
+} from '@prisma/client';
 import { PhotoService } from '../photo/photo.service';
 import { v4 as uuidv4 } from 'uuid';
+import { ItemTagService } from './itemtag.service';
+import { TagService } from '../tag/tag.service';
 
 @Controller('items')
 export class ItemController {
   constructor(
     private itemService: ItemService,
     private photoService: PhotoService,
+    private tagService: TagService,
+    private itemTagService: ItemTagService,
   ) {}
 
   @Post('')
@@ -39,6 +49,32 @@ export class ItemController {
   @Delete(':itemId')
   async Item(@Request() req, @Param('itemId') itemId): Promise<ItemModel> {
     return await this.itemService.deleteItem({ id: itemId });
+  }
+
+  @Post(':itemId/tags')
+  async createTagsForItem(
+    @Request() req,
+    @Param('itemId') itemId,
+    @Body()
+    tagData: [
+      {
+        key: string;
+        value: string;
+      },
+    ],
+  ): Promise<ItemTagModel[]> {
+    // Remember to check that the requester is the owner of the item
+    const tagDataArray = tagData.map((tag) => ({
+      type: TagType.KEY_VALUE,
+      key: tag.key,
+      value: tag.value,
+    }));
+    const tags = await this.tagService.upsertTags(tagDataArray);
+    const tagItemDataArray = tags.map((tag) => ({
+      itemId: itemId,
+      tagId: tag.id,
+    }));
+    return await this.itemTagService.upsertItemTags(tagItemDataArray);
   }
 
   @Post(':itemId/photos')

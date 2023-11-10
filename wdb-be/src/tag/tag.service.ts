@@ -1,6 +1,6 @@
 import { Injectable } from '@nestjs/common';
 import { PrismaService } from '../prisma/prisma.service';
-import { Prisma, Tag } from '@prisma/client';
+import { Prisma, Tag, TagType } from '@prisma/client';
 
 @Injectable()
 export class TagService {
@@ -35,6 +35,53 @@ export class TagService {
     return this.prisma.tag.create({
       data,
     });
+  }
+
+  async createTags(
+    data: Prisma.TagCreateManyInput,
+  ): Promise<Prisma.BatchPayload> {
+    return this.prisma.tag.createMany({
+      data: data,
+      skipDuplicates: true,
+    });
+  }
+
+  async upsertTag(tagData: {
+    key: string;
+    value: string;
+    type: TagType;
+  }): Promise<Tag> {
+    const { key, value, type } = tagData;
+
+    return this.prisma.tag.upsert({
+      where: { key_value: { key, value } },
+      update: { value, type },
+      create: { key, value, type },
+    });
+  }
+
+  async upsertTags(
+    tagDataArray: {
+      key: string;
+      value: string;
+      type: TagType;
+    }[],
+  ): Promise<Tag[]> {
+    const upsertedTags: Tag[] = [];
+
+    for (const tagData of tagDataArray) {
+      const { key, value, type } = tagData;
+
+      const upsertedTag = await this.prisma.tag.upsert({
+        where: { key_value: { key, value } },
+        update: { value, type },
+        create: { key, value, type },
+      });
+
+      upsertedTags.push(upsertedTag);
+    }
+
+    return upsertedTags;
   }
 
   async updateTag(params: {
