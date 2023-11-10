@@ -8,6 +8,7 @@ import { PrismaService } from './prisma/prisma.service';
 import { ItemModule } from './item/item.module';
 import { PhotoModule } from './photo/photo.module';
 import { OpenAIModule } from './openai/openai.module';
+import { TagModule } from './tag/tag.module';
 
 @Module({
   imports: [
@@ -17,6 +18,7 @@ import { OpenAIModule } from './openai/openai.module';
     ItemModule,
     PhotoModule,
     OpenAIModule,
+    TagModule,
   ],
   controllers: [AppController],
   providers: [AppService, PrismaService],
