@@ -11,6 +11,12 @@ export default function PhotoButton({ label, theme, onPress }) {
           style={[styles.button, { backgroundColor: "#fff" }]}
           onPress={onPress}
         >
+          <FontAwesome
+            name="picture-o"
+            size={18}
+            color="#25292e"
+            style={styles.buttonIcon}
+          />
           <Text style={[styles.buttonLabel, { color: "#25292e" }]}>{label}</Text>
         </Pressable>
     </View>
@@ -43,6 +49,9 @@ const styles = StyleSheet.create({
     alignItems: 'center',
     justifyContent: 'center',
     flexDirection: 'row',
+  },
+  buttonIcon: {
+    paddingRight: 8,
   },
   buttonLabel: {
     color: '#fff',
