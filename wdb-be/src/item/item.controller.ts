@@ -24,7 +24,7 @@ import { v4 as uuidv4 } from 'uuid';
 import { ItemTagService } from './itemtag.service';
 import { TagService } from '../tag/tag.service';
 
-@Controller('items')
+@Controller('v1/items')
 export class ItemController {
   constructor(
     private itemService: ItemService,

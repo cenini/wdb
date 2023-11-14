@@ -16,7 +16,7 @@ import { Public } from '../auth/auth.guard';
 import * as bcrypt from 'bcryptjs';
 import { v4 as uuidv4 } from 'uuid';
 
-@Controller('users')
+@Controller('v1/users')
 export class UserController {
   constructor(private userService: UserService) {}
 

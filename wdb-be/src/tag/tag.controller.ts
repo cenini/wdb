@@ -14,7 +14,7 @@ import {
 import { TagService } from './tag.service';
 import { Tag as TagModel, TagType } from '@prisma/client';
 
-@Controller('tag')
+@Controller('v1/tags')
 export class TagController {
   constructor(private tagService: TagService) {}
 
