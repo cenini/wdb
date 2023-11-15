@@ -99,11 +99,37 @@ export default function App() {
         dispatch({ type: 'LOG_IN', token: accessToken });
       },
       signup: async (email: string, password: string) => {
-        const response = await axios.post(`${Constants.expoConfig.extra.env.EXPO_PUBLIC_API_URL}users`, plainToClass(CreateUserDto, { "email": email, "password": password}))
-        const accessToken = plainToClass(UserCreatedDto, response.data).accessToken 
-        await AsyncStorage.setItem('userToken', accessToken)
-        axios.defaults.headers.common['Authorization'] = `Bearer ${accessToken}`
-        dispatch({ type: 'SIGN_UP', token: accessToken });
+        try {
+          const response = await axios.post(`${Constants.expoConfig.extra.env.EXPO_PUBLIC_API_URL}users`, plainToClass(CreateUserDto, { "email": email, "password": password}))
+          const accessToken = plainToClass(UserCreatedDto, response.data).accessToken 
+          await AsyncStorage.setItem('userToken', accessToken)
+          axios.defaults.headers.common['Authorization'] = `Bearer ${accessToken}`
+          dispatch({ type: 'SIGN_UP', token: accessToken });  
+        } catch (error) {
+          if (error.response) {
+            if (error.response.status == HttpStatusCode.Conflict) {
+              const errorText = 'A user with that e-mail has already been registered.'
+              throw new Error(errorText);
+            } else if (error.response.status < 500 ) {
+              const errorText = 'The user was not accepted. You know what you did.'
+              throw new Error(errorText);
+            } else {
+              const errorText = 'There was a server error. Try again later.'
+              throw new Error(errorText);
+            }
+          } else if (error.request) {
+            // The request was made but no response was received
+            // `error.request` is an instance of XMLHttpRequest in the browser and an instance of
+            // http.ClientRequest in node.js
+            const errorText = 'The user could not be created at this time. Try again later.'
+            throw new Error(errorText);
+          } else {
+            // Something happened in setting up the request that triggered an Error
+            // Client side issue, should be traced.
+            const errorText = 'The user could not be created at this time. Try again later.'
+            throw new Error(errorText);
+          }          
+        }
       },
       logout: async () => {
         await AsyncStorage.removeItem('userToken')
