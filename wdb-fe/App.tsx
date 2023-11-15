@@ -11,6 +11,9 @@ import axios, { HttpStatusCode } from 'axios';
 import Constants from 'expo-constants';
 import AsyncStorage from '@react-native-async-storage/async-storage';
 import HomeScreen from './components/HomeScreen';
+import { plainToClass, classToPlain } from 'class-transformer';
+import { LoggedInDto, LoginDto } from './dto/AuthDto';
+import { CreateUserDto, UserCreatedDto } from './dto/UserDto';
 
 const Stack = createNativeStackNavigator();
 export const AuthContext = createContext(null);
@@ -26,6 +29,12 @@ export default function App() {
             isLoading: false,
           };
         case 'LOG_IN':
+          return {
+            ...prevState,
+            isLogout: false,
+            userToken: action.token,
+          };
+        case 'SIGN_UP':
           return {
             ...prevState,
             isLogout: false,
@@ -83,11 +92,18 @@ export default function App() {
   const authContext = useMemo(
     () => ({
       login: async (email: string, password: string) => {
-        const response = await axios.post(`${Constants.expoConfig.extra.env.EXPO_PUBLIC_API_URL}auth/login`, { "email": email, "password": password})
-        const userToken = response.data.access_token;
-        await AsyncStorage.setItem('userToken', userToken)
-        axios.defaults.headers.common['Authorization'] = `Bearer ${userToken}`
-        dispatch({ type: 'LOG_IN', token: response.data.access_token });
+        const response = await axios.post(`${Constants.expoConfig.extra.env.EXPO_PUBLIC_API_URL}auth/login`, plainToClass(LoginDto, { "email": email, "password": password}))
+        const accessToken = plainToClass(LoggedInDto, response.data).accessToken 
+        await AsyncStorage.setItem('userToken', accessToken)
+        axios.defaults.headers.common['Authorization'] = `Bearer ${accessToken}`
+        dispatch({ type: 'LOG_IN', token: accessToken });
+      },
+      signup: async (email: string, password: string) => {
+        const response = await axios.post(`${Constants.expoConfig.extra.env.EXPO_PUBLIC_API_URL}users`, plainToClass(CreateUserDto, { "email": email, "password": password}))
+        const accessToken = plainToClass(UserCreatedDto, response.data).accessToken 
+        await AsyncStorage.setItem('userToken', accessToken)
+        axios.defaults.headers.common['Authorization'] = `Bearer ${accessToken}`
+        dispatch({ type: 'SIGN_UP', token: accessToken });
       },
       logout: async () => {
         await AsyncStorage.removeItem('userToken')

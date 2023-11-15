@@ -1,4 +1,4 @@
-import { IsEmail, IsJWT, IsStrongPassword } from 'class-validator';
+import { IsJWT, IsEmail, IsStrongPassword } from "class-validator";
 
 export class LoggedInDto {
   @IsJWT()
