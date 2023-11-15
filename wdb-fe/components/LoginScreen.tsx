@@ -1,13 +1,9 @@
 import * as React from 'react';
-import { View, Text, TextInput, StyleSheet } from 'react-native';
-import { NavigationContainer, useNavigation } from '@react-navigation/native';
-import { createNativeStackNavigator } from '@react-navigation/native-stack';
+import { Text, TextInput, StyleSheet } from 'react-native';
+import { useNavigation } from '@react-navigation/native';
 import Button from './Button';
-import axios, { HttpStatusCode } from 'axios';
 import { useContext } from 'react';
 import { AuthContext } from '../App';
-
-const loginUrl = "http://localhost:3000/v1/auth/login"
 
 export default function LoginScreen() {
   const { login } = useContext(AuthContext);
