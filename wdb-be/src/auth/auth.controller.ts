@@ -10,6 +10,8 @@ import {
 } from '@nestjs/common';
 import { Public } from './auth.guard';
 import { AuthService } from './auth.service';
+import { AccessTokenDto } from '../dto/AuthDto';
+import { plainToClass } from 'class-transformer';
 
 @Controller('v1/auth')
 export class AuthController {
@@ -18,8 +20,13 @@ export class AuthController {
   @Public()
   @HttpCode(HttpStatus.OK)
   @Post('login')
-  signIn(@Body() signInDto: Record<string, any>) {
-    return this.authService.signIn(signInDto.email, signInDto.password);
+  async signIn(@Body() signInDto: Record<string, any>) {
+    return plainToClass(AccessTokenDto, {
+      accessToken: await this.authService.signIn(
+        signInDto.email,
+        signInDto.password,
+      ),
+    });
   }
 
   @Get('profile')

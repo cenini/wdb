@@ -10,7 +10,7 @@ export class AuthService {
     private jwtService: JwtService,
   ) {}
 
-  async signIn(email, password) {
+  async signIn(email, password): Promise<string> {
     const user = await this.userService.user({ email: String(email) });
     if (user == null) {
       throw new UnauthorizedException(
@@ -25,8 +25,6 @@ export class AuthService {
     }
 
     const payload = { sub: user.id, username: user.email };
-    return {
-      access_token: await this.jwtService.signAsync(payload),
-    };
+    return await this.jwtService.signAsync(payload);
   }
 }
