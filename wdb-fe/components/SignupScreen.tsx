@@ -4,8 +4,9 @@ import { NavigationContainer, useNavigation } from '@react-navigation/native';
 import { createNativeStackNavigator } from '@react-navigation/native-stack';
 import Button from './Button';
 import axios, { HttpStatusCode } from 'axios';
+import Constants from 'expo-constants';
 
-const signupUrl = "http://localhost:3000/v1/users"
+const signupUrl = `${Constants.expoConfig.extra.env.EXPO_PUBLIC_API_URL}users`
 
 export default function SignupScreen() {
   const navigation = useNavigation()

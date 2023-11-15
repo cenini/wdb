@@ -2,8 +2,6 @@ import { createContext, useEffect, useMemo, useReducer, useState } from 'react';
 import { StatusBar } from "expo-status-bar";
 import * as ImagePicker from 'expo-image-picker';
 import { StyleSheet, View} from "react-native";
-import * as SecureStore from 'expo-secure-store';
-
 
 import Button from './components/PhotoButton'; 
 import ImageViewer from './components/ImageViewer';
@@ -13,6 +11,8 @@ import { createNativeStackNavigator } from '@react-navigation/native-stack';
 import SignupScreen from './components/SignupScreen';
 import LoginScreen from './components/LoginScreen';
 import axios, { HttpStatusCode } from 'axios';
+import Constants from 'expo-constants';
+import AsyncStorage from '@react-native-async-storage/async-storage';
 
 const PlaceholderImage = require("./assets/images/background-image.png");
 const Stack = createNativeStackNavigator();
@@ -58,7 +58,8 @@ export default function App() {
       let userToken: string;
 
       try {
-        userToken = await SecureStore.getItemAsync('userToken');
+        userToken = await AsyncStorage.getItem('userToken');
+        axios.defaults.headers.common['Authorization'] = `Bearer ${userToken}`
       } catch (e) {
         // Restoring token failed
         // User has to sign in again
@@ -67,7 +68,7 @@ export default function App() {
 
       // After restoring token, we may need to validate it in production apps
       try {
-        const response = await axios.get("http://localhost:3000/v1/auth/profile")
+        const response = await axios.get(`${Constants.expoConfig.extra.env.EXPO_PUBLIC_API_URL}auth/profile`)
         if (response.status != HttpStatusCode.Ok) {
           // log that the user token has expired
           return
@@ -92,16 +93,16 @@ export default function App() {
         // We will also need to handle errors if sign in failed
         // After getting token, we need to persist the token using `SecureStore`
         // In the example, we'll use a dummy token
-        const loginUrl = "http://localhost:3000/v1/auth/login"
-        const response = await axios.post(loginUrl, { "email": email, "password": password})
-        await SecureStore.setItemAsync('userToken', response.data.token)
+        const response = await axios.post(`${Constants.expoConfig.extra.env.EXPO_PUBLIC_API_URL}auth/login`, { "email": email, "password": password})
+        const userToken = response.data.access_token;
+        await AsyncStorage.setItem('userToken', userToken)
+        axios.defaults.headers.common['Authorization'] = `Bearer ${userToken}`
         dispatch({ type: 'SIGN_IN', token: response.data.token });
       },
       signOut: () => dispatch({ type: 'SIGN_OUT' }),
     }),
     []
   );
-
 
   const pickImageAsync = async () => {
     let result = await ImagePicker.launchImageLibraryAsync({
