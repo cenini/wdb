@@ -9,6 +9,7 @@ import ImageViewer from './components/ImageViewer';
 import { NavigationContainer } from '@react-navigation/native';
 import { createNativeStackNavigator } from '@react-navigation/native-stack';
 import SignupScreen from './components/SignupScreen';
+import LoginScreen from './components/LoginScreen';
 
 const PlaceholderImage = require("./assets/images/background-image.png");
 const Stack = createNativeStackNavigator();
@@ -49,6 +50,7 @@ export default function App() {
       <Stack.Navigator initialRouteName="Home">
         {/* <Stack.Screen name="Home" component={HomeScreen} /> */}
         <Stack.Screen name="Signup" component={SignupScreen} />
+        <Stack.Screen name="Login" component={LoginScreen} />
       </Stack.Navigator>
     </NavigationContainer>
   );

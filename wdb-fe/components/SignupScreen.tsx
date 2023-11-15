@@ -1,6 +1,6 @@
 import * as React from 'react';
 import { View, Text, TextInput, StyleSheet } from 'react-native';
-import { NavigationContainer } from '@react-navigation/native';
+import { NavigationContainer, useNavigation } from '@react-navigation/native';
 import { createNativeStackNavigator } from '@react-navigation/native-stack';
 import Button from './Button';
 import axios, { HttpStatusCode } from 'axios';
@@ -8,6 +8,7 @@ import axios, { HttpStatusCode } from 'axios';
 const signupUrl = "http://localhost:3000/v1/users"
 
 export default function SignupScreen() {
+  const navigation = useNavigation()
   const [email, setEmail] = React.useState('');
   const [password, setPassword] = React.useState('');
   const [userCreatedText, setUserCreatedText] = React.useState('');
@@ -74,6 +75,7 @@ export default function SignupScreen() {
         secureTextEntry
       />
       <Button label="Sign up" theme="primary" onPress={async () => await signUp(email, password)} />
+      <Text style={styles.text} onPress={() => navigation.navigate('Login')}>Already have a user? Log in!</Text>
       <Text style={[styles.text, userCreatedSuccessfully ? styles.userCreatedSuccessText : styles.userCreatedFailText]}>{userCreatedText}</Text>
     </>
   );
