@@ -1,4 +1,4 @@
-import { createContext, useContext, useMemo, useReducer, useState } from 'react';
+import { createContext, useContext, useEffect, useMemo, useReducer, useState } from 'react';
 import { StatusBar } from "expo-status-bar";
 import * as ImagePicker from 'expo-image-picker';
 import { StyleSheet, View} from "react-native";
@@ -19,18 +19,22 @@ export const NewItemsContext = createContext(null);
 
 export default function ItemManagementScreen() {
   const { logout } = useContext(AuthContext);
-  const newItems: ItemModel[] = [];
-
   const [state, dispatch] = useReducer(
     (prevState, action) => {
+      console.log('Reducer called with action:', action);
+      console.log('Previous state:', prevState);
       switch (action.type) {
         case 'ADD_ITEMS':
-          const newItems = action.images.map((image) => plainToClass(ItemModel, { image: image, tags: []}))
+          // console.log(prevState)
+          const newItems = action.images.map((image) => plainToClass(ItemModel, { image: image, tags: [] as TagModel[]}))
+          // const test = [...(state.newItems ?? []), newItems]
           return {
             ...prevState,
-            newItems: [...state.newItems, newItems],
+            // newItems: [...state.newItems, newItems],
+            newItems: [...(state.newItems ?? []), newItems],
           };
         case 'TAG_ITEM':
+          // console.log(prevState)
           return {
             ...prevState,
             newItems: state.newItems.map((newItem: ItemModel) => {
@@ -40,12 +44,22 @@ export default function ItemManagementScreen() {
               return newItem;
             }),
           };
+        default: 
+          // console.log(prevState)
+          return {
+            ...prevState
+          }
       }
     },
     {
-      newItems: newItems,
+      newItems: [] as ItemModel[],
     }
   );
+
+  useEffect(() => {
+    console.log('State changed:', state.newItems);
+  }, [state]);
+  
 
   const newItemsContext = useMemo(
     () => ({
@@ -53,7 +67,9 @@ export default function ItemManagementScreen() {
         if (imagePickerAssets.length === 0) {
           return
         }
+        console.log('Before dispatch', state.newItems);
         dispatch({ type: 'ADD_ITEMS', images: imagePickerAssets });
+        console.log('After dispatch', state.newItems);
       },
       tagNewItem: async (tags: TagModel[], newItem: ItemModel) => {
         if (tags.length === 0) {
@@ -62,7 +78,7 @@ export default function ItemManagementScreen() {
         dispatch({ type: 'TAG_ITEM', newItem: newItem, tags: tags})
       }
     }),
-    []
+    [state]
   )
 
   return (
@@ -72,11 +88,11 @@ export default function ItemManagementScreen() {
         ? (
           <>
             <Stack.Screen name="AddImages" component={AddImagesScreen} />
+            {/* <Stack.Screen name="Profile" component={ProfileScreen} /> */}
           </>) 
         : (
           <>
             {/* <Stack.Screen name="ManageNewItems" component={ManageNewItemsScreen} /> */}
-            {/* <Stack.Screen name="Profile" component={ProfileScreen} /> */}
           </>)
         }
       </Stack.Navigator>
