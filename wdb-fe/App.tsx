@@ -10,7 +10,7 @@ import LoginScreen from './components/LoginScreen';
 import axios, { HttpStatusCode } from 'axios';
 import Constants from 'expo-constants';
 import AsyncStorage from '@react-native-async-storage/async-storage';
-import HomeScreen from './components/HomeScreen';
+import ItemManagementScreen from './components/ItemManagementScreen';
 import { plainToClass, classToPlain } from 'class-transformer';
 import { LoggedInDto, LoginDto } from './dto/AuthDto';
 import { CreateUserDto, UserCreatedDto } from './dto/UserDto';
@@ -142,7 +142,7 @@ export default function App() {
   return (
     <AuthContext.Provider value={authContext}>
       <NavigationContainer>
-        <Stack.Navigator initialRouteName="Home">
+        <Stack.Navigator initialRouteName="Home" screenOptions={{headerShown: false}}>
           {state.userToken == null 
           ? (
             <>
@@ -152,7 +152,7 @@ export default function App() {
             </>) 
           : (
             <>
-              <Stack.Screen name="Home" component={HomeScreen} />
+              <Stack.Screen name="ItemManagement" component={ItemManagementScreen} />
               {/* <Stack.Screen name="Profile" component={ProfileScreen} /> */}
             </>)
           }
