@@ -12,6 +12,8 @@ import { TagModel } from '../models/TagModel';
 import { NavigationContainer } from '@react-navigation/native';
 import { createNativeStackNavigator } from '@react-navigation/native-stack';
 import AddImagesScreen from './AddImagesScreen';
+import React from 'react';
+import NewItemManagementScreen from './NewItemManagementScreen';
 
 const PlaceholderImage = require("../assets/images/background-image.png");
 const Stack = createNativeStackNavigator();
@@ -19,24 +21,22 @@ export const NewItemsContext = createContext(null);
 
 export default function ItemManagementScreen() {
   const { logout } = useContext(AuthContext);
+
   const [state, dispatch] = useReducer(
-    (prevState, action) => {
-      console.log('Reducer called with action:', action);
-      console.log('Previous state:', prevState);
+    (state, action) => {
       switch (action.type) {
         case 'ADD_ITEMS':
-          // console.log(prevState)
-          const newItems = action.images.map((image) => plainToClass(ItemModel, { image: image, tags: [] as TagModel[]}))
-          // const test = [...(state.newItems ?? []), newItems]
+          const newItems = action.images.map((image) =>
+            plainToClass(ItemModel, { image: image, tags: [] as TagModel[] })
+          );
           return {
-            ...prevState,
-            // newItems: [...state.newItems, newItems],
-            newItems: [...(state.newItems ?? []), newItems],
+            ...state,
+            newItems: [...state.newItems, ...newItems],
+            banana: true,
           };
         case 'TAG_ITEM':
-          // console.log(prevState)
           return {
-            ...prevState,
+            ...state,
             newItems: state.newItems.map((newItem: ItemModel) => {
               if (newItem.image.assetId === action.item.image.assetId) {
                 newItem.tags.push(action.tags);
@@ -45,41 +45,35 @@ export default function ItemManagementScreen() {
             }),
           };
         default: 
-          // console.log(prevState)
           return {
-            ...prevState
+            ...state
           }
       }
     },
     {
       newItems: [] as ItemModel[],
     }
-  );
-
-  useEffect(() => {
-    console.log('State changed:', state.newItems);
-  }, [state]);
-  
+  );  
 
   const newItemsContext = useMemo(
     () => ({
       addImages: async (imagePickerAssets: ImagePicker.ImagePickerAsset[]) => {
         if (imagePickerAssets.length === 0) {
-          return
+          return;
         }
-        console.log('Before dispatch', state.newItems);
+
         dispatch({ type: 'ADD_ITEMS', images: imagePickerAssets });
-        console.log('After dispatch', state.newItems);
       },
-      tagNewItem: async (tags: TagModel[], newItem: ItemModel) => {
-        if (tags.length === 0) {
-          return
-        }
-        dispatch({ type: 'TAG_ITEM', newItem: newItem, tags: tags})
-      }
+      // ...
     }),
     [state]
-  )
+  );
+  
+
+  useEffect(() => {
+    console.log('State updated:', state.newItems);
+    // Perform any actions you need after the state has been updated
+  }, [state.newItems]);
 
   return (
     <NewItemsContext.Provider value={newItemsContext}>
@@ -92,7 +86,7 @@ export default function ItemManagementScreen() {
           </>) 
         : (
           <>
-            {/* <Stack.Screen name="ManageNewItems" component={ManageNewItemsScreen} /> */}
+            <Stack.Screen name="ManageNewItems" component={NewItemManagementScreen} />
           </>)
         }
       </Stack.Navigator>
