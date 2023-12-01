@@ -31,10 +31,14 @@ export default function ItemManagementScreen() {
           const newItems = [...state.newItems, ...action.images.map((image) =>
             plainToClass(ItemModel, { image: image, tags: [] as TagModel[] })
           )];
-          console.log(`ADD ITEMS ${newItems}`)
           return {
             ...state,
             newItems: newItems,
+          };
+        case 'REMOVE_FIRST_ITEM':
+          return {
+            ...state,
+            newItems: state.newItems.slice(1),
           };
         case 'TAG_ITEM':
           return {
@@ -57,7 +61,7 @@ export default function ItemManagementScreen() {
     }
   );
 
-  const newItemsContext = useMemo(
+  const addItemsContext = useMemo(
     () => ({
       addImages: async (imagePickerAssets: ImagePicker.ImagePickerAsset[]) => {
         if (imagePickerAssets.length === 0) {
@@ -68,7 +72,7 @@ export default function ItemManagementScreen() {
       },
       // ...
     }),
-    [state]
+    [dispatch]
   );
   
   useEffect(() => {
@@ -79,7 +83,8 @@ export default function ItemManagementScreen() {
   }, [state.newItems]);
 
   return (
-    <NewItemsContext.Provider value={newItemsContext}>
+
+    <NewItemsContext.Provider value={{ newItems: state.newItems, addImages: addItemsContext.addImages, dispatch }}>
       <Stack.Navigator screenOptions={{headerShown: false}}>
         <>
           <Stack.Screen name="AddImages" component={AddImagesScreen} />
