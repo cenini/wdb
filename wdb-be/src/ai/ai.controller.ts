@@ -29,24 +29,25 @@ export class AIController {
     @Request() req,
     @Body() describeItemDto: DescribeItemDto,
   ): Promise<DescriptionDto> {
-    // const descriptionString = await this.aiService.describeImage(
-    //   describeItemDto.title,
-    //   describeItemDto.base64photo,
-    // );
-    // const descriptionObject = JSON.parse(descriptionString);
+    const descriptionString = await this.aiService.describeImage(
+      describeItemDto.title,
+      describeItemDto.base64photo,
+    );
+    console.log(descriptionString);
+    const descriptionObject = JSON.parse(descriptionString);
 
-    const descriptionObject = {
-      tags: [
-        { season: 'fall' },
-        { pattern: 'coral reef' },
-        { color: 'coral' },
-        'elegant',
-        'structured',
-        { 'lining color': 'salmon' },
-        'warm',
-        'formal',
-      ],
-    };
+    // const descriptionObject = {
+    //   tags: [
+    //     { season: 'fall' },
+    //     { pattern: 'coral reef' },
+    //     { color: 'coral' },
+    //     'elegant',
+    //     'structured',
+    //     { 'lining color': 'salmon' },
+    //     'warm',
+    //     'formal',
+    //   ],
+    // };
 
     const mappedData = new DescriptionDto();
     mappedData.nameTags = descriptionObject.tags
@@ -69,23 +70,24 @@ export class AIController {
     @Request() req,
     @Body() describeItemDto: DescribeItemDto,
   ): Promise<TitleAndDescriptionDto> {
-    // const descriptionString = await this.aiService.describeImageWithoutTitle(
-    //   describeItemDto.base64photo,
-    // );
-    // const descriptionObject = JSON.parse(descriptionString);
-    const descriptionObject = {
-      title: 'Coral Textured Overcoat',
-      tags: [
-        { season: 'fall' },
-        { pattern: 'coral reef' },
-        { color: 'coral' },
-        'elegant',
-        'structured',
-        { 'lining color': 'salmon' },
-        'warm',
-        'formal',
-      ],
-    };
+    const descriptionString = await this.aiService.describeImageWithoutTitle(
+      describeItemDto.base64photo,
+    );
+    console.log(descriptionString);
+    const descriptionObject = JSON.parse(descriptionString);
+    // const descriptionObject = {
+    //   title: 'Coral Textured Overcoat',
+    //   tags: [
+    //     { season: 'fall' },
+    //     { pattern: 'coral reef' },
+    //     { color: 'coral' },
+    //     'elegant',
+    //     'structured',
+    //     { 'lining color': 'salmon' },
+    //     'warm',
+    //     'formal',
+    //   ],
+    // };
 
     const mappedData = new TitleAndDescriptionDto();
     mappedData.title = descriptionObject.title;

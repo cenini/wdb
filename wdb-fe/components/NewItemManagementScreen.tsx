@@ -1,4 +1,4 @@
-import React, { useContext, useState } from 'react';
+import React, { useContext, useEffect, useState } from 'react';
 import { View, Text, StyleSheet, Button, Pressable, GestureResponderEvent, TextInput } from 'react-native';
 import { NewItemsContext } from './ItemManagementScreen';
 import { useNavigation } from '@react-navigation/native';
@@ -14,9 +14,14 @@ export default function NewItemManagementScreen({ route, navigation }) {
   const { newItems, dispatch } = useContext(NewItemsContext)
   const [title, setTitle] = React.useState('');
 
+  useEffect(() => {
+    // if the user is premium, get suggestions
+    getSuggestion();
+  }, [newItems]); 
+
   async function getSuggestion(): Promise<void> {
     if (title !== '') {
-      const itemDescriptionDto = plainToClass(DescriptionDto, await axios.post(`${Constants.expoConfig.extra.env.EXPO_PUBLIC_API_URL}ai/description`, plainToClass(TitleAndDescribeItemDto, { "base64photo": newItems[0].image.uri })))
+      const itemDescriptionDto = plainToClass(DescriptionDto, (await axios.post(`${Constants.expoConfig.extra.env.EXPO_PUBLIC_API_URL}ai/description`, plainToClass(TitleAndDescribeItemDto, { "base64photo": newItems[0].image.uri }))).data)
       console.log(`nameTags: ${itemDescriptionDto.nameTags}`)
       console.log(`kvpTags: ${itemDescriptionDto.kvpTags}`)
     } else {
@@ -40,8 +45,8 @@ export default function NewItemManagementScreen({ route, navigation }) {
       return;
     }
 
-    // if user is premium, they get a description
-    await getSuggestion();
+    // // if user is premium, they get a description
+    // await getSuggestion();
   }
 
   return (
