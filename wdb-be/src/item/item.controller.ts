@@ -23,6 +23,7 @@ import { PhotoService } from '../photo/photo.service';
 import { v4 as uuidv4 } from 'uuid';
 import { ItemTagService } from './itemtag.service';
 import { TagService } from '../tag/tag.service';
+import { CreateItemDto } from '../dto/ItemDto';
 
 @Controller('v1/items')
 export class ItemController {
@@ -36,10 +37,10 @@ export class ItemController {
   @Post('')
   async createItem(
     @Request() req,
-    @Body() itemData: { title: string },
+    @Body() createItemDto: CreateItemDto,
   ): Promise<ItemModel> {
     return await this.itemService.createItem({
-      title: itemData.title,
+      title: createItemDto.title,
       owner: {
         connect: { id: req.user.sub },
       },
