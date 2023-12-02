@@ -21,14 +21,14 @@ export class TitleAndDescribeItemDto {
   readonly base64photo: string;
 }
 
-export class ItemDescriptionDto {
-  readonly nameTags: NameTagDto[];
-  readonly kvpTags: KvpTagDto[];
+export class DescriptionDto {
+  nameTags: NameTagDto[];
+  kvpTags: KvpTagDto[];
 }
 
 export class TitleAndDescriptionDto {
   @IsNotEmpty()
-  readonly title: string;
-  readonly nameTags: NameTagDto[];
-  readonly kvpTags: KvpTagDto[];
+  title: string;
+  nameTags: NameTagDto[];
+  kvpTags: KvpTagDto[];
 }

@@ -15,7 +15,7 @@ export class AIService {
         {
           role: 'system',
           content:
-            'You are a fashion expert, specializing in classifying clothing. You do this by identifying the desired item of clothing from photographs and constructing creative and descriptive clothing item titles and tags on json format. Tags are either one word, or a key-value pair separated by a : symbol. Example output: "{ "title":"Purple Sweatshirt", "tags":[ {"season":"winter"},"warm",{"color":"purple"} ]}". Do not prefix the JSON with ```json',
+            'You are a fashion expert, specializing in classifying clothing. You do this by identifying the desired item of clothing from photographs and constructing creative and descriptive clothing item titles and tags on json format. Tags are either one word, or a key-value pair separated by a : symbol. Example output: "{ "title":"Purple Sweatshirt", "tags":[ {"season":"winter"},"warm",{"color":"purple"} ]}". You may ONLY answer with valid JSON, and no other text. Do not prefix the JSON with ```json',
         },
         {
           role: 'user',

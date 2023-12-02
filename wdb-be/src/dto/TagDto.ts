@@ -2,12 +2,25 @@ import { IsEmail, IsJWT, IsNotEmpty, IsStrongPassword } from 'class-validator';
 
 export class NameTagDto {
   @IsNotEmpty()
-  readonly name: string;
+  name;
+
+  constructor(data) {
+    if (data && data.name) {
+      this.name = data.name;
+    }
+  }
 }
 
 export class KvpTagDto {
   @IsNotEmpty()
-  readonly key: string;
+  key;
   @IsNotEmpty()
-  readonly value: string;
+  value;
+
+  constructor(data) {
+    if (data && data.key && data.value) {
+      this.key = data.key;
+      this.value = data.value;
+    }
+  }
 }

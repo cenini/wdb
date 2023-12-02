@@ -8,11 +8,25 @@ import axios from 'axios';
 import Constants from 'expo-constants';
 import { CreateItemDto, CreateItemPhotoDto, ItemCreatedDto } from '../dto/ItemDto';
 import { plainToClass } from 'class-transformer';
-import { DescribeItemDto, TitleAndDescribeItemDto } from '../dto/AIDto';
+import { DescribeItemDto, DescriptionDto, TitleAndDescribeItemDto, TitleAndDescriptionDto } from '../dto/AIDto';
 
 export default function NewItemManagementScreen({ route, navigation }) {
   const { newItems, dispatch } = useContext(NewItemsContext)
   const [title, setTitle] = React.useState('');
+
+  async function getSuggestion(): Promise<void> {
+    if (title !== '') {
+      const itemDescriptionDto = plainToClass(DescriptionDto, await axios.post(`${Constants.expoConfig.extra.env.EXPO_PUBLIC_API_URL}ai/description`, plainToClass(TitleAndDescribeItemDto, { "base64photo": newItems[0].image.uri })))
+      console.log(`nameTags: ${itemDescriptionDto.nameTags}`)
+      console.log(`kvpTags: ${itemDescriptionDto.kvpTags}`)
+    } else {
+      const titleAndDescriptionDto = plainToClass(TitleAndDescriptionDto, (await axios.post(`${Constants.expoConfig.extra.env.EXPO_PUBLIC_API_URL}ai/titleAndDescription`, plainToClass(TitleAndDescribeItemDto, { "title": title, "base64photo": newItems[0].image.uri }))).data)
+      console.log(titleAndDescriptionDto)
+      console.log(`title: ${titleAndDescriptionDto.title}`)
+      console.log(`nameTags: ${titleAndDescriptionDto.nameTags}`)
+      console.log(`kvpTags: ${titleAndDescriptionDto.kvpTags}`)
+    }
+  }
 
   async function createItem(event: GestureResponderEvent): Promise<void> {
     const itemResponse = await axios.post(`${Constants.expoConfig.extra.env.EXPO_PUBLIC_API_URL}items`, plainToClass(CreateItemDto, { "title": title }))
@@ -27,12 +41,7 @@ export default function NewItemManagementScreen({ route, navigation }) {
     }
 
     // if user is premium, they get a description
-    if (title === '') {
-      const suggestionResponse = await axios.post(`${Constants.expoConfig.extra.env.EXPO_PUBLIC_API_URL}ai/description`, plainToClass(TitleAndDescribeItemDto, { "base64photo": newItems[0].image.uri }))
-    } else {
-      const suggestionResponse = await axios.post(`${Constants.expoConfig.extra.env.EXPO_PUBLIC_API_URL}ai/titleAndDescription`, plainToClass(TitleAndDescribeItemDto, { "title": title, "base64photo": newItems[0].image.uri }))
-    }
-
+    await getSuggestion();
   }
 
   return (
