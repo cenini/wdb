@@ -8,6 +8,7 @@ import axios from 'axios';
 import Constants from 'expo-constants';
 import { CreateItemDto, CreateItemPhotoDto, ItemCreatedDto } from '../dto/ItemDto';
 import { plainToClass } from 'class-transformer';
+import { DescribeItemDto, TitleAndDescribeItemDto } from '../dto/AIDto';
 
 export default function NewItemManagementScreen({ route, navigation }) {
   const { newItems, dispatch } = useContext(NewItemsContext)
@@ -22,7 +23,16 @@ export default function NewItemManagementScreen({ route, navigation }) {
     dispatch({ type: 'REMOVE_FIRST_ITEM' });
     if (newItems.length === 1) {
       navigation.goBack();
+      return;
     }
+
+    // if user is premium, they get a description
+    if (title === '') {
+      const suggestionResponse = await axios.post(`${Constants.expoConfig.extra.env.EXPO_PUBLIC_API_URL}ai/description`, plainToClass(TitleAndDescribeItemDto, { "base64photo": newItems[0].image.uri }))
+    } else {
+      const suggestionResponse = await axios.post(`${Constants.expoConfig.extra.env.EXPO_PUBLIC_API_URL}ai/titleAndDescription`, plainToClass(TitleAndDescribeItemDto, { "title": title, "base64photo": newItems[0].image.uri }))
+    }
+
   }
 
   return (
