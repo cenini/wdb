@@ -14,7 +14,7 @@ import Button from "./Button";
 import { AuthContext } from "../App";
 import { ItemModel } from "../models/ItemModel";
 import { plainToClass, plainToInstance } from "class-transformer";
-import { TagModel } from "../models/TagModel";
+import { NameTagModel } from "../models/TagModel";
 import { NavigationContainer } from "@react-navigation/native";
 import { createNativeStackNavigator } from "@react-navigation/native-stack";
 import { NewItemsContext } from "./ItemManagementScreen";

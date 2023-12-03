@@ -1,7 +1,8 @@
 import * as ImagePicker from "expo-image-picker";
-import { TagModel } from "./TagModel";
+import { KvpTagModel, NameTagModel } from "./TagModel";
 
 export class ItemModel {
   image: ImagePicker.ImagePickerAsset;
-  tags: TagModel[];
+  nameTags: NameTagModel[];
+  kvpTags: KvpTagModel[];
 }

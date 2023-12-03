@@ -9,13 +9,15 @@ import Constants from 'expo-constants';
 import { CreateItemDto, CreateItemPhotoDto, ItemCreatedDto } from '../dto/ItemDto';
 import { plainToClass } from 'class-transformer';
 import { DescribeItemDto, DescriptionDto, TitleAndDescribeItemDto, TitleAndDescriptionDto } from '../dto/AIDto';
+import { KvpTagModel, NameTagModel } from '../models/TagModel';
 
 export default function NewItemManagementScreen({ route, navigation }) {
   const { newItems, dispatch } = useContext(NewItemsContext)
+  const [nameTags, setNameTags] = useState<NameTagModel[]>([]);
+  const [kvpTags, setKvpTags] = useState<KvpTagModel[]>([])
   const [title, setTitle] = React.useState('');
 
   useEffect(() => {
-    // if the user is premium, get suggestions
     getSuggestion();
   }, [newItems]); 
 
@@ -44,9 +46,6 @@ export default function NewItemManagementScreen({ route, navigation }) {
       navigation.goBack();
       return;
     }
-
-    // // if user is premium, they get a description
-    // await getSuggestion();
   }
 
   return (
@@ -58,7 +57,6 @@ export default function NewItemManagementScreen({ route, navigation }) {
         value={title}
       />
       <ImageViewer selectedImage={newItems[0]} />
-      {/* <Text style={styles.text}>Manage New Items Screen</Text> */}
       <View style={[styles.buttonContainer, { borderWidth: 4, borderColor: "#ffd33d", borderRadius: 18 }]}>
         <Pressable
             style={[styles.button, { backgroundColor: "#fff" }]}
@@ -73,9 +71,6 @@ export default function NewItemManagementScreen({ route, navigation }) {
             <Text style={[styles.buttonLabel, { color: "#25292e" }]}>Create item</Text>
         </Pressable>
       </View>
-
-      {/* <Text style={styles.text}>{newItems.state}</Text> */}
-      {/* <Text style={styles.text}>Number of new items: {newItems.length}</Text> */}
     </View>
   );
 };

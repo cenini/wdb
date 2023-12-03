@@ -8,7 +8,7 @@ import Button from './Button';
 import { AuthContext } from '../App';
 import { ItemModel } from '../models/ItemModel'
 import { plainToClass, plainToInstance } from 'class-transformer';
-import { TagModel } from '../models/TagModel';
+import { NameTagModel } from '../models/TagModel';
 import { NavigationContainer, useNavigation } from '@react-navigation/native';
 import { createNativeStackNavigator } from '@react-navigation/native-stack';
 import AddImagesScreen from './AddImagesScreen';
@@ -29,7 +29,7 @@ export default function ItemManagementScreen() {
       switch (action.type) {
         case 'ADD_ITEMS':
           const newItems = [...state.newItems, ...action.images.map((image) =>
-            plainToClass(ItemModel, { image: image, tags: [] as TagModel[] })
+            plainToClass(ItemModel, { image: image, tags: [] as NameTagModel[] })
           )];
           return {
             ...state,
@@ -40,16 +40,17 @@ export default function ItemManagementScreen() {
             ...state,
             newItems: state.newItems.slice(1),
           };
-        case 'TAG_ITEM':
-          return {
-            ...state,
-            newItems: state.newItems.map((newItem: ItemModel) => {
-              if (newItem.image.assetId === action.item.image.assetId) {
-                newItem.tags.push(action.tags);
-              }
-              return newItem;
-            }),
-          };
+        // case 'TAG_ITEM':
+        //   return {
+        //     ...state,
+        //     newItems: state.newItems.map((newItem: ItemModel) => {
+        //       if (newItem.image.assetId === action.item.image.assetId) {
+        //         newItem.nameTags.push(action.tags);
+        //         newItem.kvpTags.push(action.kvpTags);
+        //       }
+        //       return newItem;
+        //     }),
+        //   };
         default: 
           return {
             ...state

@@ -1,7 +1,8 @@
-export class TagModel {
+export class NameTagModel {
   name: string;
 }
 
-export class KvpTagModel extends TagModel {
+export class KvpTagModel {
+  key: string;
   value: string;
 }
