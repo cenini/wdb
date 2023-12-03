@@ -6,7 +6,7 @@ import ImageViewer from './ImageViewer';
 import { FontAwesome } from '@expo/vector-icons';
 import axios from 'axios';
 import Constants from 'expo-constants';
-import { CreateItemDto, CreateItemPhotoDto, ItemCreatedDto } from '../dto/ItemDto';
+import { CreateItemDto, CreateItemPhotoDto, CreateItemTagsDto, ItemCreatedDto } from '../dto/ItemDto';
 import { plainToClass, plainToInstance } from 'class-transformer';
 import { DescribeItemDto, DescriptionDto, TitleAndDescribeItemDto, TitleAndDescriptionDto } from '../dto/AIDto';
 import { KvpTagModel, NameTagModel, Tag } from '../models/TagModel';
@@ -66,6 +66,8 @@ export default function NewItemManagementScreen({ route, navigation }) {
     const item = plainToClass(ItemCreatedDto, itemResponse.data)
     const photoResponse = await axios.post(`${Constants.expoConfig.extra.env.EXPO_PUBLIC_API_URL}items/${item.id}/photos`, plainToClass(CreateItemPhotoDto, { "base64photo": newItems[0].image.uri }))
     console.log(`Creating item with ${nameTags.length} name tags and ${kvpTags.length} kvp tags`)
+    const tagsResponse = await axios.post(`${Constants.expoConfig.extra.env.EXPO_PUBLIC_API_URL}items/${item.id}/tags`, plainToClass(CreateItemTagsDto, { "nameTags": nameTags, "kvpTags": kvpTags }))
+    console.log(tagsResponse)
 
     // Dispatch an action to remove the item
     dispatch({ type: 'REMOVE_FIRST_ITEM' });

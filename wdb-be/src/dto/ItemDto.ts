@@ -6,6 +6,7 @@ import {
   IsNotEmpty,
   IsStrongPassword,
 } from 'class-validator';
+import { KvpTagDto, NameTagDto } from './TagDto';
 
 export class CreateItemDto {
   @IsNotEmpty()
@@ -28,4 +29,9 @@ export class ItemCreatedDto {
 export class CreateItemPhotoDto {
   @IsBase64()
   readonly base64photo: string;
+}
+
+export class CreateItemTagsDto {
+  readonly nameTags: NameTagDto[];
+  readonly kvpTags: KvpTagDto[];
 }
