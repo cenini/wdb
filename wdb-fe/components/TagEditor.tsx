@@ -19,9 +19,10 @@ export default function TagEditor({
     // console.log(`number of nametags: ${nameTags.length}`)
   };
 
-  const handleKvpTagChange = (index, field, newValue) => {
+  const handleKvpTagChange = (index, newKey, newValue) => {
     const updatedTags = [...kvpTags];
-    updatedTags[index][field] = newValue;
+    updatedTags[index].key = newKey;
+    updatedTags[index].value = newValue;
     setKvpTags(updatedTags);
     // console.log(`number of kvptags: ${kvpTags.length}`)
   };
@@ -62,14 +63,14 @@ export default function TagEditor({
               style={styles.editableInput}
               value={item.type === 'kvp' ? item.key : item.name ?? ''}
               onChangeText={(newText) =>
-                item.type === 'name' ? handleNameTagChange(index, newText) : handleKvpTagChange(index, 'key', newText)
+                item.type === 'name' ? handleNameTagChange(index, newText) : handleKvpTagChange(index, newText, item.value)
               }
             />
             {item.type === 'kvp' && (
               <TextInput
                 style={styles.editableInput}
                 value={item.value}
-                onChangeText={(newText) => handleKvpTagChange(index, 'value', newText)}
+                onChangeText={(newText) => handleKvpTagChange(index, item.key, newText)}
               />
             )}
           </View>
@@ -86,14 +87,14 @@ export default function TagEditor({
               style={styles.editableInput}
               value={item.type === 'suggestedKvp' ? item.key : item.name ?? ''}
               onChangeText={(newText) =>
-                item.type === 'suggestedName' ? handleNameTagChange(index, newText) : handleKvpTagChange(index, 'key', newText)
+                item.type === 'suggestedName' ? handleNameTagChange(index, newText) : handleKvpTagChange(index, newText, item.value)
               }
             />
             {item.type === 'suggestedKvp' && (
               <TextInput
                 style={styles.editableInput}
                 value={item.value}
-                onChangeText={(newText) => handleKvpTagChange(index, 'value', newText)}
+                onChangeText={(newText) => handleKvpTagChange(index, item.key, newText)}
               />
             )}
             <TouchableOpacity
