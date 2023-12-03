@@ -61,6 +61,11 @@ export default function NewItemManagementScreen({ route, navigation }) {
     console.log(kvpTagSuggestions)
   };
 
+  function resetTags() : void {
+    setNameTags([])
+    setKvpTags([])
+  }
+
   async function createItem(event: GestureResponderEvent): Promise<void> {
     const itemResponse = await axios.post(`${Constants.expoConfig.extra.env.EXPO_PUBLIC_API_URL}items`, plainToClass(CreateItemDto, { "title": title }))
     const item = plainToClass(ItemCreatedDto, itemResponse.data)
@@ -68,6 +73,7 @@ export default function NewItemManagementScreen({ route, navigation }) {
     console.log(`Creating item with ${nameTags.length} name tags and ${kvpTags.length} kvp tags`)
     const tagsResponse = await axios.post(`${Constants.expoConfig.extra.env.EXPO_PUBLIC_API_URL}items/${item.id}/tags`, plainToClass(CreateItemTagsDto, { "nameTags": nameTags, "kvpTags": kvpTags }))
     console.log(tagsResponse)
+    resetTags();
 
     // Dispatch an action to remove the item
     dispatch({ type: 'REMOVE_FIRST_ITEM' });
