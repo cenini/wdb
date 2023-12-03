@@ -1,94 +1,76 @@
-import React, { useState } from 'react';
+import React, { useEffect, useState } from 'react';
 import { StyleSheet, View, Text, TextInput, FlatList, TouchableOpacity } from 'react-native';
 import { KvpTagModel, NameTagModel } from '../models/TagModel';
 
-export default function TagEditor({ nameTags, kvpTags, nameTagSuggestions, onAcceptSuggestedNameTag, kvpTagSuggestions, onAcceptSuggestedKvpTag }) {
-  const [editableNameTags, setEditableNameTags] = useState(nameTags.map(tag => ({ ...tag, isEditing: false })));
-  const [editableKvpTags, setEditableKvpTags] = useState(kvpTags.map(tag => ({ ...tag, isEditing: false })));
-
-  const handleNameTagEdit = (index) => {
-    const updatedTags = [...editableNameTags];
-    updatedTags[index].isEditing = !updatedTags[index].isEditing;
-    setEditableNameTags(updatedTags);
-  };
-
-  const handleKvpTagEdit = (index) => {
-    const updatedTags = [...editableKvpTags];
-    updatedTags[index].isEditing = !updatedTags[index].isEditing;
-    setEditableKvpTags(updatedTags);
-  };
-
+export default function TagEditor({
+  nameTags,
+  setNameTags,
+  kvpTags,
+  setKvpTags,
+  nameTagSuggestions,
+  onAcceptSuggestedNameTag,
+  kvpTagSuggestions,
+  onAcceptSuggestedKvpTag,
+}) {
   const handleNameTagChange = (index, newName) => {
-    const updatedTags = [...editableNameTags];
+    const updatedTags = [...nameTags];
     updatedTags[index].name = newName;
-    setEditableNameTags(updatedTags);
+    setNameTags(updatedTags);
+    // console.log(`number of nametags: ${nameTags.length}`)
   };
 
-  const handleKvpTagChange = (index, newKey, newValue) => {
-    const updatedTags = [...editableKvpTags];
-    updatedTags[index].key = newKey;
-    updatedTags[index].value = newValue;
-    setEditableKvpTags(updatedTags);
+  const handleKvpTagChange = (index, field, newValue) => {
+    const updatedTags = [...kvpTags];
+    updatedTags[index][field] = newValue;
+    setKvpTags(updatedTags);
+    // console.log(`number of kvptags: ${kvpTags.length}`)
   };
-
-  console.log(`nameTags from TagEditor: ${nameTags}`)
-  console.log(`kvpTags from TagEditor: ${kvpTags}`)
 
   const handleAcceptSuggestedNameTag = (nameTag) => {
-    setEditableNameTags([...editableNameTags, nameTag])
+    setNameTags([...nameTags, { ...nameTag }]);
     onAcceptSuggestedNameTag(nameTag);
+    // console.log(`number of nametags: ${nameTags.length}`)
   };
 
   const handleAcceptSuggestedKvpTag = (kvpTag) => {
-    setEditableKvpTags([...editableKvpTags, kvpTag])
+    setKvpTags([...kvpTags, { ...kvpTag }]);
     onAcceptSuggestedKvpTag(kvpTag);
+    // console.log(`number of kvptags: ${kvpTags.length}`)
   };
+
+  const mergedTags = [
+    ...nameTags.map((tag) => ({ ...tag, type: 'name' })),
+    ...kvpTags.map((tag) => ({ ...tag, type: 'kvp' })),
+    ...nameTagSuggestions.map((tag) => ({ ...tag, type: 'suggestedName' })),
+    ...kvpTagSuggestions.map((tag) => ({ ...tag, type: 'suggestedKvp' })),
+  ];
+
+  const acceptedTags = mergedTags.filter((tag) => tag.type === 'name' || tag.type === 'kvp');
+  const suggestedTags = mergedTags.filter(
+    (tag) => tag.type === 'suggestedName' || tag.type === 'suggestedKvp'
+  );
 
   return (
     <View style={styles.container}>
-      <Text style={styles.header}>Name Tags:</Text>
+      <Text style={styles.header}>Accepted Tags:</Text>
       <FlatList
-        data={editableNameTags}
+        data={acceptedTags}
         keyExtractor={(item, index) => index.toString()}
         renderItem={({ item, index }) => (
           <View style={styles.tag}>
-            {item.isEditing ? (
+            <TextInput
+              style={styles.editableInput}
+              value={item.type === 'kvp' ? item.key : item.name ?? ''}
+              onChangeText={(newText) =>
+                item.type === 'name' ? handleNameTagChange(index, newText) : handleKvpTagChange(index, 'key', newText)
+              }
+            />
+            {item.type === 'kvp' && (
               <TextInput
                 style={styles.editableInput}
-                value={item.name}
-                onChangeText={(newName) => handleNameTagChange(index, newName)}
-                onBlur={() => handleNameTagEdit(index)}
+                value={item.value}
+                onChangeText={(newText) => handleKvpTagChange(index, 'value', newText)}
               />
-            ) : (
-              <Text onPress={() => handleNameTagEdit(index)}>{item.name}</Text>
-            )}
-          </View>
-        )}
-      />
-
-      <Text style={styles.header}>KVP Tags:</Text>
-      <FlatList
-        data={editableKvpTags}
-        keyExtractor={(item, index) => index.toString()}
-        renderItem={({ item, index }) => (
-          <View style={styles.tag}>
-            {item.isEditing ? (
-              <View>
-                <TextInput
-                  style={styles.editableInput}
-                  value={item.key}
-                  onChangeText={(newKey) => handleKvpTagChange(index, newKey, item.value)}
-                  onBlur={() => handleKvpTagEdit(index)}
-                />
-                <TextInput
-                  style={styles.editableInput}
-                  value={item.value}
-                  onChangeText={(newValue) => handleKvpTagChange(index, item.key, newValue)}
-                  onBlur={() => handleKvpTagEdit(index)}
-                />
-              </View>
-            ) : (
-              <Text onPress={() => handleKvpTagEdit(index)}>{`${item.key}: ${item.value}`}</Text>
             )}
           </View>
         )}
@@ -96,24 +78,31 @@ export default function TagEditor({ nameTags, kvpTags, nameTagSuggestions, onAcc
 
       <Text style={styles.header}>Suggested Tags:</Text>
       <FlatList
-        data={nameTagSuggestions}
-        keyExtractor={(item, index) => (item ? item.name.toString() : index.toString())}
-        renderItem={({ item }) => (
-          <View style={styles.suggestedTag}>
-            <Text style={styles.grayedText}>{item ? item.name : 'Unknown Name'}</Text>
-            <TouchableOpacity onPress={() => handleAcceptSuggestedNameTag(item)}>
-              <Text style={styles.checkmark}>✔</Text>
-            </TouchableOpacity>
-          </View>
-        )}
-      />
-      <FlatList
-        data={kvpTagSuggestions}
-        keyExtractor={(item, index) => (item ? item.key.toString() : index.toString())}
-        renderItem={({ item }) => (
-          <View style={styles.suggestedTag}>
-            <Text style={styles.grayedText}>{item ? `${item.key}: ${item.value}` : 'Unknown KVP'}</Text>
-            <TouchableOpacity onPress={() => handleAcceptSuggestedKvpTag(item)}>
+        data={suggestedTags}
+        keyExtractor={(item, index) => index.toString()}
+        renderItem={({ item, index }) => (
+          <View style={styles.tag}>
+            <TextInput
+              style={styles.editableInput}
+              value={item.type === 'suggestedKvp' ? item.key : item.name ?? ''}
+              onChangeText={(newText) =>
+                item.type === 'suggestedName' ? handleNameTagChange(index, newText) : handleKvpTagChange(index, 'key', newText)
+              }
+            />
+            {item.type === 'suggestedKvp' && (
+              <TextInput
+                style={styles.editableInput}
+                value={item.value}
+                onChangeText={(newText) => handleKvpTagChange(index, 'value', newText)}
+              />
+            )}
+            <TouchableOpacity
+              onPress={() =>
+                item.type === 'suggestedName'
+                  ? handleAcceptSuggestedNameTag(item)
+                  : handleAcceptSuggestedKvpTag(item)
+              }
+            >
               <Text style={styles.checkmark}>✔</Text>
             </TouchableOpacity>
           </View>
@@ -134,28 +123,20 @@ const styles = StyleSheet.create({
   },
   tag: {
     backgroundColor: '#e0e0e0',
+    flexDirection: 'row',
+    justifyContent: 'space-between',
+    alignItems: 'center',
     padding: 8,
     marginVertical: 4,
     borderRadius: 5,
   },
   editableInput: {
+    flex: 1,
     borderWidth: 1,
     borderColor: '#ccc',
     padding: 8,
     marginBottom: 8,
     borderRadius: 5,
-  },
-  suggestedTag: {
-    flexDirection: 'row',
-    justifyContent: 'space-between',
-    alignItems: 'center',
-    backgroundColor: '#f0f0f0',
-    padding: 8,
-    marginVertical: 4,
-    borderRadius: 5,
-  },
-  grayedText: {
-    color: '#888',
   },
   checkmark: {
     fontSize: 20,

@@ -51,18 +51,21 @@ export default function NewItemManagementScreen({ route, navigation }) {
     setNameTagSuggestions((nameTagSuggestions) =>
       nameTagSuggestions.filter((suggestion) => suggestion.name !== nameTag.name)
     );
+    console.log(nameTagSuggestions)
   };
 
   const handleAcceptSuggestedKvpTag = (kvpTag) => {
     setKvpTagSuggestions((kvpTagSuggestions) =>
-    kvpTagSuggestions.filter((suggestion) => suggestion.key !== kvpTag.key && suggestion.value !== kvpTag.value)
+      kvpTagSuggestions.filter((suggestion) => suggestion.key !== kvpTag.key && suggestion.value !== kvpTag.value)
     );
+    console.log(kvpTagSuggestions)
   };
 
   async function createItem(event: GestureResponderEvent): Promise<void> {
     const itemResponse = await axios.post(`${Constants.expoConfig.extra.env.EXPO_PUBLIC_API_URL}items`, plainToClass(CreateItemDto, { "title": title }))
     const item = plainToClass(ItemCreatedDto, itemResponse.data)
     const photoResponse = await axios.post(`${Constants.expoConfig.extra.env.EXPO_PUBLIC_API_URL}items/${item.id}/photos`, plainToClass(CreateItemPhotoDto, { "base64photo": newItems[0].image.uri }))
+    console.log(`Creating item with ${nameTags.length} name tags and ${kvpTags.length} kvp tags`)
 
     // Dispatch an action to remove the item
     dispatch({ type: 'REMOVE_FIRST_ITEM' });
@@ -94,7 +97,7 @@ export default function NewItemManagementScreen({ route, navigation }) {
             />
             <Text style={[styles.buttonLabel, { color: "#25292e" }]}>Create item</Text>
         </Pressable>
-        <TagEditor nameTags={nameTags} kvpTags={kvpTags} nameTagSuggestions={nameTagSuggestions} onAcceptSuggestedNameTag={handleAcceptSuggestedNameTag} kvpTagSuggestions={kvpTagSuggestions} onAcceptSuggestedKvpTag={handleAcceptSuggestedKvpTag} />
+        <TagEditor nameTags={nameTags} kvpTags={kvpTags} nameTagSuggestions={nameTagSuggestions} onAcceptSuggestedNameTag={handleAcceptSuggestedNameTag} kvpTagSuggestions={kvpTagSuggestions} onAcceptSuggestedKvpTag={handleAcceptSuggestedKvpTag} setNameTags={setNameTags} setKvpTags={setKvpTags} />
       </View>
     </View>
   );
