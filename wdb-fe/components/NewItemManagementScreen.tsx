@@ -7,14 +7,18 @@ import { FontAwesome } from '@expo/vector-icons';
 import axios from 'axios';
 import Constants from 'expo-constants';
 import { CreateItemDto, CreateItemPhotoDto, ItemCreatedDto } from '../dto/ItemDto';
-import { plainToClass } from 'class-transformer';
+import { plainToClass, plainToInstance } from 'class-transformer';
 import { DescribeItemDto, DescriptionDto, TitleAndDescribeItemDto, TitleAndDescriptionDto } from '../dto/AIDto';
-import { KvpTagModel, NameTagModel } from '../models/TagModel';
+import { KvpTagModel, NameTagModel, Tag } from '../models/TagModel';
+import TagEditor from './TagEditor';
 
 export default function NewItemManagementScreen({ route, navigation }) {
   const { newItems, dispatch } = useContext(NewItemsContext)
   const [nameTags, setNameTags] = useState<NameTagModel[]>([]);
   const [kvpTags, setKvpTags] = useState<KvpTagModel[]>([])
+  const [nameTagSuggestions, setNameTagSuggestions] = useState<NameTagModel[]>([]);
+  const [kvpTagSuggestions, setKvpTagSuggestions] = useState<KvpTagModel[]>([])
+  // const [tags, setTags] = useState<Tag[]>([])
   const [title, setTitle] = React.useState('');
 
   useEffect(() => {
@@ -24,16 +28,36 @@ export default function NewItemManagementScreen({ route, navigation }) {
   async function getSuggestion(): Promise<void> {
     if (title !== '') {
       const itemDescriptionDto = plainToClass(DescriptionDto, (await axios.post(`${Constants.expoConfig.extra.env.EXPO_PUBLIC_API_URL}ai/description`, plainToClass(TitleAndDescribeItemDto, { "base64photo": newItems[0].image.uri }))).data)
+      setNameTagSuggestions(plainToInstance(NameTagModel, itemDescriptionDto.nameTags));
+      setKvpTagSuggestions(plainToInstance(KvpTagModel, itemDescriptionDto.kvpTags));
       console.log(`nameTags: ${itemDescriptionDto.nameTags}`)
       console.log(`kvpTags: ${itemDescriptionDto.kvpTags}`)
     } else {
       const titleAndDescriptionDto = plainToClass(TitleAndDescriptionDto, (await axios.post(`${Constants.expoConfig.extra.env.EXPO_PUBLIC_API_URL}ai/titleAndDescription`, plainToClass(TitleAndDescribeItemDto, { "title": title, "base64photo": newItems[0].image.uri }))).data)
+      if (title === '') {
+        setTitle(titleAndDescriptionDto.title);
+      }
+      const titleSuggestion = titleAndDescriptionDto.title;
+      setNameTagSuggestions(plainToInstance(NameTagModel, titleAndDescriptionDto.nameTags));
+      setKvpTagSuggestions(plainToInstance(KvpTagModel, titleAndDescriptionDto.kvpTags));
       console.log(titleAndDescriptionDto)
       console.log(`title: ${titleAndDescriptionDto.title}`)
       console.log(`nameTags: ${titleAndDescriptionDto.nameTags}`)
       console.log(`kvpTags: ${titleAndDescriptionDto.kvpTags}`)
     }
   }
+
+  const handleAcceptSuggestedNameTag = (nameTag) => {
+    setNameTagSuggestions((nameTagSuggestions) =>
+      nameTagSuggestions.filter((suggestion) => suggestion.name !== nameTag.name)
+    );
+  };
+
+  const handleAcceptSuggestedKvpTag = (kvpTag) => {
+    setKvpTagSuggestions((kvpTagSuggestions) =>
+    kvpTagSuggestions.filter((suggestion) => suggestion.key !== kvpTag.key && suggestion.value !== kvpTag.value)
+    );
+  };
 
   async function createItem(event: GestureResponderEvent): Promise<void> {
     const itemResponse = await axios.post(`${Constants.expoConfig.extra.env.EXPO_PUBLIC_API_URL}items`, plainToClass(CreateItemDto, { "title": title }))
@@ -70,6 +94,7 @@ export default function NewItemManagementScreen({ route, navigation }) {
             />
             <Text style={[styles.buttonLabel, { color: "#25292e" }]}>Create item</Text>
         </Pressable>
+        <TagEditor nameTags={nameTags} kvpTags={kvpTags} nameTagSuggestions={nameTagSuggestions} onAcceptSuggestedNameTag={handleAcceptSuggestedNameTag} kvpTagSuggestions={kvpTagSuggestions} onAcceptSuggestedKvpTag={handleAcceptSuggestedKvpTag} />
       </View>
     </View>
   );
