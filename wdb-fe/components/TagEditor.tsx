@@ -40,8 +40,8 @@ export default function TagEditor({ nameTags, kvpTags, nameTagSuggestions, onAcc
   };
 
   const handleAcceptSuggestedKvpTag = (kvpTag) => {
-    setEditableNameTags([...editableKvpTags, kvpTag])
-    onAcceptSuggestedNameTag(kvpTag);
+    setEditableKvpTags([...editableKvpTags, kvpTag])
+    onAcceptSuggestedKvpTag(kvpTag);
   };
 
   return (
@@ -102,6 +102,18 @@ export default function TagEditor({ nameTags, kvpTags, nameTagSuggestions, onAcc
           <View style={styles.suggestedTag}>
             <Text style={styles.grayedText}>{item ? item.name : 'Unknown Name'}</Text>
             <TouchableOpacity onPress={() => handleAcceptSuggestedNameTag(item)}>
+              <Text style={styles.checkmark}>✔</Text>
+            </TouchableOpacity>
+          </View>
+        )}
+      />
+      <FlatList
+        data={kvpTagSuggestions}
+        keyExtractor={(item, index) => (item ? item.key.toString() : index.toString())}
+        renderItem={({ item }) => (
+          <View style={styles.suggestedTag}>
+            <Text style={styles.grayedText}>{item ? `${item.key}: ${item.value}` : 'Unknown KVP'}</Text>
+            <TouchableOpacity onPress={() => handleAcceptSuggestedKvpTag(item)}>
               <Text style={styles.checkmark}>✔</Text>
             </TouchableOpacity>
           </View>
