@@ -1,6 +1,6 @@
 import React, { useContext, useEffect, useState } from 'react';
 import { View, Text, StyleSheet, Button, Pressable, GestureResponderEvent, TextInput, TouchableWithoutFeedback, Modal } from 'react-native';
-import { NewItemsContext } from './ItemManagementScreen';
+import { NewItemsContext } from './AppScreen';
 import { useNavigation } from '@react-navigation/native';
 import { FontAwesome } from '@expo/vector-icons';
 import axios, { HttpStatusCode } from 'axios';

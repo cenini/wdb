@@ -8,7 +8,6 @@ import {
 import { StatusBar } from "expo-status-bar";
 import * as ImagePicker from "expo-image-picker";
 import { StyleSheet, View } from "react-native";
-import ImageViewer from "./ImageViewer";
 import PhotoButton from "./PhotoButton";
 import Button from "./Button";
 import { AuthContext } from "../App";
@@ -17,11 +16,11 @@ import { plainToClass, plainToInstance } from "class-transformer";
 import { NameTagModel } from "../models/TagModel";
 import { NavigationContainer } from "@react-navigation/native";
 import { createNativeStackNavigator } from "@react-navigation/native-stack";
-import { NewItemsContext } from "./ItemManagementScreen";
+import { NewItemsContext } from "./AppScreen";
 
 const PlaceholderImage = require("../assets/images/background-image.png");
 
-export default function AddImagesScreen() {
+export default function HomeScreen() {
   const { addImages } = useContext(NewItemsContext);
 
   const pickImageAsync = async () => {
@@ -30,10 +29,10 @@ export default function AddImagesScreen() {
       selectionLimit: 10,
       mediaTypes: ImagePicker.MediaTypeOptions.Images,
       quality: 0,
+      base64: true,
     });
 
     if (result.canceled) {
-      // alert('You did not select any image.');
       return;
     }
 
@@ -43,11 +42,6 @@ export default function AddImagesScreen() {
   return (
     <View style={styles.container}>
       <View style={styles.imageContainer}>
-        {/* Should have a sample image showing what is "good" */}
-        {/* <ImageViewer
-          placeholderImageSource={PlaceholderImage}
-          selectedImage={selectedImage}
-        /> */}
       </View>
       <View style={styles.footerContainer}>
         <PhotoButton

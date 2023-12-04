@@ -2,7 +2,6 @@ import { createContext, useContext, useEffect, useMemo, useReducer, useState } f
 import { StatusBar } from "expo-status-bar";
 import * as ImagePicker from 'expo-image-picker';
 import { StyleSheet, View} from "react-native";
-import ImageViewer from './ImageViewer';
 import PhotoButton from './PhotoButton';
 import Button from './Button';
 import { AuthContext } from '../App';
@@ -11,15 +10,14 @@ import { plainToClass, plainToInstance } from 'class-transformer';
 import { NameTagModel } from '../models/TagModel';
 import { NavigationContainer, useNavigation } from '@react-navigation/native';
 import { createNativeStackNavigator } from '@react-navigation/native-stack';
-import AddImagesScreen from './AddImagesScreen';
+import HomeScreen from './HomeScreen';
 import React from 'react';
 import NewItemManagementScreen from './NewItemManagementScreen';
 
-const PlaceholderImage = require("../assets/images/background-image.png");
 const Stack = createNativeStackNavigator();
 export const NewItemsContext = createContext(null);
 
-export default function ItemManagementScreen() {
+export default function AppScreen() {
   // Should probably be called like the home screen or something
   const { logout } = useContext(AuthContext);
   const navigation = useNavigation();
@@ -40,17 +38,6 @@ export default function ItemManagementScreen() {
             ...state,
             newItems: state.newItems.slice(1),
           };
-        // case 'TAG_ITEM':
-        //   return {
-        //     ...state,
-        //     newItems: state.newItems.map((newItem: ItemModel) => {
-        //       if (newItem.image.assetId === action.item.image.assetId) {
-        //         newItem.nameTags.push(action.tags);
-        //         newItem.kvpTags.push(action.kvpTags);
-        //       }
-        //       return newItem;
-        //     }),
-        //   };
         default: 
           return {
             ...state
@@ -88,7 +75,7 @@ export default function ItemManagementScreen() {
     <NewItemsContext.Provider value={{ newItems: state.newItems, addImages: addItemsContext.addImages, dispatch }}>
       <Stack.Navigator screenOptions={{headerShown: false}}>
         <>
-          <Stack.Screen name="AddImages" component={AddImagesScreen} />
+          <Stack.Screen name="Home" component={HomeScreen} />
           <Stack.Screen name="ManageNewItems" component={NewItemManagementScreen} initialParams={{ newItems: state.newItems }} />
           {/* <Stack.Screen name="Profile" component={ProfileScreen} /> */}
         </>
