@@ -2,16 +2,15 @@ import React, { useContext, useEffect, useState } from 'react';
 import { View, Text, StyleSheet, Button, Pressable, GestureResponderEvent, TextInput, TouchableWithoutFeedback, Modal } from 'react-native';
 import { NewItemsContext } from './ItemManagementScreen';
 import { useNavigation } from '@react-navigation/native';
-import ImageViewer from './ImageViewer';
 import { FontAwesome } from '@expo/vector-icons';
 import axios, { HttpStatusCode } from 'axios';
 import Constants from 'expo-constants';
 import { CreateItemDto, CreateItemPhotoDto, CreateItemTagsDto, ItemCreatedDto } from '../dto/ItemDto';
 import { plainToClass, plainToInstance } from 'class-transformer';
-import { DescribeItemDto, DescriptionDto, TitleAndDescribeItemDto, TitleAndDescriptionDto } from '../dto/AIDto';
-import { KvpTagModel, NameTagModel, Tag } from '../models/TagModel';
+import { TitleAndDescribeItemDto, TitleAndDescriptionDto } from '../dto/AIDto';
+import { KvpTagModel, NameTagModel } from '../models/TagModel';
 import TagEditor from './TagEditor';
-import TagBox from './TagBox';
+import ImageBox from './ImageBox';
 
 export default function NewItemManagementScreen({ route, navigation }) {
   const { newItems, dispatch } = useContext(NewItemsContext)
@@ -21,7 +20,6 @@ export default function NewItemManagementScreen({ route, navigation }) {
   const [kvpTagSuggestions, setKvpTagSuggestions] = useState<KvpTagModel[]>([]);
   const [title, setTitle] = React.useState('');
   const [titlePlaceholder, setTitlePlaceholder] = React.useState('Title');
-  const [isTagBoxVisible, setTagBoxVisible] = useState(false);
 
   useEffect(() => {
     getSuggestion();
@@ -78,42 +76,23 @@ export default function NewItemManagementScreen({ route, navigation }) {
     }
   }
 
-  const handleImageViewerPress = () => {
-    console.log('Image Pressed!');
-    setTagBoxVisible(true);
-  };
-
-  const handleTagBoxClose = () => {
-    setTagBoxVisible(false);
-  };
-
   const handleTagBoxSave = (tag: NameTagModel | KvpTagModel) => {
     if (tag instanceof NameTagModel) {
       setNameTags([...nameTags, tag]);
     } else {
       setKvpTags([...kvpTags, tag]);
     }
-    setTagBoxVisible(false);
   };
 
   return (
     <View style={styles.container}>
       <TextInput
-        placeholder="Enter title"
+        placeholder={titlePlaceholder}
         style={styles.input}
         onChangeText={setTitle}
         value={title}
       />
-      <View style={styles.imageContainer}>
-        <Pressable onPress={handleImageViewerPress}>
-          <ImageViewer selectedImage={newItems[0]} />
-        </Pressable>
-        {isTagBoxVisible && (
-          <View style={styles.tagBoxContainer}>
-            <TagBox onClose={handleTagBoxClose} onSaveTag={handleTagBoxSave} />
-          </View>
-        )}
-      </View>
+      <ImageBox imageUri={newItems[0].image.uri} onSaveTag={handleTagBoxSave} />
       <View style={[styles.buttonContainer, { borderWidth: 4, borderColor: "#ffd33d", borderRadius: 18 }]}>
         <Pressable
           style={[styles.button, { backgroundColor: "#fff" }]}
@@ -178,12 +157,16 @@ const styles = StyleSheet.create({
   },
   imageContainer: {
     position: 'relative',
+    flex: 1,
   },
   tagBoxContainer: {
     position: 'absolute',
-    top: '50%', // Position in the middle of the ImageViewer
-    left: '50%', // Position in the middle of the ImageViewer
-    transform: [{ translateX: '-50%' }, { translateY: '-50%' }] as any, // Explicitly cast to any
-    zIndex: 1, // Ensure it's above the ImageViewer
+    top: 0,
+    bottom: 0,
+    left: 0,
+    right: 0,
+    alignItems: 'center',
+    justifyContent: 'center',
+    zIndex: 1,
   },
 });
