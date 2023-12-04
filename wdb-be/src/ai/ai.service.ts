@@ -25,12 +25,13 @@ export class AIService {
               type: 'image_url',
               image_url: {
                 url: base64image,
+                detail: 'low',
               },
             },
           ],
         },
       ],
-      max_tokens: 300,
+      max_tokens: 500,
       // stream: true // ?
     });
     console.log(response);
@@ -55,12 +56,13 @@ export class AIService {
               type: 'image_url',
               image_url: {
                 url: base64image,
+                detail: 'low',
               },
             },
           ],
         },
       ],
-      max_tokens: 300,
+      max_tokens: 500,
       // stream: true // ?
     });
     console.log(response);
