@@ -1,8 +1,10 @@
 import React, { useState } from 'react';
 import { View, Text, TextInput, TouchableOpacity, Modal, StyleSheet, Pressable } from 'react-native';
 import { FontAwesome } from '@expo/vector-icons';
+import { plainToInstance } from 'class-transformer';
+import { KvpTagModel, NameTagModel } from '../models/TagModel';
 
-export default function TagBox({ onClose }) {
+export default function TagBox({ onClose, onSaveTag }) {
   const [isExpanded, setExpanded] = useState(false);
   const [tagName, setTagName] = useState('');
   const [tagKey, setTagKey] = useState('');
@@ -16,12 +18,14 @@ export default function TagBox({ onClose }) {
     // Add your logic to handle the entered tag (tagName, tagKey, and tagValue)
     console.log(`Tag saved: ${tagName} - ${tagKey} - ${tagValue}`);
 
-    // Close the modal
-    onClose();
+    // Add a tag
+    onSaveTag(isExpanded 
+      ? plainToInstance(KvpTagModel, { 'key': tagKey, 'value': tagValue }) 
+      : plainToInstance(NameTagModel, { 'name': tagName }));
   };
 
   const handleBackgroundPress = () => {
-    // Close the modal without saving
+    // Close the box
     onClose();
   };
 

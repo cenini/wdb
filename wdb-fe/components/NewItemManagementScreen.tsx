@@ -87,6 +87,15 @@ export default function NewItemManagementScreen({ route, navigation }) {
     setTagBoxVisible(false);
   };
 
+  const handleTagBoxSave = (tag: NameTagModel | KvpTagModel) => {
+    if (tag instanceof NameTagModel) {
+      setNameTags([...nameTags, tag]);
+    } else {
+      setKvpTags([...kvpTags, tag]);
+    }
+    setTagBoxVisible(false);
+  };
+
   return (
     <View style={styles.container}>
       <TextInput
@@ -101,7 +110,7 @@ export default function NewItemManagementScreen({ route, navigation }) {
         </Pressable>
         {isTagBoxVisible && (
           <View style={styles.tagBoxContainer}>
-            <TagBox onClose={handleTagBoxClose} />
+            <TagBox onClose={handleTagBoxClose} onSaveTag={handleTagBoxSave} />
           </View>
         )}
       </View>
