@@ -11,6 +11,14 @@ const ImageBox = ({ imageUri, onSaveTag }) => {
   const [tagValue, setTagValue] = useState('');
   const [isTagViewVisible, setTagViewVisible] = useState(false);
 
+  const onCloseTagView = () => {
+    setTagName('');
+    setTagKey('');
+    setTagValue('');
+    setExpanded(false);
+    setTagViewVisible(false);
+  }
+
   const handleToggleExpansion = () => {
     setExpanded(!isExpanded);
   };
@@ -22,9 +30,7 @@ const ImageBox = ({ imageUri, onSaveTag }) => {
         ? plainToInstance(KvpTagModel, { key: tagKey, value: tagValue })
         : plainToInstance(NameTagModel, { name: tagName })
     );
-
-    // Hide the tag view
-    setTagViewVisible(false);
+    onCloseTagView();
   };
 
   const handleImagePress = () => {
@@ -41,7 +47,7 @@ const ImageBox = ({ imageUri, onSaveTag }) => {
         <View style={styles.overlay}>
           <View style={styles.drawerBox}>
             <View style={styles.drawerHeader}>
-              <Pressable onPress={() => setTagViewVisible(false)}>
+              <Pressable onPress={() => onCloseTagView()}>
                 <FontAwesome
                   name="close"
                   size={20}
