@@ -1,5 +1,5 @@
 import React, { useContext, useEffect, useState } from 'react';
-import { View, Text, StyleSheet, Button, Pressable, GestureResponderEvent, TextInput } from 'react-native';
+import { View, Text, StyleSheet, Button, Pressable, GestureResponderEvent, TextInput, TouchableWithoutFeedback, Modal } from 'react-native';
 import { NewItemsContext } from './ItemManagementScreen';
 import { useNavigation } from '@react-navigation/native';
 import ImageViewer from './ImageViewer';
@@ -11,6 +11,7 @@ import { plainToClass, plainToInstance } from 'class-transformer';
 import { DescribeItemDto, DescriptionDto, TitleAndDescribeItemDto, TitleAndDescriptionDto } from '../dto/AIDto';
 import { KvpTagModel, NameTagModel, Tag } from '../models/TagModel';
 import TagEditor from './TagEditor';
+import TagBox from './TagBox';
 
 export default function NewItemManagementScreen({ route, navigation }) {
   const { newItems, dispatch } = useContext(NewItemsContext)
@@ -18,9 +19,9 @@ export default function NewItemManagementScreen({ route, navigation }) {
   const [kvpTags, setKvpTags] = useState<KvpTagModel[]>([])
   const [nameTagSuggestions, setNameTagSuggestions] = useState<NameTagModel[]>([]);
   const [kvpTagSuggestions, setKvpTagSuggestions] = useState<KvpTagModel[]>([]);
-  // const [tags, setTags] = useState<Tag[]>([])
   const [title, setTitle] = React.useState('');
   const [titlePlaceholder, setTitlePlaceholder] = React.useState('Title');
+  const [isTagBoxVisible, setTagBoxVisible] = useState(false);
 
   useEffect(() => {
     getSuggestion();
@@ -77,27 +78,45 @@ export default function NewItemManagementScreen({ route, navigation }) {
     }
   }
 
+  const handleImageViewerPress = () => {
+    console.log('Image Pressed!');
+    setTagBoxVisible(true);
+  };
+
+  const handleTagBoxClose = () => {
+    setTagBoxVisible(false);
+  };
+
   return (
     <View style={styles.container}>
       <TextInput
-        placeholder={titlePlaceholder}
+        placeholder="Enter title"
         style={styles.input}
         onChangeText={setTitle}
         value={title}
       />
-      <ImageViewer selectedImage={newItems[0]} />
+      <View style={styles.imageContainer}>
+        <Pressable onPress={handleImageViewerPress}>
+          <ImageViewer selectedImage={newItems[0]} />
+        </Pressable>
+        {isTagBoxVisible && (
+          <View style={styles.tagBoxContainer}>
+            <TagBox onClose={handleTagBoxClose} />
+          </View>
+        )}
+      </View>
       <View style={[styles.buttonContainer, { borderWidth: 4, borderColor: "#ffd33d", borderRadius: 18 }]}>
         <Pressable
-            style={[styles.button, { backgroundColor: "#fff" }]}
-            onPress={createItem}
-          >
-            <FontAwesome
-              name="picture-o"
-              size={18}
-              color="#25292e"
-              style={styles.buttonIcon}
-            />
-            <Text style={[styles.buttonLabel, { color: "#25292e" }]}>Create item</Text>
+          style={[styles.button, { backgroundColor: "#fff" }]}
+          onPress={createItem}
+        >
+          <FontAwesome
+            name="picture-o"
+            size={18}
+            color="#25292e"
+            style={styles.buttonIcon}
+          />
+          <Text style={[styles.buttonLabel, { color: "#25292e" }]}>Create item</Text>
         </Pressable>
         <TagEditor nameTags={nameTags} kvpTags={kvpTags} nameTagSuggestions={nameTagSuggestions} onAcceptSuggestedNameTag={handleAcceptSuggestedNameTag} kvpTagSuggestions={kvpTagSuggestions} onAcceptSuggestedKvpTag={handleAcceptSuggestedKvpTag} setNameTags={setNameTags} setKvpTags={setKvpTags} />
       </View>
@@ -147,5 +166,15 @@ const styles = StyleSheet.create({
   buttonLabel: {
     color: '#fff',
     fontSize: 16,
+  },
+  imageContainer: {
+    position: 'relative',
+  },
+  tagBoxContainer: {
+    position: 'absolute',
+    top: '50%', // Position in the middle of the ImageViewer
+    left: '50%', // Position in the middle of the ImageViewer
+    transform: [{ translateX: '-50%' }, { translateY: '-50%' }] as any, // Explicitly cast to any
+    zIndex: 1, // Ensure it's above the ImageViewer
   },
 });

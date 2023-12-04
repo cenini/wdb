@@ -1,35 +1,121 @@
-import { StyleSheet, View, Pressable, Text } from 'react-native';
-import { KvpTagModel, NameTagModel } from '../models/TagModel';
+import React, { useState } from 'react';
+import { View, Text, TextInput, TouchableOpacity, Modal, StyleSheet, Pressable } from 'react-native';
+import { FontAwesome } from '@expo/vector-icons';
 
-export default function TagBox({ tag }) {
-  if (tag instanceof NameTagModel) {
-    return (
-    //   <View
-    //   style={[styles.buttonContainer, { borderWidth: 4, borderColor: "#ffd33d", borderRadius: 18 }]}
-    //   >
-    //     <Pressable
-    //       style={[styles.button, { backgroundColor: "#fff" }]}
-    //       onPress={onPress}
-    //     >
-    //       <Text style={[styles.buttonLabel, { color: "#25292e" }]}>{label}</Text>
-    //     </Pressable>
-    // </View>
-      <></>
-    );
-  } else if (tag instanceof KvpTagModel) {
-    return(<></>)
-  }
+export default function TagBox({ onClose }) {
+  const [isExpanded, setExpanded] = useState(false);
+  const [tagName, setTagName] = useState('');
+  const [tagKey, setTagKey] = useState('');
+  const [tagValue, setTagValue] = useState('');
 
-  return (<></>)
-  // return (
-  //   <View style={styles.buttonContainer}>
-  //       <Pressable style={styles.button} onPress={onPress}>
-  //         <Text style={styles.buttonLabel}>{label}</Text>
-  //       </Pressable>
-  //     </View>
-  // );
-}
+  const handleToggleExpansion = () => {
+    setExpanded(!isExpanded);
+  };
 
+  const handleSave = () => {
+    // Add your logic to handle the entered tag (tagName, tagKey, and tagValue)
+    console.log(`Tag saved: ${tagName} - ${tagKey} - ${tagValue}`);
+
+    // Close the modal
+    onClose();
+  };
+
+  const handleBackgroundPress = () => {
+    // Close the modal without saving
+    onClose();
+  };
+
+  return (
+    <Modal transparent={true} animationType="slide">
+      <View style={styles.modalContainer}>
+        <TouchableOpacity
+          style={styles.backgroundOverlay}
+          activeOpacity={1}
+          onPress={handleBackgroundPress}
+        />
+        <View style={styles.drawerBox}>
+          <View style={styles.drawerHeader}>
+            <Text style={styles.drawerHeaderText}>Add Tag</Text>
+            <TouchableOpacity onPress={handleToggleExpansion}>
+              <FontAwesome
+                name={isExpanded ? 'caret-up' : 'caret-down'}
+                size={20}
+                color="#000"
+              />
+            </TouchableOpacity>
+          </View>
+          {isExpanded && (
+            <>
+              <TextInput
+                style={styles.input}
+                placeholder="Key"
+                value={tagKey}
+                onChangeText={setTagKey}
+              />
+              <TextInput
+                style={styles.input}
+                placeholder="Value"
+                value={tagValue}
+                onChangeText={setTagValue}
+              />
+            </>
+          )}
+          <TextInput
+            style={[styles.input, { display: isExpanded ? 'none' : 'flex' }]}
+            placeholder="Name"
+            value={tagName}
+            onChangeText={setTagName}
+          />
+          <TouchableOpacity style={styles.addButton} onPress={handleSave}>
+            <Text style={styles.buttonText}>Add Tag</Text>
+          </TouchableOpacity>
+        </View>
+        {/* ... (other styles) */}
+      </View>
+    </Modal>
+  );
+};
 
 const styles = StyleSheet.create({
+  modalContainer: {
+    flex: 1,
+    justifyContent: 'flex-end',
+  },
+  backgroundOverlay: {
+    flex: 1,
+    backgroundColor: 'rgba(0, 0, 0, 0.5)',
+  },
+  drawerBox: {
+    backgroundColor: '#fff',
+    padding: 16,
+    borderTopLeftRadius: 16,
+    borderTopRightRadius: 16,
+  },
+  drawerHeader: {
+    flexDirection: 'row',
+    justifyContent: 'space-between',
+    alignItems: 'center',
+    marginBottom: 10,
+  },
+  drawerHeaderText: {
+    fontSize: 18,
+    fontWeight: 'bold',
+  },
+  input: {
+    height: 40,
+    borderColor: 'gray',
+    borderWidth: 1,
+    marginBottom: 10,
+    paddingHorizontal: 8,
+  },
+  addButton: {
+    backgroundColor: '#4CAF50',
+    padding: 10,
+    borderRadius: 8,
+    alignItems: 'center',
+  },
+  buttonText: {
+    color: '#fff',
+    fontWeight: 'bold',
+  },
 });

@@ -53,7 +53,6 @@ export default function TagEditor({
 
   return (
     <View style={styles.container}>
-      <Text style={styles.header}>Accepted Tags:</Text>
       <FlatList
         data={acceptedTags}
         keyExtractor={(item, index) => index.toString()}
@@ -76,8 +75,6 @@ export default function TagEditor({
           </View>
         )}
       />
-
-      <Text style={styles.header}>Suggested Tags:</Text>
       <FlatList
         data={suggestedTags}
         keyExtractor={(item, index) => index.toString()}
