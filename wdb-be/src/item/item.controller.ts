@@ -30,12 +30,14 @@ import {
   CreateNewItemPhotoDto,
 } from '../dto/ItemDto';
 import { KvpTagDto, NameTagDto } from '../dto/TagDto';
+import { MediaService } from '../photo/media.service';
 
 @Controller('v1/items')
 export class ItemController {
   constructor(
     private itemService: ItemService,
     private photoService: PhotoService,
+    private mediaService: MediaService,
     private tagService: TagService,
     private itemTagService: ItemTagService,
   ) {}
@@ -93,7 +95,7 @@ export class ItemController {
     @Body() dto: CreateItemPhotoDto,
   ): Promise<PhotoModel> {
     return await this.photoService.createPhoto({
-      url: `https://some-cdn.com/${uuidv4()}`,
+      url: await this.mediaService.uploadImage(dto.base64photo),
       item: {
         connect: { id: itemId },
       },
@@ -123,7 +125,7 @@ export class ItemController {
       },
     });
     return await this.photoService.createPhoto({
-      url: `https://some-cdn.com/${uuidv4()}`,
+      url: await this.mediaService.uploadImage(dto.base64photo),
       item: {
         connect: { id: item.id },
       },

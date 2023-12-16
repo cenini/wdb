@@ -1,10 +1,15 @@
 import { Injectable } from '@nestjs/common';
 import { PrismaService } from '../prisma/prisma.service';
 import { Photo, Prisma } from '@prisma/client';
+import { v2 as cloudinary } from 'cloudinary';
+import { MediaService } from './media.service';
 
 @Injectable()
 export class PhotoService {
-  constructor(private prisma: PrismaService) {}
+  constructor(
+    private prisma: PrismaService,
+    private mediaService: MediaService,
+  ) {}
 
   async photo(
     photoWhereUniqueInput: Prisma.PhotoWhereUniqueInput,
