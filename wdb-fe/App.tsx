@@ -1,11 +1,7 @@
 import { createContext, useEffect, useMemo, useReducer, useState } from 'react';
-import { StatusBar } from "expo-status-bar";
-import * as ImagePicker from 'expo-image-picker';
-import { StyleSheet, View} from "react-native";
 
 import { NavigationContainer } from '@react-navigation/native';
 import { createNativeStackNavigator } from '@react-navigation/native-stack';
-import SignupScreen from './components/SignupScreen';
 import LoginScreen from './components/LoginScreen';
 import axios, { HttpStatusCode } from 'axios';
 import Constants from 'expo-constants';
@@ -14,7 +10,10 @@ import HomeScreen from './components/AppScreen';
 import { plainToClass, classToPlain } from 'class-transformer';
 import { LoggedInDto, LoginDto } from './dto/AuthDto';
 import { CreateUserDto, UserCreatedDto } from './dto/UserDto';
+import 'react-native-gesture-handler';
+import { createBottomTabNavigator } from '@react-navigation/bottom-tabs';
 
+const Tab = createBottomTabNavigator();
 const Stack = createNativeStackNavigator();
 export const AuthContext = createContext(null);
 
@@ -135,28 +134,27 @@ export default function App() {
         await AsyncStorage.removeItem('userToken')
         dispatch({ type: 'LOG_OUT' })
       },
+      userToken: state.userToken,
     }),
-    []
+    [state.userToken]
   );
 
   return (
     <AuthContext.Provider value={authContext}>
       <NavigationContainer>
-        <Stack.Navigator initialRouteName="Home" screenOptions={{headerShown: false}}>
-          {state.userToken == null 
+        <Tab.Navigator initialRouteName="Home" screenOptions={{headerShown: false}}>
+        {state.userToken == null 
           ? (
             <>
-              <Stack.Screen name="Login" component={LoginScreen} />
-              <Stack.Screen name="Signup" component={SignupScreen} />
-              {/* <Stack.Screen name="ResetPassword" component={ResetPassword} /> */}
+              <Tab.Screen name="Home" component={HomeScreen} />
+              <Tab.Screen name="Login" component={LoginScreen} />
             </>) 
           : (
             <>
-              <Stack.Screen name="Home" component={HomeScreen} />
-              {/* <Stack.Screen name="Profile" component={ProfileScreen} /> */}
+              <Tab.Screen name="Home" component={HomeScreen} />
             </>)
           }
-        </Stack.Navigator>
+        </Tab.Navigator>
       </NavigationContainer>
     </AuthContext.Provider>
   );

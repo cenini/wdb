@@ -5,13 +5,12 @@ import Button from './Button';
 import { useContext } from 'react';
 import { AuthContext } from '../App';
 
-export default function LoginScreen() {
+export default function LoginScreen({ navigation }) {
   const { login } = useContext(AuthContext);
   const [email, setEmail] = React.useState('');
   const [password, setPassword] = React.useState('');
   const [loginFailedText, setLoginFailedText] = React.useState('');
   const [rememberMe, setRememberMe] = React.useState(false);
-  const navigation = useNavigation()
 
   async function tryLogin(email: string, password: string) : Promise<void> {
     try {

@@ -9,9 +9,8 @@ import { AuthContext } from '../App';
 import { useContext } from 'react';
 
 
-export default function SignupScreen() {
+export default function SignupScreen({ navigation }) {
   const { signup } = useContext(AuthContext);
-  const navigation = useNavigation()
   const [email, setEmail] = React.useState('');
   const [password, setPassword] = React.useState('');
   const [userCreationFailedText, setUserCreationFailedText] = React.useState('');
