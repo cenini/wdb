@@ -31,6 +31,13 @@ export class CreateItemPhotoDto {
   readonly base64photo: string;
 }
 
+export class CreateNewItemPhotoDto {
+  @IsNotEmpty()
+  readonly title: string;
+  @IsBase64()
+  readonly base64photo: string;
+}
+
 export class CreateItemTagsDto {
   readonly nameTags: NameTagDto[];
   readonly kvpTags: KvpTagDto[];

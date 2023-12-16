@@ -23,7 +23,12 @@ import { PhotoService } from '../photo/photo.service';
 import { v4 as uuidv4 } from 'uuid';
 import { ItemTagService } from './itemtag.service';
 import { TagService } from '../tag/tag.service';
-import { CreateItemDto, CreateItemTagsDto } from '../dto/ItemDto';
+import {
+  CreateItemDto,
+  CreateItemPhotoDto,
+  CreateItemTagsDto,
+  CreateNewItemPhotoDto,
+} from '../dto/ItemDto';
 import { KvpTagDto, NameTagDto } from '../dto/TagDto';
 
 @Controller('v1/items')
@@ -85,7 +90,7 @@ export class ItemController {
   async createPhotoForItem(
     @Request() req,
     @Param('itemId') itemId,
-    @Body() photoData: { base64photo: string },
+    @Body() dto: CreateItemPhotoDto,
   ): Promise<PhotoModel> {
     return await this.photoService.createPhoto({
       url: `https://some-cdn.com/${uuidv4()}`,
@@ -109,10 +114,10 @@ export class ItemController {
   @Post('photos')
   async createPhotoForNewItem(
     @Request() req,
-    @Body() data: { title: string; base64photo: string },
+    @Body() dto: CreateNewItemPhotoDto,
   ): Promise<PhotoModel> {
     const item = await this.itemService.createItem({
-      title: data.title,
+      title: dto.title,
       owner: {
         connect: { id: req.user.sub },
       },
