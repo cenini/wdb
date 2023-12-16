@@ -49,6 +49,7 @@ export default function SignupScreen({ navigation }) {
 
 const styles = StyleSheet.create({
   input: {
+    width: 340,
     height: 40,
     margin: 12,
     borderWidth: 1,

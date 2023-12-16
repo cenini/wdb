@@ -7,15 +7,15 @@ import axios, { HttpStatusCode } from 'axios';
 import Constants from 'expo-constants';
 import AsyncStorage from '@react-native-async-storage/async-storage';
 import HomeScreen from './components/AppScreen';
-import { plainToClass, classToPlain } from 'class-transformer';
+import { plainToClass } from 'class-transformer';
 import { LoggedInDto, LoginDto } from './dto/AuthDto';
 import { CreateUserDto, UserCreatedDto } from './dto/UserDto';
 import 'react-native-gesture-handler';
 import { createBottomTabNavigator } from '@react-navigation/bottom-tabs';
 import SettingsScreen from './components/SettingsScreen';
+import AuthScreen from './components/AuthScreen';
 
 const Tab = createBottomTabNavigator();
-const Stack = createNativeStackNavigator();
 export const AuthContext = createContext(null);
 
 export default function App() {
@@ -148,7 +148,7 @@ export default function App() {
           ? (
             <>
               <Tab.Screen name="Home" component={HomeScreen} />
-              <Tab.Screen name="Login" component={LoginScreen} />
+              <Tab.Screen name="Login" component={AuthScreen} />
             </>) 
           : (
             <>

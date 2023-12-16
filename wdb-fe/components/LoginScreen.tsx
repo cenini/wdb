@@ -39,24 +39,6 @@ export default function LoginScreen({ navigation }) {
       <Text style={styles.text} onPress={() => navigation.navigate('Signup')}>No user? Sign up!</Text>
       <Text style={[styles.text, styles.loginFailedText]}>{loginFailedText}</Text>
     </>
-    // <View style={styles.container}>
-    //   <TextInput
-    //     style={styles.input}
-    //     onChangeText={setEmail}
-    //     value={email}
-    //     placeholder='email'
-    //   />
-    //   <TextInput
-    //     style={styles.input}
-    //     onChangeText={setPassword}
-    //     value={password}
-    //     placeholder='password'
-    //     secureTextEntry
-    //   />
-    //   <Button label="Login" theme="primary" onPress={async () => await login(email, password)} />
-    //   <Text style={styles.text} onPress={() => navigation.navigate('Signup')}>No user? Sign up!</Text>
-    //   <Text style={[styles.text, loginSuccessful ? styles.loginSuccessfulText : styles.loginFailedText]}>{loginText}</Text>
-    // </View>
   );
 }
 
