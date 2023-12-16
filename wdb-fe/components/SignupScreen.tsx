@@ -25,7 +25,7 @@ export default function SignupScreen({ navigation }) {
   }
 
   return (
-    <>
+    <View style={styles.container}>
       <TextInput
         style={styles.input}
         onChangeText={setEmail}
@@ -42,23 +42,33 @@ export default function SignupScreen({ navigation }) {
       <Button label="Sign up" theme="primary" onPress={async () => await trySignUp(email, password)} />
       <Text style={styles.text} onPress={() => navigation.navigate('Login')}>Already have a user? Log in!</Text>
       <Text style={[styles.text, styles.userCreatedFailText]}>{userCreationFailedText}</Text>
-    </>
+    </View>
   );
 }
 
 
 const styles = StyleSheet.create({
+  container: {
+    flex: 1,
+    backgroundColor: "#25292e",
+    alignItems: "center",
+    justifyContent: 'flex-start', // Start aligning items from the top
+  },
   input: {
     width: 340,
     height: 40,
     margin: 12,
     borderWidth: 1,
     padding: 10,
+    textDecorationColor: '#fff'
+    // color: '#fff',
+    // borderColor: '#fff',
   },
   text: {
     height: 40,
     margin: 12,
     padding: 10,
+    color: '#fff',
   },
   userCreatedSuccessText: {
     color: 'green',

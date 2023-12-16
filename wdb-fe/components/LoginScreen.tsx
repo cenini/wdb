@@ -21,7 +21,7 @@ export default function LoginScreen({ navigation }) {
   }
 
   return (
-    <>
+    <View style={styles.container}>
       <TextInput
         style={styles.input}
         onChangeText={setEmail}
@@ -38,19 +38,17 @@ export default function LoginScreen({ navigation }) {
       <Button label="Login" theme="primary" onPress={async () => await tryLogin(email, password)} />
       <Text style={styles.text} onPress={() => navigation.navigate('Signup')}>No user? Sign up!</Text>
       <Text style={[styles.text, styles.loginFailedText]}>{loginFailedText}</Text>
-    </>
+    </View>
   );
 }
 
 
 const styles = StyleSheet.create({
   container: {
-    width: 320,
-    height: 68,
-    marginHorizontal: 20,
-    alignItems: 'center',
-    // justifyContent: 'center',
-    padding: 3,
+    flex: 1,
+    backgroundColor: "#25292e",
+    alignItems: "center",
+    justifyContent: 'flex-start', // Start aligning items from the top
   },
   input: {
     width: 340,
@@ -58,11 +56,15 @@ const styles = StyleSheet.create({
     margin: 12,
     borderWidth: 1,
     padding: 10,
+    textDecorationColor: '#fff',
+    // color: '#fff',
+    // borderColor: '#fff',
   },
   text: {
     height: 40,
     margin: 12,
     padding: 10,
+    color: '#fff',
   },
   loginSuccessfulText: {
     color: 'green',
