@@ -13,7 +13,10 @@ export default function HomeScreen({ navigation }) {
   const { userToken } = useContext(AuthContext);
 
   const pickImageAsync = async () => {
-    console.log(userToken)
+    if (userToken == null) {
+      navigation.navigate('Login')
+      return;
+    }
     let result = await ImagePicker.launchImageLibraryAsync({
       allowsMultipleSelection: true,
       selectionLimit: 10,

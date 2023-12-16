@@ -12,6 +12,7 @@ import { LoggedInDto, LoginDto } from './dto/AuthDto';
 import { CreateUserDto, UserCreatedDto } from './dto/UserDto';
 import 'react-native-gesture-handler';
 import { createBottomTabNavigator } from '@react-navigation/bottom-tabs';
+import SettingsScreen from './components/SettingsScreen';
 
 const Tab = createBottomTabNavigator();
 const Stack = createNativeStackNavigator();
@@ -152,6 +153,7 @@ export default function App() {
           : (
             <>
               <Tab.Screen name="Home" component={HomeScreen} />
+              <Tab.Screen name="Settings" component={SettingsScreen} />
             </>)
           }
         </Tab.Navigator>
