@@ -28,9 +28,11 @@ import {
   CreateItemPhotoDto,
   CreateItemTagsDto,
   CreateNewItemPhotoDto,
+  ItemCreatedDto,
 } from '../dto/ItemDto';
 import { KvpTagDto, NameTagDto } from '../dto/TagDto';
 import { MediaService } from '../photo/media.service';
+import { plainToClass, plainToInstance } from 'class-transformer';
 
 @Controller('v1/items')
 export class ItemController {
@@ -46,13 +48,26 @@ export class ItemController {
   async createItem(
     @Request() req,
     @Body() createItemDto: CreateItemDto,
-  ): Promise<ItemModel> {
-    return await this.itemService.createItem({
-      title: createItemDto.title,
-      owner: {
-        connect: { id: req.user.sub },
-      },
-    });
+  ): Promise<ItemCreatedDto> {
+    const itemCreated = plainToInstance(
+      ItemCreatedDto,
+      await this.itemService.createItem({
+        title: createItemDto.title,
+        owner: {
+          connect: { id: req.user.sub },
+        },
+      }),
+    );
+    return itemCreated;
+  }
+
+  @Get('')
+  async getItems(@Request() req): Promise<ItemModel[]> {
+    const username = req['user'].username;
+    console.log(`getting items for ${username}`);
+    const items = await this.itemService.getItemsByEmail(username);
+    console.log(items);
+    return items;
   }
 
   @Delete(':itemId')

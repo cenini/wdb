@@ -31,6 +31,32 @@ export class ItemService {
     });
   }
 
+  async getItemsByEmail(email) {
+    try {
+      const items = await this.prisma.item.findMany({
+        where: {
+          owner: {
+            email: email,
+          },
+        },
+        include: {
+          owner: false,
+          Photo: true,
+          ItemTag: {
+            include: {
+              tag: true,
+            },
+          },
+        },
+      });
+
+      return items;
+    } catch (error) {
+      console.error('Error fetching items:', error);
+      throw error;
+    }
+  }
+
   async createItem(data: Prisma.ItemCreateInput): Promise<Item> {
     return this.prisma.item.create({
       data,

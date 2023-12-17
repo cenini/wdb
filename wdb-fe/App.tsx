@@ -14,6 +14,7 @@ import 'react-native-gesture-handler';
 import { createBottomTabNavigator } from '@react-navigation/bottom-tabs';
 import SettingsScreen from './components/SettingsScreen';
 import AuthScreen from './components/AuthScreen';
+import ItemBrowserScreen from './components/ItemBrowserScreen';
 
 const Tab = createBottomTabNavigator();
 export const AuthContext = createContext(null);
@@ -153,6 +154,7 @@ export default function App() {
           : (
             <>
               <Tab.Screen name="Home" component={HomeScreen} />
+              <Tab.Screen name="Browse" component={ItemBrowserScreen} />
               <Tab.Screen name="Settings" component={SettingsScreen} />
             </>)
           }
