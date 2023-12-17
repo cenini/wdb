@@ -7,6 +7,7 @@ import axios, { HttpStatusCode } from 'axios';
 import Constants from 'expo-constants';
 import { AuthContext } from '../App';
 import { useContext } from 'react';
+import { CommonStyles } from './Styles';
 
 
 export default function SignupScreen({ navigation }) {
@@ -27,13 +28,13 @@ export default function SignupScreen({ navigation }) {
   return (
     <View style={styles.container}>
       <TextInput
-        style={styles.input}
+        style={CommonStyles.textInput}
         onChangeText={setEmail}
         value={email}
         placeholder='email'
       />
       <TextInput
-        style={styles.input}
+        style={CommonStyles.textInput}
         onChangeText={setPassword}
         value={password}
         placeholder='password'
@@ -53,16 +54,6 @@ const styles = StyleSheet.create({
     backgroundColor: "#25292e",
     alignItems: "center",
     justifyContent: 'flex-start', // Start aligning items from the top
-  },
-  input: {
-    width: 340,
-    height: 40,
-    margin: 12,
-    borderWidth: 1,
-    padding: 10,
-    textDecorationColor: '#fff'
-    // color: '#fff',
-    // borderColor: '#fff',
   },
   text: {
     height: 40,

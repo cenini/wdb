@@ -4,6 +4,7 @@ import { useNavigation } from '@react-navigation/native';
 import Button from './Button';
 import { useContext } from 'react';
 import { AuthContext } from '../App';
+import { CommonStyles } from './Styles';
 
 export default function LoginScreen({ navigation }) {
   const { login } = useContext(AuthContext);
@@ -23,13 +24,13 @@ export default function LoginScreen({ navigation }) {
   return (
     <View style={styles.container}>
       <TextInput
-        style={styles.input}
+        style={CommonStyles.textInput}
         onChangeText={setEmail}
         value={email}
         placeholder='email'
       />
       <TextInput
-        style={styles.input}
+        style={CommonStyles.textInput}
         onChangeText={setPassword}
         value={password}
         placeholder='password'
@@ -49,16 +50,6 @@ const styles = StyleSheet.create({
     backgroundColor: "#25292e",
     alignItems: "center",
     justifyContent: 'flex-start', // Start aligning items from the top
-  },
-  input: {
-    width: 340,
-    height: 40,
-    margin: 12,
-    borderWidth: 1,
-    padding: 10,
-    textDecorationColor: '#fff',
-    // color: '#fff',
-    // borderColor: '#fff',
   },
   text: {
     height: 40,
