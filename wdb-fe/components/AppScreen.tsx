@@ -13,6 +13,7 @@ import { createNativeStackNavigator } from '@react-navigation/native-stack';
 import HomeScreen from './HomeScreen';
 import React from 'react';
 import NewItemManagementScreen from './NewItemManagementScreen';
+import { ImageModel } from '../models/ImageModel';
 
 const Stack = createNativeStackNavigator();
 export const NewItemsContext = createContext(null);
@@ -51,12 +52,12 @@ export default function AppScreen() {
 
   const addItemsContext = useMemo(
     () => ({
-      addImages: async (imagePickerAssets: ImagePicker.ImagePickerAsset[]) => {
-        if (imagePickerAssets.length === 0) {
+      addImages: async (images: ImageModel[]) => {
+        if (images.length === 0) {
           return;
         }
 
-        dispatch({ type: 'ADD_ITEMS', images: imagePickerAssets });
+        dispatch({ type: 'ADD_ITEMS', images: images });
       },
       // ...
     }),

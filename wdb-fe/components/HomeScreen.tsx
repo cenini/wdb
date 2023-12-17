@@ -7,10 +7,14 @@ import { StyleSheet, View, Text, Image } from "react-native";
 import PhotoButton from "./PhotoButton";
 import { NewItemsContext } from "./AppScreen";
 import { AuthContext } from "../App";
+import { manipulateAsync, FlipType, SaveFormat } from 'expo-image-manipulator';
+import { plainToInstance } from 'class-transformer';
+import { ImageModel } from "../models/ImageModel";
 
 export default function HomeScreen({ navigation }) {
   const { addImages } = useContext(NewItemsContext);
   const { userToken } = useContext(AuthContext);
+  const maxImageSize = 512;
 
   const pickImageAsync = async () => {
     if (userToken == null) {
@@ -29,8 +33,22 @@ export default function HomeScreen({ navigation }) {
       return;
     }
 
-    await addImages(result.assets);
+    const images = await Promise.all(
+      result.assets.map(image => plainToInstance(ImageModel, resizeImage(image, maxImageSize)))
+    );
+
+    await addImages(images);
   };
+
+  async function resizeImage(image: ImagePicker.ImagePickerAsset, maxSize: number) {
+    const resizeOptions = image.width > image.height ? { width: maxSize } : { height: maxSize };
+    const manipulationResult = await manipulateAsync(
+      image.uri,
+      [{ resize: resizeOptions }], 
+      { compress: 0.8, format: SaveFormat.JPEG, base64: true }
+    );
+    return manipulationResult;
+  }
 
   return (
     <View style={styles.container}>

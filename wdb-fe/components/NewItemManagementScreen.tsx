@@ -26,7 +26,8 @@ export default function NewItemManagementScreen({ route, navigation }) {
   }, [newItems]); 
 
   async function getSuggestion(): Promise<void> {
-    const titleAndDescriptionDto = plainToClass(TitleAndDescriptionDto, (await axios.post(`${Constants.expoConfig.extra.env.EXPO_PUBLIC_API_URL}ai/titleAndDescription`, plainToClass(TitleAndDescribeItemDto, { "title": title, "base64photo": newItems[0].image.uri }))).data)
+    console.log(newItems)
+    const titleAndDescriptionDto = plainToClass(TitleAndDescriptionDto, (await axios.post(`${Constants.expoConfig.extra.env.EXPO_PUBLIC_API_URL}ai/titleAndDescription`, plainToClass(TitleAndDescribeItemDto, { "title": title, "base64photo": newItems[0].image.base64representation }))).data)
     setTitlePlaceholder(titleAndDescriptionDto.title)
     setNameTagSuggestions(plainToInstance(NameTagModel, titleAndDescriptionDto.nameTags));
     setKvpTagSuggestions(plainToInstance(KvpTagModel, titleAndDescriptionDto.kvpTags));
