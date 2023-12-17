@@ -1,5 +1,5 @@
 import React, { useState, useEffect } from 'react';
-import { View, ScrollView, Image, StyleSheet, Text } from 'react-native';
+import { View, ScrollView, Image, StyleSheet, Text, Pressable, Modal } from 'react-native';
 import axios from 'axios';
 import Constants from 'expo-constants';
 
@@ -41,6 +41,7 @@ const ItemBrowserScreen = () => {
 
     const handleImagePress = (url) => {
       setSelectedImage(url);
+      // In the future, navigate to the item
     };
 
     const closeImage = () => {
@@ -53,19 +54,28 @@ const ItemBrowserScreen = () => {
     return (
       <ScrollView>
           <View style={styles.container}>
-              {items.map((item) => (
-                  <View key={item.id} style={styles.item}>
-                      <Image source={{ uri: item.photoUrl }} style={styles.image} />
-                      <Text style={styles.title}>{item.title}</Text>
-                      <View style={styles.tags}>
-                          {item.tags.map((tag, index) => (
-                              <Text key={index} style={styles.tag}>
-                                  {tag.key}: {tag.value}
-                              </Text>
-                          ))}
-                      </View>
-                  </View>
-              ))}
+            {items.map((item, index) => (
+                <Pressable key={index} onPress={() => handleImagePress(item.photoUrl)}>
+                    <Image source={{ uri: item.photoUrl }} style={styles.image} />
+                </Pressable>
+            ))}
+
+            {/* Full-size image modal */}
+            {selectedImage && (
+                <Modal
+                    animationType="slide"
+                    transparent={true}
+                    visible={!!selectedImage}
+                    onRequestClose={closeImage}
+                >
+                    <View style={styles.modalView}>
+                        <Pressable onPress={closeImage} style={styles.closeButton}>
+                            <Text style={styles.closeButtonText}>X</Text>
+                        </Pressable>
+                        <Image source={{ uri: selectedImage }} style={styles.fullSizeImage} />
+                    </View>
+                </Modal>
+            )}
           </View>
       </ScrollView>
   );
@@ -73,15 +83,19 @@ const ItemBrowserScreen = () => {
 
 const styles = StyleSheet.create({
   container: {
-      padding: 10,
+    flexDirection: 'row',
+    flexWrap: 'wrap',
+    justifyContent: 'space-between',
+    flex: 1,
+    padding: 20
+  },
+  image: {
+      width: 150,
+      height: 150,
+      marginBottom: 4,
   },
   item: {
       marginBottom: 20,
-  },
-  image: {
-      width: 512,
-      height: 512,
-      borderRadius: 10,
   },
   title: {
       fontSize: 18,
@@ -95,6 +109,29 @@ const styles = StyleSheet.create({
   tag: {
       marginRight: 10,
       color: 'gray',
+  },
+  modalView: {
+    flex: 1,
+    justifyContent: 'center',
+    alignItems: 'center',
+    backgroundColor: 'rgba(0, 0, 0, 0.8)',
+  },
+  fullSizeImage: {
+      width: '100%',
+      height: '80%',
+      resizeMode: 'contain',
+  },
+  closeButton: {
+      position: 'absolute',
+      top: 30,
+      right: 20,
+      backgroundColor: 'white',
+      borderRadius: 20,
+  },
+  closeButtonText: {
+      fontSize: 16,
+      fontWeight: 'bold',
+      padding: 10,
   },
 });
 
