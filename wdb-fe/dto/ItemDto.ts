@@ -33,7 +33,7 @@ export class PhotoDto {
 
 export class TagDto {
   id: number;
-  type: TagType;
+  type: TagTypeDto;
   name: string | null;
   key: string | null;
   value: string | null;
@@ -41,7 +41,7 @@ export class TagDto {
   updatedAt: Date | null;
 }
 
-enum TagType {
+export enum TagTypeDto {
   NAME,
   KEY_VALUE,
 }

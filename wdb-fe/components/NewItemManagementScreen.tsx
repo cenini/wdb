@@ -9,6 +9,7 @@ import {
   TextInput,
   TouchableWithoutFeedback,
   Modal,
+  ScrollView,
 } from "react-native";
 import { NewItemsContext } from "./AppScreen";
 import { useNavigation } from "@react-navigation/native";
@@ -136,7 +137,10 @@ export default function NewItemManagementScreen({ route, navigation }) {
   };
 
   return (
-    <View style={styles.container}>
+    <ScrollView
+      style={styles.scrollView}
+      contentContainerStyle={styles.container}
+    >
       <TextInput
         placeholder={titlePlaceholder}
         style={styles.input}
@@ -175,16 +179,19 @@ export default function NewItemManagementScreen({ route, navigation }) {
           setKvpTags={setKvpTags}
         />
       </View>
-    </View>
+    </ScrollView>
   );
 }
 
 const styles = StyleSheet.create({
-  container: {
+  scrollView: {
     flex: 1,
+    backgroundColor: "#fff",
+  },
+  container: {
+    flexGrow: 1,
     justifyContent: "center",
     alignItems: "center",
-    backgroundColor: "#fff",
   },
   text: {
     fontSize: 24,

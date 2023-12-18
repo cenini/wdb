@@ -36,7 +36,7 @@ export class TagModel {
   updatedAt: Date | null;
 }
 
-enum TagType {
+export enum TagType {
   NAME,
   KEY_VALUE,
 }

@@ -8,12 +8,14 @@ import {
   Pressable,
   Modal,
   Button,
+  TextInput,
 } from "react-native";
 import axios from "axios";
 import Constants from "expo-constants";
 import { plainToInstance } from "class-transformer";
 import { ItemDto } from "../dto/ItemDto";
-import { ItemModel } from "../models/ItemModel";
+import { ItemModel, TagType } from "../models/ItemModel";
+import { CommonStyles } from "./Styles";
 
 const ITEMS_PER_PAGE = 12;
 
@@ -24,16 +26,32 @@ const ItemBrowserScreen = () => {
   const [selectedImage, setSelectedImage] = useState(null);
   const [currentPage, setCurrentPage] = useState(0);
   const [hoveredItemId, setHoveredItemId] = useState(null);
+  const [searchText, setSearchText] = useState("");
 
   useEffect(() => {
     console.log("Getting items...");
     const getItemsAsync = async () => {
-      const result = axios
+      axios
         .get(`${Constants.expoConfig.extra.env.EXPO_PUBLIC_API_URL}items`)
         .then((response) => {
           const items = plainToInstance(ItemModel, response.data as ItemDto[]);
           console.log(items);
-          setItems(items);
+          if (searchText) {
+            setItems(
+              items.filter(
+                (item) =>
+                  item.tags &&
+                  item.tags.some((tag) =>
+                    tag.type === TagType.NAME
+                      ? tag.name && tag.name.includes(searchText)
+                      : (tag.key && tag.key.includes(searchText)) ||
+                        (tag.value && tag.value.includes(searchText))
+                  )
+              )
+            );
+          } else {
+            setItems(items);
+          }
           setLoading(false);
         })
         .catch((err) => {
@@ -42,7 +60,7 @@ const ItemBrowserScreen = () => {
         });
     };
     getItemsAsync();
-  }, []);
+  }, [searchText]);
 
   const paginatedItems = items.slice(
     currentPage * ITEMS_PER_PAGE,
@@ -83,6 +101,14 @@ const ItemBrowserScreen = () => {
 
   return (
     <View style={styles.container}>
+      <View style={styles.inputContainer}>
+        <TextInput
+          style={CommonStyles.textInput}
+          placeholder="Search tags..."
+          value={searchText}
+          onChangeText={setSearchText}
+        />
+      </View>
       <View style={styles.grid}>
         {paginatedItems.map((item, index) => (
           <Pressable
@@ -121,6 +147,11 @@ const styles = StyleSheet.create({
     justifyContent: "space-between",
     flex: 1,
     padding: 20,
+    alignSelf: "center",
+    backgroundColor: "#25292e",
+  },
+  inputContainer: {
+    backgroundColor: "#25292e",
     alignSelf: "center",
   },
   grid: {
