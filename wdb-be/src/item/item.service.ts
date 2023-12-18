@@ -1,6 +1,7 @@
 import { Injectable } from '@nestjs/common';
 import { PrismaService } from '../prisma/prisma.service';
 import { Item, Prisma } from '@prisma/client';
+import { ItemDto, ItemTagDto, PhotoDto, TagDto } from '../dto/ItemDto';
 
 @Injectable()
 export class ItemService {
@@ -79,4 +80,51 @@ export class ItemService {
       where,
     });
   }
+}
+
+// Mapper for Item to ItemDto
+export function mapItemToItemDto(item: any): ItemDto {
+  return {
+    id: item.id,
+    ownerId: item.ownerId,
+    createdAt: item.createdAt,
+    title: item.title,
+    updatedAt: item.updatedAt || null,
+    photos: item.photos.map(mapPhotoToPhotoDto),
+    tags: item.itemTags.map(mapItemTagToItemTagDto),
+  };
+}
+
+// Mapper for Photo to PhotoDto
+export function mapPhotoToPhotoDto(photo: any): PhotoDto {
+  return {
+    id: photo.id,
+    url: photo.url,
+    itemId: photo.itemId,
+    createdAt: photo.createdAt,
+    updatedAt: photo.updatedAt || null,
+  };
+}
+
+// Mapper for ItemTag to ItemTagDto
+export function mapItemTagToItemTagDto(itemTag: any): ItemTagDto {
+  return {
+    id: itemTag.id,
+    itemId: itemTag.itemId,
+    tagId: itemTag.tagId,
+    tag: mapTagToTagDto(itemTag.tag),
+  };
+}
+
+// Mapper for Tag to TagDto
+export function mapTagToTagDto(tag: any): TagDto {
+  return {
+    id: tag.id,
+    type: tag.type,
+    name: tag.name || null,
+    key: tag.key || null,
+    value: tag.value || null,
+    createdAt: tag.createdAt,
+    updatedAt: tag.updatedAt || null,
+  };
 }

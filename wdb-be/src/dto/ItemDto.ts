@@ -33,7 +33,7 @@ export class ItemDto {
   title: string;
   updatedAt: Date | null;
   photos: PhotoDto[];
-  itemTags: ItemTagDto[];
+  tags: ItemTagDto[];
 }
 
 export class PhotoDto {

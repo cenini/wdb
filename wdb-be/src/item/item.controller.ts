@@ -11,7 +11,7 @@ import {
   Request,
   UseGuards,
 } from '@nestjs/common';
-import { ItemService } from './item.service';
+import { ItemService, mapItemToItemDto } from './item.service';
 import {
   Item as ItemModel,
   Photo as PhotoModel,
@@ -65,10 +65,8 @@ export class ItemController {
 
   @Get('')
   async getItems(@Request() req): Promise<ItemDto[]> {
-    return plainToInstance(
-      ItemDto,
-      await this.itemService.getItemsByEmail(req['user'].username),
-    );
+    const items = await this.itemService.getItemsByEmail(req['user'].username);
+    return items.map((item) => mapItemToItemDto(item));
   }
 
   @Delete(':itemId')

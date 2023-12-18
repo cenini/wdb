@@ -20,7 +20,7 @@ export class ItemDto {
   title: string;
   updatedAt: Date | null;
   photos: PhotoDto[];
-  itemTags: ItemTagDto[];
+  tags: TagDto[];
 }
 
 export class PhotoDto {
@@ -29,13 +29,6 @@ export class PhotoDto {
   itemId: string;
   createdAt: Date;
   updatedAt: Date | null;
-}
-
-export class ItemTagDto {
-  id: number;
-  itemId: string;
-  tagId: number;
-  tag: TagDto;
 }
 
 export class TagDto {

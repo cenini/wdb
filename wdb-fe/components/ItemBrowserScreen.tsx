@@ -13,6 +13,7 @@ import axios from "axios";
 import Constants from "expo-constants";
 import { plainToInstance } from "class-transformer";
 import { ItemDto } from "../dto/ItemDto";
+import { ItemModel } from "../models/ItemModel";
 
 const ITEMS_PER_PAGE = 12;
 
@@ -30,20 +31,9 @@ const ItemBrowserScreen = () => {
       const result = axios
         .get(`${Constants.expoConfig.extra.env.EXPO_PUBLIC_API_URL}items`)
         .then((response) => {
-          const itemDto = plainToInstance(ItemDto, response.data as ItemDto[]);
-          const formattedData = itemDto.map((item) => {
-            console.log(item);
-            return {
-              id: item.id,
-              title: item.title,
-              photoUrl: item.photos[0].url,
-              // tags: item.itemTags.map((tag) => ({
-              //   key: tag.tag.key,
-              //   value: tag.tag.value,
-              // })),
-            };
-          });
-          setItems(formattedData);
+          const items = plainToInstance(ItemModel, response.data as ItemDto[]);
+          console.log(items);
+          setItems(items);
           setLoading(false);
         })
         .catch((err) => {
@@ -97,11 +87,11 @@ const ItemBrowserScreen = () => {
         {paginatedItems.map((item, index) => (
           <Pressable
             key={index}
-            onPress={() => handleImagePress(item.photoUrl)}
+            onPress={() => handleImagePress(item.photos[0].url)}
             onHoverIn={() => handleHoverIn(item.id)}
             onHoverOut={handleHoverOut}
           >
-            <Image source={{ uri: item.photoUrl }} style={styles.image} />
+            <Image source={{ uri: item.photos[0].url }} style={styles.image} />
             {hoveredItemId === item.id && (
               <View style={styles.overlay}>
                 <Text style={styles.overlayText}>{item.title}</Text>
