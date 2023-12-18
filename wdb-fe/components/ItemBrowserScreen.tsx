@@ -11,6 +11,8 @@ import {
 } from "react-native";
 import axios from "axios";
 import Constants from "expo-constants";
+import { plainToInstance } from "class-transformer";
+import { ItemDto } from "../dto/ItemDto";
 
 const ITEMS_PER_PAGE = 12;
 
@@ -29,12 +31,14 @@ const ItemBrowserScreen = () => {
         .then((response) => {
           console.log(response.data);
 
-          const formattedData = response.data.map((item) => {
+          const itemDto = plainToInstance(ItemDto, response.data as ItemDto[]);
+
+          const formattedData = itemDto.map((item) => {
             return {
               id: item.id,
               title: item.title,
-              photoUrl: item.Photo[0]?.url,
-              tags: item.ItemTag.map((tag) => ({
+              photoUrl: item.photos[0]?.url,
+              tags: item.itemTags.map((tag) => ({
                 key: tag.tag.key,
                 value: tag.tag.value,
               })),
@@ -88,7 +92,9 @@ const ItemBrowserScreen = () => {
           <Pressable
             key={index}
             onPress={() => handleImagePress(item.photoUrl)}
+            // onHoverIn={() => handleHoverInItem(item.title)}
           >
+            {}
             <Image source={{ uri: item.photoUrl }} style={styles.image} />
           </Pressable>
         ))}

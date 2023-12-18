@@ -13,6 +13,46 @@ export class CreateItemDto {
   readonly title: string;
 }
 
+export class ItemDto {
+  id: string;
+  ownerId: number;
+  createdAt: Date;
+  title: string;
+  updatedAt: Date | null;
+  photos: PhotoDto[];
+  itemTags: ItemTagDto[];
+}
+
+export class PhotoDto {
+  id: string;
+  url: string;
+  itemId: string;
+  createdAt: Date;
+  updatedAt: Date | null;
+}
+
+export class ItemTagDto {
+  id: number;
+  itemId: string;
+  tagId: number;
+  tag: TagDto;
+}
+
+export class TagDto {
+  id: number;
+  type: TagType;
+  name: string | null;
+  key: string | null;
+  value: string | null;
+  createdAt: Date;
+  updatedAt: Date | null;
+}
+
+enum TagType {
+  NAME,
+  KEY_VALUE,
+}
+
 export class ItemCreatedDto {
   @IsNotEmpty()
   readonly id: string;
