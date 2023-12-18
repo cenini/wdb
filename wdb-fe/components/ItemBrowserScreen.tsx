@@ -22,6 +22,7 @@ const ItemBrowserScreen = () => {
   const [error, setError] = useState(null);
   const [selectedImage, setSelectedImage] = useState(null);
   const [currentPage, setCurrentPage] = useState(0);
+  const [hoveredItemId, setHoveredItemId] = useState(null);
 
   useEffect(() => {
     console.log("Getting items...");
@@ -29,22 +30,19 @@ const ItemBrowserScreen = () => {
       const result = axios
         .get(`${Constants.expoConfig.extra.env.EXPO_PUBLIC_API_URL}items`)
         .then((response) => {
-          console.log(response.data);
-
           const itemDto = plainToInstance(ItemDto, response.data as ItemDto[]);
-
           const formattedData = itemDto.map((item) => {
+            console.log(item);
             return {
               id: item.id,
               title: item.title,
-              photoUrl: item.photos[0]?.url,
-              tags: item.itemTags.map((tag) => ({
-                key: tag.tag.key,
-                value: tag.tag.value,
-              })),
+              photoUrl: item.photos[0].url,
+              // tags: item.itemTags.map((tag) => ({
+              //   key: tag.tag.key,
+              //   value: tag.tag.value,
+              // })),
             };
           });
-
           setItems(formattedData);
           setLoading(false);
         })
@@ -82,6 +80,14 @@ const ItemBrowserScreen = () => {
     setSelectedImage(null);
   };
 
+  const handleHoverIn = (itemId) => {
+    setHoveredItemId(itemId);
+  };
+
+  const handleHoverOut = () => {
+    setHoveredItemId(null);
+  };
+
   if (loading) return <Text>Loading...</Text>;
   if (error) return <Text>Error: {error}</Text>;
 
@@ -92,10 +98,15 @@ const ItemBrowserScreen = () => {
           <Pressable
             key={index}
             onPress={() => handleImagePress(item.photoUrl)}
-            // onHoverIn={() => handleHoverInItem(item.title)}
+            onHoverIn={() => handleHoverIn(item.id)}
+            onHoverOut={handleHoverOut}
           >
-            {}
             <Image source={{ uri: item.photoUrl }} style={styles.image} />
+            {hoveredItemId === item.id && (
+              <View style={styles.overlay}>
+                <Text style={styles.overlayText}>{item.title}</Text>
+              </View>
+            )}
           </Pressable>
         ))}
       </View>
@@ -128,12 +139,12 @@ const styles = StyleSheet.create({
     justifyContent: "space-between",
     alignSelf: "center",
     padding: 10,
+    width: 500,
   },
   image: {
     width: 150, // Adjust for 3 images per row
     height: 150, // Adjust as needed
-    marginBottom: 10,
-    marginHorizontal: 4,
+    margin: 4,
   },
   navigation: {
     flexDirection: "row",
@@ -142,6 +153,18 @@ const styles = StyleSheet.create({
   },
   button: {
     margin: 5,
+  },
+  overlay: {
+    position: "absolute",
+    width: "100%",
+    height: "100%",
+    backgroundColor: "rgba(0, 0, 0, 0.5)", // Semi-transparent overlay
+    justifyContent: "center",
+    alignItems: "center",
+  },
+  overlayText: {
+    color: "white",
+    textAlign: "center",
   },
 });
 

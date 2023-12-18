@@ -41,8 +41,8 @@ export class ItemService {
         },
         include: {
           owner: false,
-          Photo: true,
-          ItemTag: {
+          photos: true,
+          itemTags: {
             include: {
               tag: true,
             },

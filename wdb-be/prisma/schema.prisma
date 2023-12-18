@@ -15,7 +15,7 @@ model User {
   salt      String    @db.VarChar(32)
   createdAt DateTime  @default(now())
   updatedAt DateTime?
-  Item      Item[]
+  items     Item[]
 }
 
 model Item {
@@ -25,8 +25,8 @@ model Item {
   title     String
   updatedAt DateTime?
   owner     User      @relation(fields: [ownerId], references: [id], onDelete: Cascade)
-  Photo     Photo[]
-  ItemTag   ItemTag[]
+  photos    Photo[]
+  itemTags  ItemTag[]
 }
 
 model Photo {
@@ -46,7 +46,7 @@ model Tag {
   value     String?
   createdAt DateTime  @default(now())
   updatedAt DateTime?
-  ItemTag   ItemTag[]
+  ItemTags  ItemTag[]
 
   @@unique([key, value])
 }
