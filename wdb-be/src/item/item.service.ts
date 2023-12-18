@@ -91,7 +91,7 @@ export function mapItemToItemDto(item: any): ItemDto {
     title: item.title,
     updatedAt: item.updatedAt || null,
     photos: item.photos.map(mapPhotoToPhotoDto),
-    tags: item.itemTags.map(mapItemTagToItemTagDto),
+    tags: item.itemTags.map((itemTag) => mapItemTagToItemTagDto(itemTag).tag),
   };
 }
 
