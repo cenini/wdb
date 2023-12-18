@@ -40,13 +40,22 @@ const ItemBrowserScreen = () => {
             setItems(
               items.filter(
                 (item) =>
-                  item.tags &&
                   item.tags.some((tag) =>
                     tag.type === TagType.NAME
-                      ? tag.name && tag.name.includes(searchText)
-                      : (tag.key && tag.key.includes(searchText)) ||
-                        (tag.value && tag.value.includes(searchText))
-                  )
+                      ? tag.name &&
+                        tag.name
+                          .toLowerCase()
+                          .includes(searchText.toLowerCase())
+                      : (tag.key &&
+                          tag.key
+                            .toLowerCase()
+                            .includes(searchText.toLowerCase())) ||
+                        (tag.value &&
+                          tag.value
+                            .toLowerCase()
+                            .includes(searchText.toLowerCase()))
+                  ) ||
+                  item.title.toLowerCase().includes(searchText.toLowerCase())
               )
             );
           } else {
