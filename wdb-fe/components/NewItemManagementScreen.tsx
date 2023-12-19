@@ -38,6 +38,12 @@ export default function NewItemManagementScreen({ route, navigation }) {
   const [kvpTagSuggestions, setKvpTagSuggestions] = useState<KvpTagModel[]>([]);
   const [title, setTitle] = React.useState("");
   const [titlePlaceholder, setTitlePlaceholder] = React.useState("Title");
+  const [initialNameTagSuggestions, setInitialNameTagSuggestions] = useState<
+    NameTagModel[]
+  >([]);
+  const [initialKvpTagSuggestions, setInitialKvpTagSuggestions] = useState<
+    KvpTagModel[]
+  >([]);
 
   useEffect(() => {
     getSuggestion();
@@ -58,16 +64,21 @@ export default function NewItemManagementScreen({ route, navigation }) {
       ).data
     );
     setTitlePlaceholder(titleAndDescriptionDto.title);
-    setNameTagSuggestions(
-      plainToInstance(NameTagModel, titleAndDescriptionDto.nameTags)
+    const instantiatedNameTagSuggestions = plainToInstance(
+      NameTagModel,
+      titleAndDescriptionDto.nameTags
     );
-    setKvpTagSuggestions(
-      plainToInstance(KvpTagModel, titleAndDescriptionDto.kvpTags)
+    const instantiatedKvpTagSuggestions = plainToInstance(
+      KvpTagModel,
+      titleAndDescriptionDto.kvpTags
     );
-    console.log(titleAndDescriptionDto);
-    console.log(`title: ${titleAndDescriptionDto.title}`);
-    console.log(`nameTags: ${titleAndDescriptionDto.nameTags}`);
-    console.log(`kvpTags: ${titleAndDescriptionDto.kvpTags}`);
+    console.log(
+      "instantiated name tag suggestions followed by kvp tag suggestions"
+    );
+    setNameTagSuggestions(instantiatedNameTagSuggestions);
+    setInitialNameTagSuggestions(instantiatedNameTagSuggestions);
+    setKvpTagSuggestions(instantiatedKvpTagSuggestions);
+    setInitialKvpTagSuggestions(instantiatedKvpTagSuggestions);
   }
 
   const handleAcceptSuggestedNameTag = (nameTag) => {
@@ -76,7 +87,6 @@ export default function NewItemManagementScreen({ route, navigation }) {
         (suggestion) => suggestion.name !== nameTag.name
       )
     );
-    console.log(nameTagSuggestions);
   };
 
   const handleAcceptSuggestedKvpTag = (kvpTag) => {
@@ -86,8 +96,45 @@ export default function NewItemManagementScreen({ route, navigation }) {
           suggestion.key !== kvpTag.key && suggestion.value !== kvpTag.value
       )
     );
-    console.log(kvpTagSuggestions);
   };
+
+  function handleAcceptAllTags(event: GestureResponderEvent): void {
+    setNameTagSuggestions((nameTagSuggestions) =>
+      nameTagSuggestions.filter(() => false)
+    );
+    setKvpTagSuggestions((kvpTagSuggestions) =>
+      kvpTagSuggestions.filter(() => false)
+    );
+  }
+
+  function handleRejectAllTags(event: GestureResponderEvent): void {
+    setNameTagSuggestions(initialNameTagSuggestions);
+    setKvpTagSuggestions(initialKvpTagSuggestions);
+    setNameTags(
+      nameTags.filter(
+        (nameTag) =>
+          nameTagSuggestions.find(
+            (nameTagSuggestion) => nameTagSuggestion.name == nameTag.name
+          ) != undefined
+      )
+    );
+    setKvpTags(
+      kvpTags.filter(
+        (kvpTag) =>
+          kvpTagSuggestions.find(
+            (kvpTagSuggestion) =>
+              kvpTagSuggestion.key == kvpTag.key &&
+              kvpTagSuggestion.value == kvpTag.value
+          ) != undefined
+      )
+    );
+    setNameTagSuggestions((nameTagSuggestions) =>
+      nameTagSuggestions.filter(() => true)
+    );
+    setKvpTagSuggestions((kvpTagSuggestions) =>
+      kvpTagSuggestions.filter(() => true)
+    );
+  }
 
   function resetTags(): void {
     setNameTags([]);
@@ -110,14 +157,15 @@ export default function NewItemManagementScreen({ route, navigation }) {
       `${Constants.expoConfig.extra.env.EXPO_PUBLIC_API_URL}items/${item.id}/photos`,
       plainToClass(CreateItemPhotoDto, { base64photo: newItems[0].image.uri })
     );
-    console.log(
-      `Creating item with ${nameTags.length} name tags and ${kvpTags.length} kvp tags`
-    );
     const tagsResponse = await axios.post(
       `${Constants.expoConfig.extra.env.EXPO_PUBLIC_API_URL}items/${item.id}/tags`,
-      plainToClass(CreateItemTagsDto, { nameTags: nameTags, kvpTags: kvpTags })
+      plainToClass(CreateItemTagsDto, {
+        nameTags: nameTags.filter((nameTag) => nameTag.name !== ""),
+        kvpTags: kvpTags.filter(
+          (kvpTag) => kvpTag.key !== "" && kvpTag.value !== ""
+        ),
+      })
     );
-    console.log(tagsResponse);
     resetTags();
 
     // Dispatch an action to remove the item
@@ -172,6 +220,8 @@ export default function NewItemManagementScreen({ route, navigation }) {
           nameTags={nameTags}
           kvpTags={kvpTags}
           nameTagSuggestions={nameTagSuggestions}
+          onAcceptAllTags={handleAcceptAllTags}
+          onRejectAllTags={handleRejectAllTags}
           onAcceptSuggestedNameTag={handleAcceptSuggestedNameTag}
           kvpTagSuggestions={kvpTagSuggestions}
           onAcceptSuggestedKvpTag={handleAcceptSuggestedKvpTag}
