@@ -1,4 +1,4 @@
-import { StyleSheet } from 'react-native';
+import { StyleSheet } from "react-native";
 
 export const CommonStyles = StyleSheet.create({
   textInput: {
@@ -7,9 +7,9 @@ export const CommonStyles = StyleSheet.create({
     margin: 12,
     borderWidth: 1,
     padding: 10,
-    textDecorationColor: '#fff',
-    placeholderTextColor: '#fff',
-    color: '#fff',
+    textDecorationColor: "#fff",
+    placeholderTextColor: "#fff",
+    color: "#fff",
     // color: '#fff',
     // borderColor: '#fff',
   },

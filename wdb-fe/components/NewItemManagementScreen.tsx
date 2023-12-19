@@ -58,7 +58,7 @@ export default function NewItemManagementScreen({ route, navigation }) {
           `${Constants.expoConfig.extra.env.EXPO_PUBLIC_API_URL}ai/titleAndDescription`,
           plainToClass(TitleAndDescribeItemDto, {
             title: title,
-            base64photo: newItems[0].image.base64representation,
+            base64photo: newItems[0].image.uri,
           })
         )
       ).data
