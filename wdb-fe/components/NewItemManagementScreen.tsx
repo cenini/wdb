@@ -105,27 +105,36 @@ export default function NewItemManagementScreen({ route, navigation }) {
     setKvpTagSuggestions((kvpTagSuggestions) =>
       kvpTagSuggestions.filter(() => false)
     );
+    setNameTags([...nameTags, ...nameTagSuggestions]);
+    setKvpTags([...kvpTags, ...kvpTagSuggestions]);
   }
 
   function handleRejectAllTags(event: GestureResponderEvent): void {
     setNameTagSuggestions(initialNameTagSuggestions);
     setKvpTagSuggestions(initialKvpTagSuggestions);
+    console.log(
+      `nameTags length: ${nameTags.length} suggestedNameTags length: ${nameTagSuggestions.length} initialNameTagSuggestions length: ${initialNameTagSuggestions.length}`
+    );
+    console.log(nameTags);
+    console.log(nameTagSuggestions);
     setNameTags(
       nameTags.filter(
         (nameTag) =>
-          nameTagSuggestions.find(
+          initialNameTagSuggestions.find(
             (nameTagSuggestion) => nameTagSuggestion.name == nameTag.name
-          ) != undefined
+          ) == undefined
       )
     );
+    console.log(kvpTags);
+    console.log(kvpTagSuggestions);
     setKvpTags(
       kvpTags.filter(
         (kvpTag) =>
-          kvpTagSuggestions.find(
+          initialKvpTagSuggestions.find(
             (kvpTagSuggestion) =>
               kvpTagSuggestion.key == kvpTag.key &&
               kvpTagSuggestion.value == kvpTag.value
-          ) != undefined
+          ) == undefined
       )
     );
     setNameTagSuggestions((nameTagSuggestions) =>

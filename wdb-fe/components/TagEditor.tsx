@@ -10,6 +10,8 @@ import {
 } from "react-native";
 import { KvpTagModel, NameTagModel } from "../models/TagModel";
 import { FontAwesome } from "@expo/vector-icons";
+import { FontAwesome5 } from "@expo/vector-icons";
+import { plainToInstance } from "class-transformer";
 
 export default function TagEditor({
   nameTags,
@@ -23,6 +25,17 @@ export default function TagEditor({
   kvpTagSuggestions,
   onAcceptSuggestedKvpTag,
 }) {
+  const handleAddNameTag = () => {
+    setNameTags([plainToInstance(NameTagModel, { name: "" }), ...nameTags]);
+  };
+
+  const handleAddKvpTag = () => {
+    setKvpTags([
+      plainToInstance(KvpTagModel, { key: "", value: "" }),
+      ...kvpTags,
+    ]);
+  };
+
   const handleNameTagChange = (index, newName) => {
     const updatedTags = [...nameTags];
     updatedTags[index].name = newName;
@@ -32,6 +45,7 @@ export default function TagEditor({
 
   const handleKvpTagChange = (index, newKey, newValue) => {
     const updatedTags = [...kvpTags];
+    // console.log(`index: ${index} new key: ${newKey} new value: ${newValue}`);
     updatedTags[index].key = newKey;
     updatedTags[index].value = newValue;
     setKvpTags(updatedTags);
@@ -51,15 +65,13 @@ export default function TagEditor({
   };
 
   const handleAcceptAllTags = () => {
-    setNameTags([...nameTags, ...nameTagSuggestions]);
-    setKvpTags([...kvpTags, ...kvpTagSuggestions]);
+    console.log(nameTagSuggestions);
+    console.log(kvpTagSuggestions);
     onAcceptAllTags();
     // console.log(`number of nametags: ${nameTags.length}`)
   };
 
   const handleRejectAllTags = () => {
-    setNameTags([]);
-    setKvpTags([]);
     onRejectAllTags();
     // console.log(`number of kvptags: ${kvpTags.length}`)
   };
@@ -80,6 +92,14 @@ export default function TagEditor({
 
   return (
     <View style={styles.container}>
+      <View style={styles.buttonContainer}>
+        <Pressable onPress={handleAddNameTag}>
+          <FontAwesome5 name="dice-one" size={24} color="#25292e" />
+        </Pressable>
+        <Pressable onPress={handleAddKvpTag}>
+          <FontAwesome5 name="dice-two" size={24} color="#25292e" />
+        </Pressable>
+      </View>
       <FlatList
         data={acceptedTags}
         keyExtractor={(item, index) => index.toString()}
@@ -87,26 +107,32 @@ export default function TagEditor({
           <View style={styles.tag}>
             <TextInput
               style={styles.editableInput}
+              placeholder="name"
               value={item.type === "kvp" ? item.key : item.name ?? ""}
               onChangeText={(newText) =>
                 item.type === "name"
                   ? handleNameTagChange(index, newText)
-                  : handleKvpTagChange(index, newText, item.value)
+                  : handleKvpTagChange(
+                      index - nameTags.length,
+                      newText,
+                      item.value
+                    )
               }
             />
             {item.type === "kvp" && (
               <TextInput
                 style={styles.editableInput}
+                placeholder="value"
                 value={item.value}
                 onChangeText={(newText) =>
-                  handleKvpTagChange(index, item.key, newText)
+                  handleKvpTagChange(index - nameTags.length, item.key, newText)
                 }
               />
             )}
           </View>
         )}
       />
-      <View style={styles.arrowContainer}>
+      <View style={styles.buttonContainer}>
         <Pressable onPress={handleAcceptAllTags} style={styles.arrowStyle}>
           <FontAwesome name="arrow-up" size={18} color="#25292e" />
         </Pressable>
@@ -122,6 +148,7 @@ export default function TagEditor({
             <TextInput
               style={styles.editableInput}
               value={item.type === "suggestedKvp" ? item.key : item.name ?? ""}
+              editable={false}
               onChangeText={(newText) =>
                 item.type === "suggestedName"
                   ? handleNameTagChange(index, newText)
@@ -132,6 +159,7 @@ export default function TagEditor({
               <TextInput
                 style={styles.editableInput}
                 value={item.value}
+                editable={false}
                 onChangeText={(newText) =>
                   handleKvpTagChange(index, item.key, newText)
                 }
@@ -157,7 +185,7 @@ const styles = StyleSheet.create({
   container: {
     padding: 16,
   },
-  arrowContainer: {
+  buttonContainer: {
     alignSelf: "center",
     flexDirection: "row",
     justifyContent: "space-between",
