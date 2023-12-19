@@ -9,6 +9,10 @@ import {
   Modal,
   Button,
   TextInput,
+  TextInputSubmitEditingEventData,
+  NativeSyntheticEvent,
+  FlatList,
+  GestureResponderEvent,
 } from "react-native";
 import axios from "axios";
 import Constants from "expo-constants";
@@ -21,6 +25,8 @@ const ITEMS_PER_PAGE = 12;
 
 const ItemBrowserScreen = () => {
   const [items, setItems] = useState([]);
+  const [initialItems, setInitialItems] = useState([]);
+  const [searchBlobs, setSearchBlobs] = useState([]);
   const [loading, setLoading] = useState(true);
   const [error, setError] = useState(null);
   const [selectedImage, setSelectedImage] = useState(null);
@@ -36,31 +42,8 @@ const ItemBrowserScreen = () => {
         .then((response) => {
           const items = plainToInstance(ItemModel, response.data as ItemDto[]);
           console.log(items);
-          if (searchText) {
-            setItems(
-              items.filter(
-                (item) =>
-                  item.tags.some((tag) =>
-                    tag.type === TagType.NAME
-                      ? tag.name &&
-                        tag.name
-                          .toLowerCase()
-                          .includes(searchText.toLowerCase())
-                      : (tag.key &&
-                          tag.key
-                            .toLowerCase()
-                            .includes(searchText.toLowerCase())) ||
-                        (tag.value &&
-                          tag.value
-                            .toLowerCase()
-                            .includes(searchText.toLowerCase()))
-                  ) ||
-                  item.title.toLowerCase().includes(searchText.toLowerCase())
-              )
-            );
-          } else {
-            setItems(items);
-          }
+          setItems([...items]);
+          setInitialItems([...items]);
           setLoading(false);
         })
         .catch((err) => {
@@ -69,7 +52,53 @@ const ItemBrowserScreen = () => {
         });
     };
     getItemsAsync();
-  }, [searchText]);
+  }, []);
+
+  useEffect(() => {
+    setItems(
+      initialItems.filter((item) => {
+        // Check for matching searchBlobs
+        const matchesSearchBlobs =
+          searchBlobs.length === 0 ||
+          searchBlobs.every(
+            (searchBlob) =>
+              item.tags.some(
+                (tag) =>
+                  (tag.type === TagType.NAME &&
+                    tag.name &&
+                    tag.name
+                      .toLowerCase()
+                      .includes(searchBlob.toLowerCase())) ||
+                  (tag.type !== TagType.NAME &&
+                    ((tag.key &&
+                      tag.key
+                        .toLowerCase()
+                        .includes(searchBlob.toLowerCase())) ||
+                      (tag.value &&
+                        tag.value
+                          .toLowerCase()
+                          .includes(searchBlob.toLowerCase()))))
+              ) || item.title.toLowerCase().includes(searchBlob.toLowerCase())
+          );
+
+        // Check for matching searchText
+        const matchesSearchText =
+          searchText === "" ||
+          item.tags.some((tag) =>
+            tag.type === TagType.NAME
+              ? tag.name &&
+                tag.name.toLowerCase().includes(searchText.toLowerCase())
+              : (tag.key &&
+                  tag.key.toLowerCase().includes(searchText.toLowerCase())) ||
+                (tag.value &&
+                  tag.value.toLowerCase().includes(searchText.toLowerCase()))
+          ) ||
+          item.title.toLowerCase().includes(searchText.toLowerCase());
+
+        return matchesSearchBlobs && matchesSearchText;
+      })
+    );
+  }, [searchText, searchBlobs]);
 
   const paginatedItems = items.slice(
     currentPage * ITEMS_PER_PAGE,
@@ -105,6 +134,13 @@ const ItemBrowserScreen = () => {
     setHoveredItemId(null);
   };
 
+  function addSearchBlob(
+    e: NativeSyntheticEvent<TextInputSubmitEditingEventData>
+  ): void {
+    setSearchBlobs([searchText, ...searchBlobs]);
+    setSearchText("");
+  }
+
   if (loading) return <Text>Loading...</Text>;
   if (error) return <Text>Error: {error}</Text>;
 
@@ -116,7 +152,25 @@ const ItemBrowserScreen = () => {
           placeholder="Search tags..."
           value={searchText}
           onChangeText={setSearchText}
+          onSubmitEditing={addSearchBlob}
         />
+        <View style={styles.searchBlobsContainer}>
+          {searchBlobs.map((item, index) => (
+            <View style={styles.searchBlobContainer} key={index}>
+              <Pressable
+                onPress={() => {
+                  setSearchBlobs(
+                    searchBlobs.filter(
+                      (searchBlob, blobIndex) => blobIndex !== index
+                    )
+                  );
+                }}
+              >
+                <Text>{item}</Text>
+              </Pressable>
+            </View>
+          ))}
+        </View>
       </View>
       <View style={styles.grid}>
         {paginatedItems.map((item, index) => (
@@ -166,7 +220,6 @@ const styles = StyleSheet.create({
   grid: {
     flexDirection: "row",
     flexWrap: "wrap",
-    justifyContent: "space-between",
     alignSelf: "center",
     padding: 10,
     width: 500,
@@ -195,6 +248,18 @@ const styles = StyleSheet.create({
   overlayText: {
     color: "white",
     textAlign: "center",
+  },
+  searchBlobsContainer: {
+    flexDirection: "row",
+    flexWrap: "wrap",
+    alignSelf: "center",
+    padding: 10,
+    width: 500,
+  },
+  searchBlobContainer: {
+    backgroundColor: "#fff",
+    alignSelf: "flex-start",
+    margin: 2,
   },
 });
 
