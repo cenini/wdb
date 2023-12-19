@@ -9,8 +9,6 @@ import {
 import { StatusBar } from "expo-status-bar";
 import * as ImagePicker from "expo-image-picker";
 import { StyleSheet, View } from "react-native";
-import PhotoButton from "./PhotoButton";
-import Button from "./Button";
 import { AuthContext } from "../App";
 import { NewItemModel } from "../models/ItemModel";
 import { plainToClass, plainToInstance } from "class-transformer";

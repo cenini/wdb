@@ -3,7 +3,6 @@ import {
   View,
   Text,
   StyleSheet,
-  Button,
   Pressable,
   GestureResponderEvent,
   TextInput,
@@ -27,6 +26,7 @@ import { TitleAndDescribeItemDto, TitleAndDescriptionDto } from "../dto/AIDto";
 import { KvpTagModel, NameTagModel } from "../models/TagModel";
 import TagEditor from "./TagEditor";
 import ImageBox from "./ImageBox";
+import Button from "./Button";
 
 export default function NewItemManagementScreen({ route, navigation }) {
   const { newItems, dispatch } = useContext(NewItemsContext);
@@ -205,26 +205,12 @@ export default function NewItemManagementScreen({ route, navigation }) {
         value={title}
       />
       <ImageBox imageUri={newItems[0].image.uri} onSaveTag={handleTagBoxSave} />
-      <View
-        style={[
-          styles.buttonContainer,
-          { borderWidth: 4, borderColor: "#ffd33d", borderRadius: 18 },
-        ]}
-      >
-        <Pressable
-          style={[styles.button, { backgroundColor: "#fff" }]}
+      <View style={[styles.buttonContainer]}>
+        <Button
+          label={"Add to wardrobe"}
+          symbol={"picture-o"}
           onPress={createItem}
-        >
-          <FontAwesome
-            name="picture-o"
-            size={18}
-            color="#25292e"
-            style={styles.buttonIcon}
-          />
-          <Text style={[styles.buttonLabel, { color: "#25292e" }]}>
-            Create item
-          </Text>
-        </Pressable>
+        />
         <TagEditor
           nameTags={nameTags}
           kvpTags={kvpTags}

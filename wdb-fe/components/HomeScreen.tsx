@@ -2,7 +2,6 @@ import { useContext } from "react";
 import { StatusBar } from "expo-status-bar";
 import * as ImagePicker from "expo-image-picker";
 import { StyleSheet, View, Text, Image } from "react-native";
-import PhotoButton from "./PhotoButton";
 import { NewItemsContext } from "./AppScreen";
 import { AuthContext } from "../App";
 import { manipulateAsync, FlipType, SaveFormat } from "expo-image-manipulator";
@@ -78,7 +77,6 @@ export default function HomeScreen({ navigation }) {
       </View>
       <View style={styles.footerContainer}>
         <Button
-          theme="primary"
           symbol="picture-o"
           label="Add some images"
           onPress={pickImageAsync}
