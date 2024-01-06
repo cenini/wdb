@@ -4,6 +4,7 @@ import {
   Pressable,
   Text,
   GestureResponderEvent,
+  ViewStyle,
 } from "react-native";
 import FontAwesome from "@expo/vector-icons/FontAwesome";
 import { useState } from "react";
@@ -20,8 +21,8 @@ export default function Button({
   symbol = null,
   icon = null,
   theme = "",
-  width = 320,
-  height = 68,
+  width = null,
+  height = null,
   margin = 0,
 }) {
   const [isPressedIn, setIsPressedIn] = useState(false);
@@ -39,18 +40,49 @@ export default function Button({
 
   const ButtonBorderWidth = 4;
   const ButtonShadowHeight = 6;
+  const buttonContainerStyle =
+    width !== null && height !== null
+      ? ({
+          width: width as number,
+          height: height as number,
+          margin: margin,
+          alignItems: "center",
+          justifyContent: "center",
+          padding: 3,
+        } as ViewStyle)
+      : width !== null
+      ? ({
+          width: width as number,
+          margin: margin,
+          alignItems: "center",
+          justifyContent: "center",
+          padding: 3,
+        } as ViewStyle)
+      : height !== null
+      ? ({
+          height: height as number,
+          margin: margin,
+          alignItems: "center",
+          justifyContent: "center",
+          padding: 3,
+        } as ViewStyle)
+      : ({
+          margin: margin,
+          alignItems: "center",
+          justifyContent: "center",
+          padding: 3,
+        } as ViewStyle);
+
   const styles = StyleSheet.create({
-    buttonContainer: {
-      // width: style.width,
-      // height: style.height,
-      // margin: style.margin,
-      width: width,
-      height: height,
-      margin: margin,
-      alignItems: "center",
-      justifyContent: "center",
-      padding: 3,
-    },
+    // buttonContainer: {
+    //   width: width,
+    //   height: height,
+    //   margin: margin,
+    //   alignItems: "center",
+    //   justifyContent: "center",
+    //   padding: 3,
+    // },
+    buttonContainer: buttonContainerStyle,
     button: {
       borderRadius: 10,
       width: "100%",

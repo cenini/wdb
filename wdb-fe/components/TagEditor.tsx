@@ -28,10 +28,12 @@ export default function TagEditor({
   onAcceptSuggestedKvpTag,
 }) {
   const handleAddNameTag = () => {
+    if (nameTags.find((tag) => tag.name === "")) return;
     setNameTags([plainToInstance(NameTagModel, { name: "" }), ...nameTags]);
   };
 
   const handleAddKvpTag = () => {
+    if (kvpTags.find((tag) => tag.key === "" && tag.value === "")) return;
     setKvpTags([
       plainToInstance(KvpTagModel, { key: "", value: "" }),
       ...kvpTags,
@@ -117,13 +119,17 @@ export default function TagEditor({
           width={120}
           height={40}
           onPress={handleAddNameTag}
-          label={"New name tag"}
+          label={""}
+          icon={<AntDesign name="right" size={24} color="black" />}
+          margin={4}
         />
         <Button
           width={120}
           height={40}
           onPress={handleAddKvpTag}
-          label={"New multi tag"}
+          label={""}
+          icon={<AntDesign name="doubleright" size={24} color="black" />}
+          margin={4}
         />
       </View>
       <FlatList
