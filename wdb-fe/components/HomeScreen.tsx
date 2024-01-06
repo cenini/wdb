@@ -8,6 +8,7 @@ import { manipulateAsync, FlipType, SaveFormat } from "expo-image-manipulator";
 import { plainToInstance } from "class-transformer";
 import { ImageModel } from "../models/ImageModel";
 import Button from "./Button";
+import { CommonStyles } from "./Styles";
 
 export default function HomeScreen({ navigation }) {
   const { addImages } = useContext(NewItemsContext);
@@ -80,6 +81,10 @@ export default function HomeScreen({ navigation }) {
           symbol="picture-o"
           label="Add some images"
           onPress={pickImageAsync}
+          // style={CommonStyles.bigButton}
+          width={320}
+          height={68}
+          margin={20}
         />
       </View>
       <StatusBar style="auto" />

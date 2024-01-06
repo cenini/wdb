@@ -13,4 +13,9 @@ export const CommonStyles = StyleSheet.create({
     // color: '#fff',
     // borderColor: '#fff',
   },
+  bigButton: {
+    width: 320,
+    height: 68,
+    margin: 20,
+  },
 });

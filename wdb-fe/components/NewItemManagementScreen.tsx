@@ -210,6 +210,7 @@ export default function NewItemManagementScreen({ route, navigation }) {
           label={"Add to wardrobe"}
           symbol={"picture-o"}
           onPress={createItem}
+          margin={20}
         />
         <TagEditor
           nameTags={nameTags}

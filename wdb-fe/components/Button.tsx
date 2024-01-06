@@ -8,7 +8,22 @@ import {
 import FontAwesome from "@expo/vector-icons/FontAwesome";
 import { useState } from "react";
 
-export default function Button({ label, symbol, theme = "", onPress }) {
+export interface ButtonStyle {
+  width: number;
+  height: number;
+  margin: number;
+}
+
+export default function Button({
+  label,
+  onPress,
+  symbol = null,
+  icon = null,
+  theme = "",
+  width = 320,
+  height = 68,
+  margin = 0,
+}) {
   const [isPressedIn, setIsPressedIn] = useState(false);
 
   function handlePressIn(event: GestureResponderEvent): void {
@@ -22,6 +37,54 @@ export default function Button({ label, symbol, theme = "", onPress }) {
   if (theme === "primary") {
   }
 
+  const ButtonBorderWidth = 4;
+  const ButtonShadowHeight = 6;
+  const styles = StyleSheet.create({
+    buttonContainer: {
+      // width: style.width,
+      // height: style.height,
+      // margin: style.margin,
+      width: width,
+      height: height,
+      margin: margin,
+      alignItems: "center",
+      justifyContent: "center",
+      padding: 3,
+    },
+    button: {
+      borderRadius: 10,
+      width: "100%",
+      height: "100%",
+      alignItems: "center",
+      justifyContent: "center",
+      flexDirection: "row",
+      backgroundColor: "#EAECCC",
+      shadowColor: "#DBCC95",
+      shadowOffset: { width: 0, height: ButtonShadowHeight },
+      borderWidth: ButtonBorderWidth,
+      borderColor: "#DBCC95",
+    },
+    buttonPressed: {
+      borderRadius: 10,
+      width: "100%",
+      height: "100%",
+      alignItems: "center",
+      justifyContent: "center",
+      flexDirection: "row",
+      backgroundColor: "#EAECCC",
+      borderWidth: ButtonBorderWidth,
+      borderColor: "#DBCC95",
+      marginTop: ButtonBorderWidth + ButtonShadowHeight,
+    },
+    buttonIcon: {
+      paddingRight: 8,
+    },
+    buttonLabel: {
+      color: "#fff",
+      fontSize: 16,
+    },
+  });
+
   return (
     <View style={[styles.buttonContainer]}>
       <Pressable
@@ -30,7 +93,8 @@ export default function Button({ label, symbol, theme = "", onPress }) {
         onPressIn={handlePressIn}
         onPressOut={handlePressOut}
       >
-        {symbol !== null && symbol !== "" ? (
+        {icon !== null ? icon : <></>}
+        {icon === null && symbol !== null && symbol !== "" ? (
           <FontAwesome
             name={symbol}
             size={18}
@@ -45,48 +109,3 @@ export default function Button({ label, symbol, theme = "", onPress }) {
     </View>
   );
 }
-
-const ButtonBorderWidth = 4;
-const ButtonShadowHeight = 6;
-const styles = StyleSheet.create({
-  buttonContainer: {
-    width: 320,
-    height: 68,
-    marginHorizontal: 20,
-    alignItems: "center",
-    justifyContent: "center",
-    padding: 3,
-  },
-  button: {
-    borderRadius: 10,
-    width: "100%",
-    height: "100%",
-    alignItems: "center",
-    justifyContent: "center",
-    flexDirection: "row",
-    backgroundColor: "#EAECCC",
-    shadowColor: "#DBCC95",
-    shadowOffset: { width: 0, height: ButtonShadowHeight },
-    borderWidth: ButtonBorderWidth,
-    borderColor: "#DBCC95",
-  },
-  buttonPressed: {
-    borderRadius: 10,
-    width: "100%",
-    height: "100%",
-    alignItems: "center",
-    justifyContent: "center",
-    flexDirection: "row",
-    backgroundColor: "#EAECCC",
-    borderWidth: ButtonBorderWidth,
-    borderColor: "#DBCC95",
-    marginTop: ButtonBorderWidth + ButtonShadowHeight,
-  },
-  buttonIcon: {
-    paddingRight: 8,
-  },
-  buttonLabel: {
-    color: "#fff",
-    fontSize: 16,
-  },
-});

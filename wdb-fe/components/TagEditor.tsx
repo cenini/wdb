@@ -12,6 +12,8 @@ import { KvpTagModel, NameTagModel } from "../models/TagModel";
 import { FontAwesome } from "@expo/vector-icons";
 import { FontAwesome5 } from "@expo/vector-icons";
 import { plainToInstance } from "class-transformer";
+import Button from "./Button";
+import { AntDesign } from "@expo/vector-icons";
 
 export default function TagEditor({
   nameTags,
@@ -71,6 +73,24 @@ export default function TagEditor({
     // console.log(`number of nametags: ${nameTags.length}`)
   };
 
+  const handleRejectNameTag = (nameTag) => {
+    setNameTags(
+      nameTags.filter(
+        (existingNameTag) => existingNameTag.name !== nameTag.name
+      )
+    );
+  };
+
+  const handleRejectKvpTag = (kvpTag) => {
+    setKvpTags((kvpTags) =>
+      kvpTags.filter(
+        (existingKvpTag) =>
+          existingKvpTag.key !== kvpTag.key &&
+          existingKvpTag.value !== kvpTag.value
+      )
+    );
+  };
+
   const handleRejectAllTags = () => {
     onRejectAllTags();
     // console.log(`number of kvptags: ${kvpTags.length}`)
@@ -93,12 +113,18 @@ export default function TagEditor({
   return (
     <View style={styles.container}>
       <View style={styles.buttonContainer}>
-        <Pressable onPress={handleAddNameTag}>
-          <FontAwesome5 name="dice-one" size={24} color="#25292e" />
-        </Pressable>
-        <Pressable onPress={handleAddKvpTag}>
-          <FontAwesome5 name="dice-two" size={24} color="#25292e" />
-        </Pressable>
+        <Button
+          width={120}
+          height={40}
+          onPress={handleAddNameTag}
+          label={"New name tag"}
+        />
+        <Button
+          width={120}
+          height={40}
+          onPress={handleAddKvpTag}
+          label={"New multi tag"}
+        />
       </View>
       <FlatList
         data={acceptedTags}
@@ -129,6 +155,17 @@ export default function TagEditor({
                 }
               />
             )}
+            <Button
+              width={60}
+              height={40}
+              onPress={() =>
+                item.type === "name"
+                  ? handleRejectNameTag(item)
+                  : handleRejectKvpTag(item)
+              }
+              label={""}
+              icon={<AntDesign name="minuscircleo" size={24} color="black" />}
+            />
           </View>
         )}
       />
@@ -165,15 +202,17 @@ export default function TagEditor({
                 }
               />
             )}
-            <TouchableOpacity
+            <Button
+              width={60}
+              height={40}
               onPress={() =>
                 item.type === "suggestedName"
                   ? handleAcceptSuggestedNameTag(item)
                   : handleAcceptSuggestedKvpTag(item)
               }
-            >
-              <Text style={styles.checkmark}>✔</Text>
-            </TouchableOpacity>
+              label={""}
+              icon={<AntDesign name="pluscircleo" size={24} color="black" />}
+            />
           </View>
         )}
       />
@@ -212,7 +251,6 @@ const styles = StyleSheet.create({
     borderWidth: 1,
     borderColor: "#ccc",
     padding: 8,
-    marginBottom: 8,
     borderRadius: 5,
   },
   checkmark: {
