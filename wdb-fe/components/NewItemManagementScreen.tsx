@@ -50,7 +50,6 @@ export default function NewItemManagementScreen({ route, navigation }) {
   }, [newItems]);
 
   async function getSuggestion(): Promise<void> {
-    console.log(newItems);
     const titleAndDescriptionDto = plainToClass(
       TitleAndDescriptionDto,
       (
@@ -71,9 +70,6 @@ export default function NewItemManagementScreen({ route, navigation }) {
     const instantiatedKvpTagSuggestions = plainToInstance(
       KvpTagModel,
       titleAndDescriptionDto.kvpTags
-    );
-    console.log(
-      "instantiated name tag suggestions followed by kvp tag suggestions"
     );
     setNameTagSuggestions(instantiatedNameTagSuggestions);
     setInitialNameTagSuggestions(instantiatedNameTagSuggestions);
@@ -112,11 +108,6 @@ export default function NewItemManagementScreen({ route, navigation }) {
   function handleRejectAllTags(event: GestureResponderEvent): void {
     setNameTagSuggestions(initialNameTagSuggestions);
     setKvpTagSuggestions(initialKvpTagSuggestions);
-    console.log(
-      `nameTags length: ${nameTags.length} suggestedNameTags length: ${nameTagSuggestions.length} initialNameTagSuggestions length: ${initialNameTagSuggestions.length}`
-    );
-    console.log(nameTags);
-    console.log(nameTagSuggestions);
     setNameTags(
       nameTags.filter(
         (nameTag) =>
@@ -125,8 +116,6 @@ export default function NewItemManagementScreen({ route, navigation }) {
           ) == undefined
       )
     );
-    console.log(kvpTags);
-    console.log(kvpTagSuggestions);
     setKvpTags(
       kvpTags.filter(
         (kvpTag) =>

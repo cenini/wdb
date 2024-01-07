@@ -20,6 +20,7 @@ import { plainToInstance } from "class-transformer";
 import { ItemDto } from "../dto/ItemDto";
 import { ItemModel, TagType } from "../models/ItemModel";
 import { CommonStyles } from "./Styles";
+import ItemManagementScreen from "./ItemManagementScreen";
 
 const ITEMS_PER_PAGE = 12;
 
@@ -29,7 +30,7 @@ const ItemBrowserScreen = () => {
   const [searchBlobs, setSearchBlobs] = useState([]);
   const [loading, setLoading] = useState(true);
   const [error, setError] = useState(null);
-  const [selectedImage, setSelectedImage] = useState(null);
+  const [selectedItem, setSelectedItem] = useState(null);
   const [currentPage, setCurrentPage] = useState(0);
   const [hoveredItemId, setHoveredItemId] = useState(null);
   const [searchText, setSearchText] = useState("");
@@ -117,13 +118,13 @@ const ItemBrowserScreen = () => {
     }
   };
 
-  const handleImagePress = (url) => {
-    setSelectedImage(url);
+  const handleImageClick = (item) => {
+    setSelectedItem(item);
     // In the future, navigate to the item
   };
 
-  const closeImage = () => {
-    setSelectedImage(null);
+  const handleItemClose = () => {
+    setSelectedItem(null);
   };
 
   const handleHoverIn = (itemId) => {
@@ -146,60 +147,71 @@ const ItemBrowserScreen = () => {
 
   return (
     <View style={styles.container}>
-      <View style={styles.inputContainer}>
-        <TextInput
-          style={CommonStyles.textInput}
-          placeholder="Search tags..."
-          value={searchText}
-          onChangeText={setSearchText}
-          onSubmitEditing={addSearchBlob}
-        />
-        <View style={styles.searchBlobsContainer}>
-          {searchBlobs.map((item, index) => (
-            <View style={styles.searchBlobContainer} key={index}>
-              <Pressable
-                onPress={() => {
-                  setSearchBlobs(
-                    searchBlobs.filter(
-                      (searchBlob, blobIndex) => blobIndex !== index
-                    )
-                  );
-                }}
-              >
-                <Text>{item}</Text>
-              </Pressable>
-            </View>
-          ))}
-        </View>
-      </View>
-      <View style={styles.grid}>
-        {paginatedItems.map((item, index) => (
-          <Pressable
-            key={index}
-            onPress={() => handleImagePress(item.photos[0].url)}
-            onHoverIn={() => handleHoverIn(item.id)}
-            onHoverOut={handleHoverOut}
-          >
-            <Image source={{ uri: item.photos[0].url }} style={styles.image} />
-            {hoveredItemId === item.id && (
-              <View style={styles.overlay}>
-                <Text style={styles.overlayText}>{item.title}</Text>
+      <View>
+        {selectedItem === null ? (
+          <View>
+            <View style={styles.inputContainer}>
+              <TextInput
+                style={CommonStyles.textInput}
+                placeholder="Search tags..."
+                value={searchText}
+                onChangeText={setSearchText}
+                onSubmitEditing={addSearchBlob}
+              />
+              <View style={styles.searchBlobsContainer}>
+                {searchBlobs.map((item, index) => (
+                  <View style={styles.searchBlobContainer} key={index}>
+                    <Pressable
+                      onPress={() => {
+                        setSearchBlobs(
+                          searchBlobs.filter(
+                            (searchBlob, blobIndex) => blobIndex !== index
+                          )
+                        );
+                      }}
+                    >
+                      <Text>{item}</Text>
+                    </Pressable>
+                  </View>
+                ))}
               </View>
-            )}
-          </Pressable>
-        ))}
-      </View>
-      <View style={styles.navigation}>
-        <Button
-          title="Previous"
-          onPress={goToPreviousPage}
-          disabled={currentPage === 0}
-        />
-        <Button
-          title="Next"
-          onPress={goToNextPage}
-          disabled={(currentPage + 1) * ITEMS_PER_PAGE >= items.length}
-        />
+            </View>
+            <View style={styles.grid}>
+              {paginatedItems.map((item, index) => (
+                <Pressable
+                  key={index}
+                  onPress={() => handleImageClick(item)}
+                  onHoverIn={() => handleHoverIn(item.id)}
+                  onHoverOut={handleHoverOut}
+                >
+                  <Image
+                    source={{ uri: item.photos[0].url }}
+                    style={styles.image}
+                  />
+                  {hoveredItemId === item.id && (
+                    <View style={styles.overlay}>
+                      <Text style={styles.overlayText}>{item.title}</Text>
+                    </View>
+                  )}
+                </Pressable>
+              ))}
+            </View>
+            <View style={styles.navigation}>
+              <Button
+                title="Previous"
+                onPress={goToPreviousPage}
+                disabled={currentPage === 0}
+              />
+              <Button
+                title="Next"
+                onPress={goToNextPage}
+                disabled={(currentPage + 1) * ITEMS_PER_PAGE >= items.length}
+              />
+            </View>
+          </View>
+        ) : (
+          <ItemManagementScreen item={selectedItem} onClose={handleItemClose} />
+        )}
       </View>
     </View>
   );
