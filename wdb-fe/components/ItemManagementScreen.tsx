@@ -20,7 +20,7 @@ const ItemManagementScreen = ({
     title: string,
     nameTags: NameTagModel[],
     kvpTags: KvpTagModel[]
-  ) => void;
+  ) => Promise<void>;
   onClose: () => void;
 }) => {
   const [title, setTitle] = useState(item.title);
@@ -42,8 +42,9 @@ const ItemManagementScreen = ({
 
   const addPhotos = (photos: PhotoModel) => {};
 
-  const handleClose = () => {
-    updateItem(title, nameTags, kvpTags);
+  const handleClose = async () => {
+    console.log(nameTags);
+    await updateItem(title, nameTags, kvpTags);
     onClose();
   };
 

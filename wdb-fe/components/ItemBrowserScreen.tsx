@@ -16,8 +16,8 @@ import {
 } from "react-native";
 import axios from "axios";
 import Constants from "expo-constants";
-import { plainToInstance } from "class-transformer";
-import { ItemDto } from "../dto/ItemDto";
+import { plainToClass, plainToInstance } from "class-transformer";
+import { CreateItemTagsDto, ItemDto } from "../dto/ItemDto";
 import { ItemModel, TagType } from "../models/ItemModel";
 import { CommonStyles } from "./Styles";
 import ItemManagementScreen from "./ItemManagementScreen";
@@ -128,11 +128,21 @@ const ItemBrowserScreen = () => {
     setSelectedItem(null);
   };
 
-  const updateItem = (
+  const updateItem = async (
     title: string,
     nameTags: NameTagModel[],
     kvpTags: KvpTagModel[]
-  ) => {};
+  ) => {
+    const tagsResponse = await axios.post(
+      `${Constants.expoConfig.extra.env.EXPO_PUBLIC_API_URL}items/${selectedItem.id}/tags`,
+      plainToClass(CreateItemTagsDto, {
+        nameTags: nameTags.filter((nameTag) => nameTag.name !== ""),
+        kvpTags: kvpTags.filter(
+          (kvpTag) => kvpTag.key !== "" && kvpTag.value !== ""
+        ),
+      })
+    );
+  };
 
   const handleHoverIn = (itemId) => {
     setHoveredItemId(itemId);

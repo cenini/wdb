@@ -99,13 +99,12 @@ export class ItemController {
         name: '',
       })),
     ];
-    console.log(tagDataArray);
     const tags = await this.tagService.upsertTags(tagDataArray);
     const tagItemDataArray = tags.map((tag) => ({
       itemId: itemId,
       tagId: tag.id,
     }));
-    return await this.itemTagService.upsertItemTags(tagItemDataArray);
+    return await this.itemTagService.updateItemTags(tagItemDataArray);
   }
 
   @Post(':itemId/photos')

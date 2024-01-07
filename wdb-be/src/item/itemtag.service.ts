@@ -44,7 +44,7 @@ export class ItemTagService {
     });
   }
 
-  async upsertItemTags(
+  async updateItemTags(
     itemTagDataArray: {
       itemId: string;
       tagId: number;
@@ -52,6 +52,7 @@ export class ItemTagService {
   ): Promise<ItemTag[]> {
     const upsertedItemTags: ItemTag[] = [];
 
+    // Upsert tags from itemTagDataArray
     for (const itemTagData of itemTagDataArray) {
       const { itemId, tagId } = itemTagData;
 
@@ -62,6 +63,25 @@ export class ItemTagService {
       });
 
       upsertedItemTags.push(upsertedItemTag);
+    }
+
+    // Collect all unique itemIds from itemTagDataArray
+    const uniqueItemIds = [
+      ...new Set(itemTagDataArray.map((tagData) => tagData.itemId)),
+    ];
+
+    // Delete tags not in itemTagDataArray for each itemId
+    for (const itemId of uniqueItemIds) {
+      const tagsForItem = itemTagDataArray
+        .filter((tagData) => tagData.itemId === itemId)
+        .map((tagData) => tagData.tagId);
+
+      await this.prisma.itemTag.deleteMany({
+        where: {
+          itemId,
+          tagId: { notIn: tagsForItem },
+        },
+      });
     }
 
     return upsertedItemTags;
