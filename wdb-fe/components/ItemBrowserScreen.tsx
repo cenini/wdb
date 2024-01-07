@@ -32,29 +32,15 @@ const ItemBrowserScreen = () => {
   const [loading, setLoading] = useState(true);
   const [error, setError] = useState(null);
   const [selectedItem, setSelectedItem] = useState(null);
+  const [itemsUpdated, setItemsUpdated] = useState(0);
   const [currentPage, setCurrentPage] = useState(0);
   const [hoveredItemId, setHoveredItemId] = useState(null);
   const [searchText, setSearchText] = useState("");
 
   useEffect(() => {
     console.log("Getting items...");
-    const getItemsAsync = async () => {
-      axios
-        .get(`${Constants.expoConfig.extra.env.EXPO_PUBLIC_API_URL}items`)
-        .then((response) => {
-          const items = plainToInstance(ItemModel, response.data as ItemDto[]);
-          console.log(items);
-          setItems([...items]);
-          setInitialItems([...items]);
-          setLoading(false);
-        })
-        .catch((err) => {
-          setError(err.message);
-          setLoading(false);
-        });
-    };
     getItemsAsync();
-  }, []);
+  }, [itemsUpdated]);
 
   useEffect(() => {
     setItems(
@@ -100,7 +86,23 @@ const ItemBrowserScreen = () => {
         return matchesSearchBlobs && matchesSearchText;
       })
     );
-  }, [searchText, searchBlobs]);
+  }, [searchText, searchBlobs, itemsUpdated]);
+
+  const getItemsAsync = async () => {
+    axios
+      .get(`${Constants.expoConfig.extra.env.EXPO_PUBLIC_API_URL}items`)
+      .then((response) => {
+        const items = plainToInstance(ItemModel, response.data as ItemDto[]);
+        console.log(items);
+        setItems([...items]);
+        setInitialItems([...items]);
+        setLoading(false);
+      })
+      .catch((err) => {
+        setError(err.message);
+        setLoading(false);
+      });
+  };
 
   const paginatedItems = items.slice(
     currentPage * ITEMS_PER_PAGE,
@@ -142,6 +144,7 @@ const ItemBrowserScreen = () => {
         ),
       })
     );
+    setItemsUpdated(itemsUpdated + 1);
   };
 
   const handleHoverIn = (itemId) => {
@@ -164,76 +167,76 @@ const ItemBrowserScreen = () => {
 
   return (
     <View style={styles.container}>
-      <View>
-        {selectedItem === null ? (
-          <View>
-            <View style={styles.inputContainer}>
-              <TextInput
-                style={CommonStyles.textInput}
-                placeholder="Search tags..."
-                value={searchText}
-                onChangeText={setSearchText}
-                onSubmitEditing={addSearchBlob}
-              />
-              <View style={styles.searchBlobsContainer}>
-                {searchBlobs.map((item, index) => (
-                  <View style={styles.searchBlobContainer} key={index}>
-                    <Pressable
-                      onPress={() => {
-                        setSearchBlobs(
-                          searchBlobs.filter(
-                            (searchBlob, blobIndex) => blobIndex !== index
-                          )
-                        );
-                      }}
-                    >
-                      <Text>{item}</Text>
-                    </Pressable>
-                  </View>
-                ))}
-              </View>
-            </View>
-            <View style={styles.grid}>
-              {paginatedItems.map((item, index) => (
-                <Pressable
-                  key={index}
-                  onPress={() => handleImageClick(item)}
-                  onHoverIn={() => handleHoverIn(item.id)}
-                  onHoverOut={handleHoverOut}
-                >
-                  <Image
-                    source={{ uri: item.photos[0].url }}
-                    style={styles.image}
-                  />
-                  {hoveredItemId === item.id && (
-                    <View style={styles.overlay}>
-                      <Text style={styles.overlayText}>{item.title}</Text>
-                    </View>
-                  )}
-                </Pressable>
+      {selectedItem === null ? (
+        <View>
+          <View style={styles.inputContainer}>
+            <TextInput
+              style={CommonStyles.textInput}
+              placeholder="Search tags..."
+              value={searchText}
+              onChangeText={setSearchText}
+              onSubmitEditing={addSearchBlob}
+            />
+            <View style={styles.searchBlobsContainer}>
+              {searchBlobs.map((item, index) => (
+                <View style={styles.searchBlobContainer} key={index}>
+                  <Pressable
+                    onPress={() => {
+                      setSearchBlobs(
+                        searchBlobs.filter(
+                          (searchBlob, blobIndex) => blobIndex !== index
+                        )
+                      );
+                    }}
+                  >
+                    <Text>{item}</Text>
+                  </Pressable>
+                </View>
               ))}
             </View>
-            <View style={styles.navigation}>
-              <Button
-                title="Previous"
-                onPress={goToPreviousPage}
-                disabled={currentPage === 0}
-              />
-              <Button
-                title="Next"
-                onPress={goToNextPage}
-                disabled={(currentPage + 1) * ITEMS_PER_PAGE >= items.length}
-              />
-            </View>
           </View>
-        ) : (
+          <View style={styles.grid}>
+            {paginatedItems.map((item, index) => (
+              <Pressable
+                key={index}
+                onPress={() => handleImageClick(item)}
+                onHoverIn={() => handleHoverIn(item.id)}
+                onHoverOut={handleHoverOut}
+              >
+                <Image
+                  source={{ uri: item.photos[0].url }}
+                  style={styles.image}
+                />
+                {hoveredItemId === item.id && (
+                  <View style={styles.overlay}>
+                    <Text style={styles.overlayText}>{item.title}</Text>
+                  </View>
+                )}
+              </Pressable>
+            ))}
+          </View>
+          <View style={styles.navigation}>
+            <Button
+              title="Previous"
+              onPress={goToPreviousPage}
+              disabled={currentPage === 0}
+            />
+            <Button
+              title="Next"
+              onPress={goToNextPage}
+              disabled={(currentPage + 1) * ITEMS_PER_PAGE >= items.length}
+            />
+          </View>
+        </View>
+      ) : (
+        <View style={styles.grid}>
           <ItemManagementScreen
             item={selectedItem}
             updateItem={updateItem}
             onClose={handleItemClose}
           />
-        )}
-      </View>
+        </View>
+      )}
     </View>
   );
 };

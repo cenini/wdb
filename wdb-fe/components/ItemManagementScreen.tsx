@@ -43,7 +43,6 @@ const ItemManagementScreen = ({
   const addPhotos = (photos: PhotoModel) => {};
 
   const handleClose = async () => {
-    console.log(nameTags);
     await updateItem(title, nameTags, kvpTags);
     onClose();
   };
@@ -92,30 +91,6 @@ const ItemManagementScreen = ({
       </View>
     </ScrollView>
   );
-  // console.log(item);
-  // // {
-  // //   "id": "a074314e-c20b-4769-b1d7-2ecccaafd908",
-  // //   "ownerId": 1,
-  // //   "createdAt": "2023-12-18T14:45:46.409Z",
-  // //   "title": "Coral Textured Overcoat",
-  // //   "updatedAt": null,
-  // //   "photos": [
-  // //       {
-  // //           "id": "fc31278a-2c01-43c9-b4c2-7ccb22536312",
-  // //           "url": "https://res.cloudinary.com/dbf4lqbob/image/upload/v1702910746/vjjxmz9yvlhnyjxhqhhh.jpg",
-  // //           "itemId": "a074314e-c20b-4769-b1d7-2ecccaafd908",
-  // //           "createdAt": "2023-12-18T14:45:47.221Z",
-  // //           "updatedAt": null
-  // //       }
-  // //   ],
-  // //   "tags": []
-  // // }
-  // return (
-  //   <View>
-  //     <Text>{item.title}</Text>
-  //     <Button onPress={onClose} title="Close" />
-  //   </View>
-  // );
 };
 
 const styles = StyleSheet.create({
@@ -124,7 +99,8 @@ const styles = StyleSheet.create({
     backgroundColor: "#fff",
   },
   container: {
-    flexGrow: 1,
+    flex: 1,
+    backgroundColor: "#fff",
     justifyContent: "center",
     alignItems: "center",
   },

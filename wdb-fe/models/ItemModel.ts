@@ -37,6 +37,6 @@ export class TagModel {
 }
 
 export enum TagType {
-  NAME,
-  KEY_VALUE,
+  NAME = "NAME",
+  KEY_VALUE = "KEY_VALUE",
 }
