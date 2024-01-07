@@ -77,7 +77,7 @@ export default function NewItemManagementScreen({ route, navigation }) {
     setInitialKvpTagSuggestions(instantiatedKvpTagSuggestions);
   }
 
-  const handleAcceptSuggestedNameTag = (nameTag) => {
+  const handleAcceptSuggestedNameTag = (nameTag: NameTagModel) => {
     setNameTagSuggestions((nameTagSuggestions) =>
       nameTagSuggestions.filter(
         (suggestion) => suggestion.name !== nameTag.name
@@ -85,7 +85,7 @@ export default function NewItemManagementScreen({ route, navigation }) {
     );
   };
 
-  const handleAcceptSuggestedKvpTag = (kvpTag) => {
+  const handleAcceptSuggestedKvpTag = (kvpTag: KvpTagModel) => {
     setKvpTagSuggestions((kvpTagSuggestions) =>
       kvpTagSuggestions.filter(
         (suggestion) =>

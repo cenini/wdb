@@ -7,8 +7,10 @@ import {
   FlatList,
   TouchableOpacity,
   Pressable,
+  GestureResponderEvent,
 } from "react-native";
 import { KvpTagModel, NameTagModel } from "../models/TagModel";
+import { TagModel } from "../models/ItemModel";
 import { FontAwesome } from "@expo/vector-icons";
 import { FontAwesome5 } from "@expo/vector-icons";
 import { plainToInstance } from "class-transformer";
@@ -16,6 +18,7 @@ import Button from "./Button";
 import { AntDesign } from "@expo/vector-icons";
 
 export default function TagEditor({
+  // tags,
   nameTags,
   setNameTags,
   kvpTags,
@@ -26,6 +29,18 @@ export default function TagEditor({
   onAcceptSuggestedNameTag,
   kvpTagSuggestions,
   onAcceptSuggestedKvpTag,
+}: {
+  // tags: TagModel[];
+  nameTags: NameTagModel[];
+  kvpTags: KvpTagModel[];
+  setNameTags: React.Dispatch<React.SetStateAction<NameTagModel[]>>;
+  setKvpTags: React.Dispatch<React.SetStateAction<KvpTagModel[]>>;
+  nameTagSuggestions: NameTagModel[];
+  kvpTagSuggestions: KvpTagModel[];
+  onAcceptAllTags: (event: GestureResponderEvent) => void;
+  onRejectAllTags: (event: GestureResponderEvent) => void;
+  onAcceptSuggestedNameTag: (nameTag: NameTagModel) => void;
+  onAcceptSuggestedKvpTag: (kvpTag: KvpTagModel) => void;
 }) {
   const handleAddNameTag = () => {
     if (nameTags.find((tag) => tag.name === "")) return;
@@ -94,7 +109,7 @@ export default function TagEditor({
   };
 
   const handleRejectAllTags = () => {
-    onRejectAllTags();
+    onRejectAllTags(null);
     // console.log(`number of kvptags: ${kvpTags.length}`)
   };
 
