@@ -86,7 +86,7 @@ const ItemBrowserScreen = () => {
         return matchesSearchBlobs && matchesSearchText;
       })
     );
-  }, [searchText, searchBlobs, itemsUpdated]);
+  }, [searchText, searchBlobs, initialItems]);
 
   const getItemsAsync = async () => {
     axios
