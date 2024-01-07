@@ -88,15 +88,18 @@ export class ItemController {
     const tagDataArray = [
       ...createItemTagsDto.nameTags.map((tag) => ({
         type: TagType.NAME,
-        key: tag.name,
+        name: tag.name,
+        key: '',
         value: '',
       })),
       ...createItemTagsDto.kvpTags.map((tag) => ({
         type: TagType.KEY_VALUE,
         key: tag.key,
         value: tag.value,
+        name: '',
       })),
     ];
+    console.log(tagDataArray);
     const tags = await this.tagService.upsertTags(tagDataArray);
     const tagItemDataArray = tags.map((tag) => ({
       itemId: itemId,

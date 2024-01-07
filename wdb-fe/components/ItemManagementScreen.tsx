@@ -5,33 +5,32 @@ import { useState } from "react";
 import ImageBox from "./ImageBox";
 import TagEditor from "./TagEditor";
 import { KvpTagModel, NameTagModel } from "../models/TagModel";
+import {
+  ExtractKvpTagModelsFromTagModels,
+  ExtractNameTagModelsFromTagModels,
+} from "../utils/Convert";
 
 const ItemManagementScreen = ({
   item,
+  updateItem,
   onClose,
 }: {
   item: ItemModel;
-  onClose: any;
+  updateItem: (
+    title: string,
+    nameTags: NameTagModel[],
+    kvpTags: KvpTagModel[]
+  ) => void;
+  onClose: () => void;
 }) => {
   const [title, setTitle] = useState(item.title);
   const [nameTags, setNameTags] = useState(
-    item.tags.filter((tag) => tag.type == TagType.NAME)
+    ExtractNameTagModelsFromTagModels(item.tags)
   );
 
   const [kvpTags, setKvpTags] = useState(
-    item.tags.filter((tag) => tag.type == TagType.KEY_VALUE)
+    ExtractKvpTagModelsFromTagModels(item.tags)
   );
-  console.log(item);
-  console.log(kvpTags);
-  console.log(nameTags);
-  // setNameTags([
-  //   ...nameTags,
-  //   ...item.tags.filter((tag) => tag.type == TagType.NAME),
-  // ]);
-  // setKvpTags([
-  //   ...kvpTags,
-  //   ...item.tags.filter((tag) => tag.type == TagType.KEY_VALUE),
-  // ]);
 
   const handleTagBoxSave = (tag: NameTagModel | KvpTagModel) => {
     // if (tag instanceof NameTagModel) {
@@ -43,6 +42,11 @@ const ItemManagementScreen = ({
 
   const addPhotos = (photos: PhotoModel) => {};
 
+  const handleClose = () => {
+    updateItem(title, nameTags, kvpTags);
+    onClose();
+  };
+
   return (
     <ScrollView
       style={styles.scrollView}
@@ -51,7 +55,7 @@ const ItemManagementScreen = ({
       <Button
         label={""}
         symbol={"picture-o"}
-        onPress={onClose}
+        onPress={handleClose}
         width={24}
         height={24}
         margin={20}

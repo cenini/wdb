@@ -1,6 +1,6 @@
 import { Injectable } from '@nestjs/common';
 import { PrismaService } from '../prisma/prisma.service';
-import { Prisma, Tag, TagType } from '@prisma/client';
+import { $Enums, Prisma, Tag, TagType } from '@prisma/client';
 
 @Injectable()
 export class TagService {
@@ -62,6 +62,7 @@ export class TagService {
 
   async upsertTags(
     tagDataArray: {
+      name: string;
       key: string;
       value: string;
       type: TagType;
@@ -70,15 +71,25 @@ export class TagService {
     const upsertedTags: Tag[] = [];
 
     for (const tagData of tagDataArray) {
-      const { key, value, type } = tagData;
+      const { name, key, value, type } = tagData;
 
-      const upsertedTag = await this.prisma.tag.upsert({
-        where: { key_value: { key, value } },
-        update: { value, type },
-        create: { key, value, type },
-      });
+      if (type === $Enums.TagType.KEY_VALUE) {
+        const upsertedTag = await this.prisma.tag.upsert({
+          where: { key_value: { key, value } },
+          update: { value, type },
+          create: { key, value, type },
+        });
 
-      upsertedTags.push(upsertedTag);
+        upsertedTags.push(upsertedTag);
+      } else {
+        const upsertedTag = await this.prisma.tag.upsert({
+          where: { name },
+          update: { name, type },
+          create: { name, type },
+        });
+
+        upsertedTags.push(upsertedTag);
+      }
     }
 
     return upsertedTags;

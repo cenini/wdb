@@ -18,7 +18,7 @@ export class MediaService implements OnModuleInit {
     const result = await cloudinary.uploader.upload(
       base64Image,
       function (error, result) {
-        console.log(result);
+        // console.log(result);
       },
     );
     return result.secure_url;

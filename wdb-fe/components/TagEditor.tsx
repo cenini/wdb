@@ -17,8 +17,30 @@ import { plainToInstance } from "class-transformer";
 import Button from "./Button";
 import { AntDesign } from "@expo/vector-icons";
 
+// export default function TagEditor({
+//   nameTags,
+//   setNameTags,
+//   kvpTags,
+//   setKvpTags,
+//   nameTagSuggestions,
+//   onAcceptAllTags,
+//   onRejectAllTags,
+//   onAcceptSuggestedNameTag,
+//   kvpTagSuggestions,
+//   onAcceptSuggestedKvpTag,
+// }: {
+//   nameTags: NameTagModel[];
+//   kvpTags: KvpTagModel[];
+//   setNameTags: React.Dispatch<React.SetStateAction<NameTagModel[]>>;
+//   setKvpTags: React.Dispatch<React.SetStateAction<KvpTagModel[]>>;
+//   nameTagSuggestions: NameTagModel[];
+//   kvpTagSuggestions: KvpTagModel[];
+//   onAcceptAllTags: (event: GestureResponderEvent) => void;
+//   onRejectAllTags: (event: GestureResponderEvent) => void;
+//   onAcceptSuggestedNameTag: (nameTag: NameTagModel) => void;
+//   onAcceptSuggestedKvpTag: (kvpTag: KvpTagModel) => void;
+// }) {
 export default function TagEditor({
-  // tags,
   nameTags,
   setNameTags,
   kvpTags,
@@ -29,18 +51,6 @@ export default function TagEditor({
   onAcceptSuggestedNameTag,
   kvpTagSuggestions,
   onAcceptSuggestedKvpTag,
-}: {
-  // tags: TagModel[];
-  nameTags: NameTagModel[];
-  kvpTags: KvpTagModel[];
-  setNameTags: React.Dispatch<React.SetStateAction<NameTagModel[]>>;
-  setKvpTags: React.Dispatch<React.SetStateAction<KvpTagModel[]>>;
-  nameTagSuggestions: NameTagModel[];
-  kvpTagSuggestions: KvpTagModel[];
-  onAcceptAllTags: (event: GestureResponderEvent) => void;
-  onRejectAllTags: (event: GestureResponderEvent) => void;
-  onAcceptSuggestedNameTag: (nameTag: NameTagModel) => void;
-  onAcceptSuggestedKvpTag: (kvpTag: KvpTagModel) => void;
 }) {
   const handleAddNameTag = () => {
     if (nameTags.find((tag) => tag.name === "")) return;
@@ -86,7 +96,7 @@ export default function TagEditor({
   const handleAcceptAllTags = () => {
     console.log(nameTagSuggestions);
     console.log(kvpTagSuggestions);
-    onAcceptAllTags();
+    onAcceptAllTags(null);
     // console.log(`number of nametags: ${nameTags.length}`)
   };
 

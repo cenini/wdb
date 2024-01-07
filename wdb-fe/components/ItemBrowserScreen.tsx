@@ -21,13 +21,14 @@ import { ItemDto } from "../dto/ItemDto";
 import { ItemModel, TagType } from "../models/ItemModel";
 import { CommonStyles } from "./Styles";
 import ItemManagementScreen from "./ItemManagementScreen";
+import { KvpTagModel, NameTagModel } from "../models/TagModel";
 
 const ITEMS_PER_PAGE = 12;
 
 const ItemBrowserScreen = () => {
-  const [items, setItems] = useState([]);
-  const [initialItems, setInitialItems] = useState([]);
-  const [searchBlobs, setSearchBlobs] = useState([]);
+  const [items, setItems] = useState([] as ItemModel[]);
+  const [initialItems, setInitialItems] = useState([] as ItemModel[]);
+  const [searchBlobs, setSearchBlobs] = useState([] as string[]);
   const [loading, setLoading] = useState(true);
   const [error, setError] = useState(null);
   const [selectedItem, setSelectedItem] = useState(null);
@@ -127,6 +128,12 @@ const ItemBrowserScreen = () => {
     setSelectedItem(null);
   };
 
+  const updateItem = (
+    title: string,
+    nameTags: NameTagModel[],
+    kvpTags: KvpTagModel[]
+  ) => {};
+
   const handleHoverIn = (itemId) => {
     setHoveredItemId(itemId);
   };
@@ -210,7 +217,11 @@ const ItemBrowserScreen = () => {
             </View>
           </View>
         ) : (
-          <ItemManagementScreen item={selectedItem} onClose={handleItemClose} />
+          <ItemManagementScreen
+            item={selectedItem}
+            updateItem={updateItem}
+            onClose={handleItemClose}
+          />
         )}
       </View>
     </View>

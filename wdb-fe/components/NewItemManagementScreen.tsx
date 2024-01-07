@@ -164,6 +164,7 @@ export default function NewItemManagementScreen({ route, navigation }) {
         ),
       })
     );
+    console.log(tagsResponse);
     resetTags();
 
     // Dispatch an action to remove the item
