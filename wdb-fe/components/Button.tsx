@@ -12,7 +12,7 @@ import { useState } from "react";
 export interface ButtonStyle {
   width: number;
   height: number;
-  margin: number;
+  margin?: number;
   backgroundColor: string;
   shadowColor: string;
   labelColor: string;
@@ -25,7 +25,13 @@ export default function Button({
   symbol = null,
   icon = null,
   theme = "",
-  margin = 0,
+}: {
+  label?: string;
+  onPress: any; // function to call on button press
+  style: ButtonStyle;
+  symbol?: any; // fontawesome symbol string
+  icon?: any; // icon component
+  theme?: string;
 }) {
   const [isPressedIn, setIsPressedIn] = useState(false);
 
@@ -47,13 +53,13 @@ export default function Button({
       ? ({
           width: style.width,
           height: style.height,
-          margin: style.margin,
+          margin: style.margin ?? 0,
           alignItems: "center",
           justifyContent: "center",
           padding: 3,
         } as ViewStyle)
       : ({
-          margin: margin,
+          margin: style.margin ?? 0,
           alignItems: "center",
           justifyContent: "center",
           padding: 3,
@@ -108,13 +114,13 @@ export default function Button({
           <FontAwesome
             name={symbol}
             size={18}
-            color="#25292e"
+            color={style?.labelColor ?? "#000000"}
             style={styles.buttonIcon}
           />
         ) : (
           <></>
         )}
-        <Text style={[styles.buttonLabel, { color: "#25292e" }]}>{label}</Text>
+        <Text style={[styles.buttonLabel]}>{label}</Text>
       </Pressable>
     </View>
   );

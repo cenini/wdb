@@ -99,9 +99,6 @@ const ItemManagementScreen = ({
           label={"Add photos"}
           symbol={"picture-o"}
           onPress={addPhotos}
-          // width={320}
-          // height={68}
-          // margin={10}
           style={{
             ...ButtonStyles.buttonLarge,
             ...ButtonStyles.buttonPrimaryColor,
@@ -112,11 +109,6 @@ const ItemManagementScreen = ({
           label={"Delete item"}
           symbol={"picture-o"}
           onPress={handleDelete}
-          // width={160}
-          // height={51}
-          // margin={10}
-          // buttonColor="#FF8080"
-          // buttonShadowColor="#A44040"
           style={{
             ...ButtonStyles.buttonMedium,
             ...ButtonStyles.buttonWarningColor,

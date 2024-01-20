@@ -34,16 +34,16 @@ export const ButtonStyles = {
   buttonPrimaryColor: {
     backgroundColor: "#EAECCC",
     shadowColor: "#DBCC95",
-    labelColor: "#fff",
+    labelColor: "#25292e",
   },
   buttonSecondaryColor: {
     backgroundColor: "#EAECCC",
     shadowColor: "#DBCC95",
-    labelColor: "#fff",
+    labelColor: "#25292e",
   },
   buttonWarningColor: {
     backgroundColor: "#FF8080",
     shadowColor: "#A44040",
-    labelColor: "#fff",
+    labelColor: "#25292e",
   },
 };
