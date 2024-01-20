@@ -7,7 +7,6 @@ import {
   Text,
   Pressable,
   Modal,
-  Button,
   TextInput,
   TextInputSubmitEditingEventData,
   NativeSyntheticEvent,
@@ -19,9 +18,10 @@ import Constants from "expo-constants";
 import { plainToClass, plainToInstance } from "class-transformer";
 import { CreateItemTagsDto, ItemDto } from "../dto/ItemDto";
 import { ItemModel, TagType } from "../models/ItemModel";
-import { CommonStyles } from "./Styles";
+import { ButtonStyles, CommonStyles } from "./Styles";
 import ItemManagementScreen from "./ItemManagementScreen";
 import { KvpTagModel, NameTagModel } from "../models/TagModel";
+import Button from "./Button";
 
 const ITEMS_PER_PAGE = 12;
 
@@ -223,7 +223,7 @@ const ItemBrowserScreen = () => {
             ))}
           </View>
           <View style={styles.navigation}>
-            <Button
+            {/* <Button
               title="Previous"
               onPress={goToPreviousPage}
               disabled={currentPage === 0}
@@ -232,6 +232,26 @@ const ItemBrowserScreen = () => {
               title="Next"
               onPress={goToNextPage}
               disabled={(currentPage + 1) * ITEMS_PER_PAGE >= items.length}
+            /> */}
+            <Button
+              label="Previous"
+              onPress={goToPreviousPage}
+              disabled={currentPage === 0}
+              style={{
+                ...ButtonStyles.buttonSmall,
+                ...ButtonStyles.buttonPrimaryColor,
+                ...{ margin: 4 },
+              }}
+            />
+            <Button
+              label="Next"
+              onPress={goToNextPage}
+              disabled={(currentPage + 1) * ITEMS_PER_PAGE >= items.length}
+              style={{
+                ...ButtonStyles.buttonSmall,
+                ...ButtonStyles.buttonPrimaryColor,
+                ...{ margin: 4 },
+              }}
             />
           </View>
         </View>

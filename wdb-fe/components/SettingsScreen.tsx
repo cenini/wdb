@@ -1,6 +1,8 @@
-import React, { useContext } from 'react';
-import { View, Button, StyleSheet } from 'react-native';
-import { AuthContext } from '../App';
+import React, { useContext } from "react";
+import { View, StyleSheet } from "react-native";
+import { AuthContext } from "../App";
+import Button from "./Button";
+import { ButtonStyles } from "./Styles";
 
 const SettingsScreen = ({ navigation }) => {
   const { logout } = useContext(AuthContext);
@@ -11,8 +13,12 @@ const SettingsScreen = ({ navigation }) => {
   return (
     <View style={styles.container}>
       <Button
-        title="Log Out"
+        label="Log Out"
         onPress={handleLogout}
+        style={{
+          ...ButtonStyles.buttonMedium,
+          ...ButtonStyles.buttonSecondaryColor,
+        }}
       />
       {/* Add more settings options here in the future */}
     </View>
@@ -22,8 +28,8 @@ const SettingsScreen = ({ navigation }) => {
 const styles = StyleSheet.create({
   container: {
     flex: 1,
-    justifyContent: 'center',
-    alignItems: 'center',
+    justifyContent: "center",
+    alignItems: "center",
   },
 });
 
