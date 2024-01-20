@@ -71,6 +71,9 @@ export class ItemController {
 
   @Delete(':itemId')
   async Item(@Request() req, @Param('itemId') itemId): Promise<ItemDto> {
+    await this.mediaService.deleteImageFolder(
+      this.mediaService.generateItemFolderPath(itemId, req.user.sub),
+    );
     return plainToInstance(
       ItemDto,
       await this.itemService.deleteItem({ id: itemId }),
@@ -113,10 +116,17 @@ export class ItemController {
     @Param('itemId') itemId,
     @Body() dto: CreateItemPhotoDto,
   ): Promise<PhotoDto> {
+    const uploadedImage = await this.mediaService.uploadImage(
+      dto.base64photo,
+      itemId,
+      req.user.sub,
+    );
+    console.log(uploadedImage);
     return plainToInstance(
       PhotoDto,
       await this.photoService.createPhoto({
-        url: await this.mediaService.uploadImage(dto.base64photo),
+        url: uploadedImage.secureUrl,
+        publicId: uploadedImage.publicId,
         item: {
           connect: { id: itemId },
         },
@@ -149,10 +159,16 @@ export class ItemController {
         connect: { id: req.user.sub },
       },
     });
+    const uploadedImage = await this.mediaService.uploadImage(
+      dto.base64photo,
+      item.id,
+      req.user.sub,
+    );
     return plainToInstance(
       PhotoDto,
       await this.photoService.createPhoto({
-        url: await this.mediaService.uploadImage(dto.base64photo),
+        url: uploadedImage.secureUrl,
+        publicId: uploadedImage.publicId,
         item: {
           connect: { id: item.id },
         },

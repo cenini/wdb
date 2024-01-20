@@ -1,6 +1,6 @@
 import { Injectable, OnModuleInit } from '@nestjs/common';
 import { ConfigService } from '@nestjs/config';
-import { v2 as cloudinary } from 'cloudinary';
+import { UploadApiOptions, v2 as cloudinary } from 'cloudinary';
 
 @Injectable()
 export class MediaService implements OnModuleInit {
@@ -14,13 +14,41 @@ export class MediaService implements OnModuleInit {
     });
   }
 
-  async uploadImage(base64Image: string): Promise<string> {
+  generateItemFolderPath(itemId, userId) {
+    return `items/${userId}/${itemId}`;
+  }
+
+  async uploadImage(
+    base64Image: string,
+    itemId: string,
+    userId: string,
+  ): Promise<UploadedImage> {
     const result = await cloudinary.uploader.upload(
       base64Image,
+      {
+        folder: this.generateItemFolderPath(itemId, userId),
+      },
       function (error, result) {
         // console.log(result);
       },
     );
-    return result.secure_url;
+    return { publicId: result.public_id, secureUrl: result.secure_url };
   }
+
+  async deleteImageFolder(path): Promise<void> {
+    const result = await cloudinary.api.delete_resources_by_prefix(path);
+    console.log(`Deleted images at path ${path}`);
+    console.log(result);
+  }
+
+  async deleteImages(publicIds: string[]): Promise<void> {
+    const result = await cloudinary.api.delete_resources(publicIds);
+    console.log(`Deleted images with ids ${publicIds}`);
+    console.log(result);
+  }
+}
+
+export interface UploadedImage {
+  publicId: string;
+  secureUrl: string;
 }

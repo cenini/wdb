@@ -1,4 +1,11 @@
-import { View, Text, ScrollView, TextInput, StyleSheet } from "react-native";
+import {
+  View,
+  Text,
+  ScrollView,
+  TextInput,
+  StyleSheet,
+  Pressable,
+} from "react-native";
 import Button from "./Button";
 import { ItemModel, PhotoModel, TagType } from "../models/ItemModel";
 import { useState } from "react";
@@ -9,10 +16,12 @@ import {
   ExtractKvpTagModelsFromTagModels,
   ExtractNameTagModelsFromTagModels,
 } from "../utils/Convert";
+import { Entypo } from "@expo/vector-icons";
 
 const ItemManagementScreen = ({
   item,
   updateItem,
+  deleteItem,
   onClose,
 }: {
   item: ItemModel;
@@ -21,6 +30,7 @@ const ItemManagementScreen = ({
     nameTags: NameTagModel[],
     kvpTags: KvpTagModel[]
   ) => Promise<void>;
+  deleteItem: (item: ItemModel) => Promise<void>;
   onClose: () => void;
 }) => {
   const [title, setTitle] = useState(item.title);
@@ -42,7 +52,13 @@ const ItemManagementScreen = ({
 
   const addPhotos = (photos: PhotoModel) => {};
 
+  const handleDelete = async () => {
+    await deleteItem(item);
+    await onClose();
+  };
+
   const handleClose = async () => {
+    // console.log("Clicked close button!");
     await updateItem(title, nameTags, kvpTags);
     onClose();
   };
@@ -52,14 +68,9 @@ const ItemManagementScreen = ({
       style={styles.scrollView}
       contentContainerStyle={styles.container}
     >
-      <Button
-        label={""}
-        symbol={"picture-o"}
-        onPress={handleClose}
-        width={24}
-        height={24}
-        margin={20}
-      />
+      <Pressable onPress={handleClose} style={styles.crossStyle}>
+        <Entypo name="cross" size={24} color="#25292e" />
+      </Pressable>
       <TextInput
         placeholder={"Title"}
         style={styles.input}
@@ -74,6 +85,14 @@ const ItemManagementScreen = ({
           onPress={addPhotos}
           width={320}
           height={68}
+          margin={20}
+        />
+        <Button
+          label={"Delete item"}
+          symbol={"picture-o"}
+          onPress={handleDelete}
+          width={160}
+          height={51}
           margin={20}
         />
         <TagEditor
@@ -153,6 +172,11 @@ const styles = StyleSheet.create({
     alignItems: "center",
     justifyContent: "center",
     zIndex: 1,
+  },
+  crossStyle: {
+    width: 24,
+    height: 24,
+    margin: 20,
   },
 });
 

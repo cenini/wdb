@@ -39,6 +39,7 @@ export class ItemDto {
 export class PhotoDto {
   id: string;
   url: string;
+  publicId: string;
   itemId: string;
   createdAt: Date;
   updatedAt: Date | null;

@@ -14,7 +14,7 @@ import {
   FlatList,
   GestureResponderEvent,
 } from "react-native";
-import axios from "axios";
+import axios, { HttpStatusCode } from "axios";
 import Constants from "expo-constants";
 import { plainToClass, plainToInstance } from "class-transformer";
 import { CreateItemTagsDto, ItemDto } from "../dto/ItemDto";
@@ -147,6 +147,13 @@ const ItemBrowserScreen = () => {
     setItemsUpdated(itemsUpdated + 1);
   };
 
+  const deleteItem = async (item: ItemModel) => {
+    const deleteResponse = await axios.delete(
+      `${Constants.expoConfig.extra.env.EXPO_PUBLIC_API_URL}items/${selectedItem.id}`
+    );
+    setItemsUpdated(itemsUpdated + 1);
+  };
+
   const handleHoverIn = (itemId) => {
     setHoveredItemId(itemId);
   };
@@ -233,6 +240,7 @@ const ItemBrowserScreen = () => {
           <ItemManagementScreen
             item={selectedItem}
             updateItem={updateItem}
+            deleteItem={deleteItem}
             onClose={handleItemClose}
           />
         </View>

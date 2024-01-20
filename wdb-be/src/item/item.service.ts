@@ -100,6 +100,7 @@ export function mapPhotoToPhotoDto(photo: any): PhotoDto {
   return {
     id: photo.id,
     url: photo.url,
+    publicId: photo.publicId,
     itemId: photo.itemId,
     createdAt: photo.createdAt,
     updatedAt: photo.updatedAt || null,

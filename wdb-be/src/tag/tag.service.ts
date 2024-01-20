@@ -73,6 +73,8 @@ export class TagService {
     for (const tagData of tagDataArray) {
       const { name, key, value, type } = tagData;
 
+      if (key === null || value === null) continue;
+
       if (type === $Enums.TagType.KEY_VALUE) {
         const upsertedTag = await this.prisma.tag.upsert({
           where: { key_value: { key, value } },
