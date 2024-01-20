@@ -69,6 +69,13 @@ export class ItemController {
     return items.map((item) => mapItemToItemDto(item));
   }
 
+  @Get(':itemId')
+  async getItem(@Request() req, @Param('itemId') itemId): Promise<ItemDto> {
+    return mapItemToItemDto(
+      await this.itemService.getItemForOwner(itemId, req.user.sub),
+    );
+  }
+
   @Delete(':itemId')
   async Item(@Request() req, @Param('itemId') itemId): Promise<ItemDto> {
     await this.mediaService.deleteImageFolder(

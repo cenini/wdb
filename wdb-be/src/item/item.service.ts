@@ -7,11 +7,36 @@ import { ItemDto, ItemTagDto, PhotoDto, TagDto } from '../dto/ItemDto';
 export class ItemService {
   constructor(private prisma: PrismaService) {}
 
-  async item(
-    itemWhereUniqueInput: Prisma.ItemWhereUniqueInput,
-  ): Promise<Item | null> {
+  async item(itemId: string): Promise<Item | null> {
     return this.prisma.item.findUnique({
-      where: itemWhereUniqueInput,
+      where: {
+        id: itemId,
+      },
+      include: {
+        photos: true,
+        itemTags: {
+          include: {
+            tag: true,
+          },
+        },
+      },
+    });
+  }
+
+  async getItemForOwner(itemId: string, ownerId: number): Promise<Item | null> {
+    return this.prisma.item.findUnique({
+      where: {
+        id: itemId,
+        ownerId: ownerId,
+      },
+      include: {
+        photos: true,
+        itemTags: {
+          include: {
+            tag: true,
+          },
+        },
+      },
     });
   }
 
