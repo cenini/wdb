@@ -194,9 +194,12 @@ const ItemBrowserScreen = () => {
   if (error) return <Text>Error: {error}</Text>;
 
   return (
-    <View style={styles.container}>
+    <ScrollView
+      style={styles.mainScrollView}
+      contentContainerStyle={styles.contentContainer}
+    >
       {selectedItem === null ? (
-        <View>
+        <View style={styles.container}>
           <View style={styles.inputContainer}>
             <TextInput
               style={CommonStyles.textInput}
@@ -223,25 +226,27 @@ const ItemBrowserScreen = () => {
               ))}
             </View>
           </View>
-          <View style={styles.grid}>
-            {paginatedItems.map((item, index) => (
-              <Pressable
-                key={index}
-                onPress={() => handleImageClick(item)}
-                onHoverIn={() => handleHoverIn(item.id)}
-                onHoverOut={handleHoverOut}
-              >
-                <Image
-                  source={{ uri: item.photos[0].url }}
-                  style={styles.image}
-                />
-                {hoveredItemId === item.id && (
-                  <View style={styles.overlay}>
-                    <Text style={styles.overlayText}>{item.title}</Text>
-                  </View>
-                )}
-              </Pressable>
-            ))}
+          <View style={styles.gridContainer}>
+            <View style={styles.grid}>
+              {paginatedItems.map((item, index) => (
+                <Pressable
+                  key={index}
+                  onPress={() => handleImageClick(item)}
+                  onHoverIn={() => handleHoverIn(item.id)}
+                  onHoverOut={handleHoverOut}
+                >
+                  <Image
+                    source={{ uri: item.photos[0].url }}
+                    style={styles.image}
+                  />
+                  {hoveredItemId === item.id && (
+                    <View style={styles.overlay}>
+                      <Text style={styles.overlayText}>{item.title}</Text>
+                    </View>
+                  )}
+                </Pressable>
+              ))}
+            </View>
           </View>
           <View style={styles.navigation}>
             <Button
@@ -267,7 +272,7 @@ const ItemBrowserScreen = () => {
           </View>
         </View>
       ) : (
-        <View style={styles.grid}>
+        <View style={styles.itemContainer}>
           <ItemManagementScreen
             item={selectedItem}
             updateItem={updateItem}
@@ -276,28 +281,50 @@ const ItemBrowserScreen = () => {
           />
         </View>
       )}
-    </View>
+    </ScrollView>
   );
 };
 
 const styles = StyleSheet.create({
-  container: {
-    justifyContent: "space-between",
+  mainScrollView: {
     flex: 1,
-    padding: 20,
-    alignSelf: "center",
     backgroundColor: "#25292e",
+  },
+  contentContainer: {
+    flexGrow: 1,
+  },
+  container: {
+    justifyContent: "flex-start",
+    padding: 10,
+    backgroundColor: "#25292e",
+    width: "100%",
   },
   inputContainer: {
     backgroundColor: "#25292e",
+    alignSelf: "center",
+    alignItems: "center",
+  },
+  gridContainer: {
     alignSelf: "center",
   },
   grid: {
     flexDirection: "row",
     flexWrap: "wrap",
-    alignSelf: "center",
+    alignSelf: "flex-start",
+    justifyContent: "flex-start",
     padding: 10,
-    width: 500,
+    width: 500, // Adjust as needed
+  },
+  itemContainer: {
+    // Adjust the size to take more screen space
+    flex: 1,
+    padding: 20,
+    alignSelf: "center",
+    backgroundColor: "#25292e",
+    // Adjust width and height as needed
+    width: "50%",
+    height: "100%",
+    overflow: "hidden", // Hide the inner scrollbar
   },
   image: {
     width: 150, // Adjust for 3 images per row

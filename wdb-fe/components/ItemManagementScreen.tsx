@@ -18,7 +18,7 @@ import {
   ExtractNameTagModelsFromTagModels,
 } from "../utils/Convert";
 import { Entypo } from "@expo/vector-icons";
-import { ButtonStyles } from "./Styles";
+import { ButtonStyles, CommonStyles } from "./Styles";
 
 const ItemManagementScreen = ({
   item,
@@ -81,16 +81,13 @@ const ItemManagementScreen = ({
   };
 
   return (
-    <ScrollView
-      style={styles.scrollView}
-      contentContainerStyle={styles.container}
-    >
+    <View style={styles.container}>
       <Pressable onPress={handleClose} style={styles.crossStyle}>
-        <Entypo name="cross" size={24} color="#25292e" />
+        <Entypo name="cross" size={24} color="#fff" />
       </Pressable>
       <TextInput
         placeholder={"Title"}
-        style={styles.input}
+        style={CommonStyles.textInput}
         onChangeText={setTitle}
         value={title}
       />
@@ -129,18 +126,18 @@ const ItemManagementScreen = ({
           setKvpTags={setKvpTags}
         />
       </View>
-    </ScrollView>
+    </View>
   );
 };
 
 const styles = StyleSheet.create({
   scrollView: {
     flex: 1,
-    backgroundColor: "#fff",
+    backgroundColor: "#25292e",
   },
   container: {
     flex: 1,
-    backgroundColor: "#fff",
+    backgroundColor: "#25292e",
     justifyContent: "center",
     alignItems: "center",
   },
@@ -148,20 +145,8 @@ const styles = StyleSheet.create({
     fontSize: 24,
     fontWeight: "bold",
   },
-  input: {
-    height: 40,
-    margin: 12,
-    marginVertical: 5,
-    borderWidth: 1,
-    padding: 10,
-    width: 240,
-  },
   buttonContainer: {
-    width: 320,
-    height: 68,
-    marginHorizontal: 20,
     alignItems: "center",
-    // justifyContent: 'center',
     padding: 3,
     marginVertical: 5,
   },

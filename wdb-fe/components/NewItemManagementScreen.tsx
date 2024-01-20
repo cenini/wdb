@@ -27,6 +27,7 @@ import { KvpTagModel, NameTagModel } from "../models/TagModel";
 import TagEditor from "./TagEditor";
 import ImageBox from "./ImageBox";
 import Button from "./Button";
+import { ButtonStyles } from "./Styles";
 
 export default function NewItemManagementScreen({ route, navigation }) {
   const { newItems, dispatch } = useContext(NewItemsContext);
@@ -199,9 +200,11 @@ export default function NewItemManagementScreen({ route, navigation }) {
           label={"Add to wardrobe"}
           symbol={"picture-o"}
           onPress={createItem}
-          width={320}
-          height={68}
-          margin={20}
+          style={{
+            ...ButtonStyles.buttonLarge,
+            ...ButtonStyles.buttonPrimaryColor,
+            ...{ margin: 20 },
+          }}
         />
         <TagEditor
           nameTags={nameTags}
