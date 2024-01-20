@@ -157,7 +157,9 @@ export default function Button({
         ) : (
           <></>
         )}
-        <Text style={[styles.buttonLabel]}>{label}</Text>
+        <Text style={[styles.buttonLabel]} selectable={false}>
+          {label}
+        </Text>
       </Pressable>
     </View>
   );
