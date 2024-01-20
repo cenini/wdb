@@ -5,6 +5,7 @@ import {
   TextInput,
   StyleSheet,
   Pressable,
+  Alert,
 } from "react-native";
 import Button from "./Button";
 import { ItemModel, PhotoModel, TagType } from "../models/ItemModel";
@@ -17,6 +18,7 @@ import {
   ExtractNameTagModelsFromTagModels,
 } from "../utils/Convert";
 import { Entypo } from "@expo/vector-icons";
+import { ButtonStyles } from "./Styles";
 
 const ItemManagementScreen = ({
   item,
@@ -53,6 +55,20 @@ const ItemManagementScreen = ({
   const addPhotos = (photos: PhotoModel) => {};
 
   const handleDelete = async () => {
+    // Alert.alert("Are you sure?", "Deletion can not be reverted", [
+    //   {
+    //     text: "Cancel",
+    //     onPress: () => {},
+    //     style: "cancel",
+    //   },
+    //   {
+    //     text: "OK",
+    //     onPress: async () => {
+    //       await deleteItem(item);
+    //       await onClose();
+    //     },
+    //   },
+    // ]);
     await deleteItem(item);
     await onClose();
   };
@@ -83,17 +99,29 @@ const ItemManagementScreen = ({
           label={"Add photos"}
           symbol={"picture-o"}
           onPress={addPhotos}
-          width={320}
-          height={68}
-          margin={20}
+          // width={320}
+          // height={68}
+          // margin={10}
+          style={{
+            ...ButtonStyles.buttonLarge,
+            ...ButtonStyles.buttonPrimaryColor,
+            ...{ margin: 10 },
+          }}
         />
         <Button
           label={"Delete item"}
           symbol={"picture-o"}
           onPress={handleDelete}
-          width={160}
-          height={51}
-          margin={20}
+          // width={160}
+          // height={51}
+          // margin={10}
+          // buttonColor="#FF8080"
+          // buttonShadowColor="#A44040"
+          style={{
+            ...ButtonStyles.buttonMedium,
+            ...ButtonStyles.buttonWarningColor,
+            ...{ margin: 10 },
+          }}
         />
         <TagEditor
           nameTags={nameTags}

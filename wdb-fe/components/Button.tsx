@@ -13,16 +13,18 @@ export interface ButtonStyle {
   width: number;
   height: number;
   margin: number;
+  backgroundColor: string;
+  shadowColor: string;
+  labelColor: string;
 }
 
 export default function Button({
   label,
   onPress,
+  style = null,
   symbol = null,
   icon = null,
   theme = "",
-  width = null,
-  height = null,
   margin = 0,
 }) {
   const [isPressedIn, setIsPressedIn] = useState(false);
@@ -41,27 +43,11 @@ export default function Button({
   const ButtonBorderWidth = 4;
   const ButtonShadowHeight = 6;
   const buttonContainerStyle =
-    width !== null && height !== null
+    style !== null
       ? ({
-          width: width as number,
-          height: height as number,
-          margin: margin,
-          alignItems: "center",
-          justifyContent: "center",
-          padding: 3,
-        } as ViewStyle)
-      : width !== null
-      ? ({
-          width: width as number,
-          margin: margin,
-          alignItems: "center",
-          justifyContent: "center",
-          padding: 3,
-        } as ViewStyle)
-      : height !== null
-      ? ({
-          height: height as number,
-          margin: margin,
+          width: style.width,
+          height: style.height,
+          margin: style.margin,
           alignItems: "center",
           justifyContent: "center",
           padding: 3,
@@ -74,14 +60,6 @@ export default function Button({
         } as ViewStyle);
 
   const styles = StyleSheet.create({
-    // buttonContainer: {
-    //   width: width,
-    //   height: height,
-    //   margin: margin,
-    //   alignItems: "center",
-    //   justifyContent: "center",
-    //   padding: 3,
-    // },
     buttonContainer: buttonContainerStyle,
     button: {
       borderRadius: 10,
@@ -90,11 +68,11 @@ export default function Button({
       alignItems: "center",
       justifyContent: "center",
       flexDirection: "row",
-      backgroundColor: "#EAECCC",
-      shadowColor: "#DBCC95",
+      backgroundColor: style?.backgroundColor ?? "#ffffff", // should be white or dark gray depending on theme
+      shadowColor: style?.shadowColor ?? "#000000",
       shadowOffset: { width: 0, height: ButtonShadowHeight },
       borderWidth: ButtonBorderWidth,
-      borderColor: "#DBCC95",
+      borderColor: style?.shadowColor ?? "#000000",
     },
     buttonPressed: {
       borderRadius: 10,
@@ -103,16 +81,16 @@ export default function Button({
       alignItems: "center",
       justifyContent: "center",
       flexDirection: "row",
-      backgroundColor: "#EAECCC",
+      backgroundColor: style?.backgroundColor ?? "#ffffff",
       borderWidth: ButtonBorderWidth,
-      borderColor: "#DBCC95",
+      borderColor: style?.shadowColor ?? "#000000",
       marginTop: ButtonBorderWidth + ButtonShadowHeight,
     },
     buttonIcon: {
       paddingRight: 8,
     },
     buttonLabel: {
-      color: "#fff",
+      color: style?.labelColor ?? "#000000", // "#fff",
       fontSize: 16,
     },
   });

@@ -4,7 +4,7 @@ import { useNavigation } from "@react-navigation/native";
 import Button from "./Button";
 import { useContext } from "react";
 import { AuthContext } from "../App";
-import { CommonStyles } from "./Styles";
+import { ButtonStyles, CommonStyles } from "./Styles";
 
 export default function LoginScreen({ navigation }) {
   const { login } = useContext(AuthContext);
@@ -40,8 +40,10 @@ export default function LoginScreen({ navigation }) {
         label="Login"
         theme="primary"
         onPress={async () => await tryLogin(email, password)}
-        width={320}
-        height={68}
+        style={{
+          ...ButtonStyles.buttonLarge,
+          ...ButtonStyles.buttonPrimaryColor,
+        }}
       />
       <Text style={styles.text} onPress={() => navigation.navigate("Signup")}>
         No user? Sign up!

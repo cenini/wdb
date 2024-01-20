@@ -7,7 +7,7 @@ import axios, { HttpStatusCode } from "axios";
 import Constants from "expo-constants";
 import { AuthContext } from "../App";
 import { useContext } from "react";
-import { CommonStyles } from "./Styles";
+import { ButtonStyles, CommonStyles } from "./Styles";
 
 export default function SignupScreen({ navigation }) {
   const { signup } = useContext(AuthContext);
@@ -44,8 +44,10 @@ export default function SignupScreen({ navigation }) {
         label="Sign up"
         theme="primary"
         onPress={async () => await trySignUp(email, password)}
-        width={320}
-        height={68}
+        style={{
+          ...ButtonStyles.buttonLarge,
+          ...ButtonStyles.buttonPrimaryColor,
+        }}
       />
       <Text style={styles.text} onPress={() => navigation.navigate("Login")}>
         Already have a user? Log in!

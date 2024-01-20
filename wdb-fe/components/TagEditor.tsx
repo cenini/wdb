@@ -16,6 +16,7 @@ import { FontAwesome5 } from "@expo/vector-icons";
 import { plainToInstance } from "class-transformer";
 import Button from "./Button";
 import { AntDesign } from "@expo/vector-icons";
+import { ButtonStyles } from "./Styles";
 
 // export default function TagEditor({
 //   nameTags,
@@ -141,20 +142,24 @@ export default function TagEditor({
     <View style={styles.container}>
       <View style={styles.buttonContainer}>
         <Button
-          width={120}
-          height={40}
+          style={{
+            ...ButtonStyles.buttonSmall,
+            ...ButtonStyles.buttonPrimaryColor,
+            ...{ margin: 4 },
+          }}
           onPress={handleAddNameTag}
           label={""}
           icon={<AntDesign name="right" size={24} color="black" />}
-          margin={4}
         />
         <Button
-          width={120}
-          height={40}
+          style={{
+            ...ButtonStyles.buttonSmall,
+            ...ButtonStyles.buttonPrimaryColor,
+            ...{ margin: 4 },
+          }}
           onPress={handleAddKvpTag}
           label={""}
           icon={<AntDesign name="doubleright" size={24} color="black" />}
-          margin={4}
         />
       </View>
       <FlatList
@@ -187,13 +192,15 @@ export default function TagEditor({
               />
             )}
             <Button
-              width={60}
-              height={40}
               onPress={() =>
                 item.type === "name"
                   ? handleRejectNameTag(item)
                   : handleRejectKvpTag(item)
               }
+              style={{
+                ...ButtonStyles.buttonPrimaryColor,
+                ...{ width: 60, height: 40 },
+              }}
               label={""}
               icon={<AntDesign name="minuscircleo" size={24} color="black" />}
             />
@@ -234,8 +241,10 @@ export default function TagEditor({
               />
             )}
             <Button
-              width={60}
-              height={40}
+              style={{
+                ...ButtonStyles.buttonPrimaryColor,
+                ...{ width: 60, height: 40 },
+              }}
               onPress={() =>
                 item.type === "suggestedName"
                   ? handleAcceptSuggestedNameTag(item)

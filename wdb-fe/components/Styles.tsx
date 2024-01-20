@@ -1,4 +1,4 @@
-import { StyleSheet } from "react-native";
+import { StyleSheet, Pressable } from "react-native";
 
 export const CommonStyles = StyleSheet.create({
   textInput: {
@@ -13,9 +13,37 @@ export const CommonStyles = StyleSheet.create({
     // color: '#fff',
     // borderColor: '#fff',
   },
-  bigButton: {
+});
+
+export const ButtonStyles = {
+  buttonLarge: {
     width: 320,
     height: 68,
-    margin: 20,
+    // margin: 20,
   },
-});
+  buttonMedium: {
+    width: 160,
+    height: 51,
+    // margin: 20,
+  },
+  buttonSmall: {
+    width: 120,
+    height: 34,
+    // margin: 20,
+  },
+  buttonPrimaryColor: {
+    backgroundColor: "#EAECCC",
+    shadowColor: "#DBCC95",
+    labelColor: "#fff",
+  },
+  buttonSecondaryColor: {
+    backgroundColor: "#EAECCC",
+    shadowColor: "#DBCC95",
+    labelColor: "#fff",
+  },
+  buttonWarningColor: {
+    backgroundColor: "#FF8080",
+    shadowColor: "#A44040",
+    labelColor: "#fff",
+  },
+};
