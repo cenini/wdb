@@ -22,6 +22,7 @@ import { ButtonStyles, CommonStyles } from "./Styles";
 import ItemManagementScreen from "./ItemManagementScreen";
 import { KvpTagModel, NameTagModel } from "../models/TagModel";
 import Button from "./Button";
+import { useFocusEffect } from "@react-navigation/native";
 
 const ITEMS_PER_PAGE = 12;
 
@@ -36,10 +37,15 @@ const ItemBrowserScreen = () => {
   const [hoveredItemId, setHoveredItemId] = useState(null);
   const [searchText, setSearchText] = useState("");
 
-  useEffect(() => {
-    console.log("Getting items...");
-    getItemsAsync();
-  }, []);
+  useFocusEffect(
+    React.useCallback(() => {
+      getItemsAsync();
+
+      return () => {
+        // Do something when the screen is unfocused
+      };
+    }, [])
+  );
 
   useEffect(() => {
     setItems(
@@ -159,7 +165,6 @@ const ItemBrowserScreen = () => {
           }
           return item;
         });
-        console.log(updatedItems);
         setItems(updatedItems);
       })
       .catch((err) => {
@@ -169,10 +174,12 @@ const ItemBrowserScreen = () => {
       });
   };
 
-  const deleteItem = async (item: ItemModel) => {
+  const deleteItem = async (deletedItem: ItemModel) => {
     const deleteResponse = await axios.delete(
-      `${Constants.expoConfig.extra.env.EXPO_PUBLIC_API_URL}items/${selectedItem.id}`
+      `${Constants.expoConfig.extra.env.EXPO_PUBLIC_API_URL}items/${deletedItem.id}`
     );
+    setItems(items.filter((item) => item.id !== deletedItem.id));
+    setCurrentPage(0);
   };
 
   const handleHoverIn = (itemId) => {
