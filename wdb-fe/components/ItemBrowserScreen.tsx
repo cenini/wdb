@@ -32,7 +32,6 @@ const ItemBrowserScreen = () => {
   const [loading, setLoading] = useState(true);
   const [error, setError] = useState(null);
   const [selectedItem, setSelectedItem] = useState(null);
-  const [itemsUpdated, setItemsUpdated] = useState(0);
   const [currentPage, setCurrentPage] = useState(0);
   const [hoveredItemId, setHoveredItemId] = useState(null);
   const [searchText, setSearchText] = useState("");
@@ -40,7 +39,7 @@ const ItemBrowserScreen = () => {
   useEffect(() => {
     console.log("Getting items...");
     getItemsAsync();
-  }, [itemsUpdated]);
+  }, []);
 
   useEffect(() => {
     setItems(
@@ -131,12 +130,13 @@ const ItemBrowserScreen = () => {
   };
 
   const updateItem = async (
+    itemToUpdate: ItemModel,
     title: string,
     nameTags: NameTagModel[],
     kvpTags: KvpTagModel[]
   ) => {
     const tagsResponse = await axios.post(
-      `${Constants.expoConfig.extra.env.EXPO_PUBLIC_API_URL}items/${selectedItem.id}/tags`,
+      `${Constants.expoConfig.extra.env.EXPO_PUBLIC_API_URL}items/${itemToUpdate.id}/tags`,
       plainToClass(CreateItemTagsDto, {
         nameTags: nameTags.filter((nameTag) => nameTag.name !== ""),
         kvpTags: kvpTags.filter(
@@ -144,14 +144,35 @@ const ItemBrowserScreen = () => {
         ),
       })
     );
-    setItemsUpdated(itemsUpdated + 1);
+    axios
+      .get(
+        `${Constants.expoConfig.extra.env.EXPO_PUBLIC_API_URL}items/${itemToUpdate.id}`
+      )
+      .then((response) => {
+        const updatedItem = plainToInstance(
+          ItemModel,
+          response.data as ItemDto
+        );
+        const updatedItems = items.map((item) => {
+          if (item.id === updatedItem.id) {
+            return updatedItem;
+          }
+          return item;
+        });
+        console.log(updatedItems);
+        setItems(updatedItems);
+      })
+      .catch((err) => {
+        console.log(err);
+        setError(err.message);
+        setLoading(false);
+      });
   };
 
   const deleteItem = async (item: ItemModel) => {
     const deleteResponse = await axios.delete(
       `${Constants.expoConfig.extra.env.EXPO_PUBLIC_API_URL}items/${selectedItem.id}`
     );
-    setItemsUpdated(itemsUpdated + 1);
   };
 
   const handleHoverIn = (itemId) => {
@@ -223,16 +244,6 @@ const ItemBrowserScreen = () => {
             ))}
           </View>
           <View style={styles.navigation}>
-            {/* <Button
-              title="Previous"
-              onPress={goToPreviousPage}
-              disabled={currentPage === 0}
-            />
-            <Button
-              title="Next"
-              onPress={goToNextPage}
-              disabled={(currentPage + 1) * ITEMS_PER_PAGE >= items.length}
-            /> */}
             <Button
               label="Previous"
               onPress={goToPreviousPage}

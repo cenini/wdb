@@ -28,6 +28,7 @@ const ItemManagementScreen = ({
 }: {
   item: ItemModel;
   updateItem: (
+    item: ItemModel,
     title: string,
     nameTags: NameTagModel[],
     kvpTags: KvpTagModel[]
@@ -75,7 +76,7 @@ const ItemManagementScreen = ({
 
   const handleClose = async () => {
     // console.log("Clicked close button!");
-    await updateItem(title, nameTags, kvpTags);
+    await updateItem(item, title, nameTags, kvpTags);
     onClose();
   };
 
