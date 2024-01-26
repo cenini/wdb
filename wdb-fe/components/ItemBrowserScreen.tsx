@@ -143,8 +143,10 @@ const ItemBrowserScreen = () => {
         // If not, add it to the array
         return [...prevSelectedItems, item];
       }
-      // Otherwise, return the array unchanged
-      return prevSelectedItems;
+      // Otherwise, return the array without that item
+      return prevSelectedItems.filter(
+        (selectedItem) => selectedItem.id !== item.id
+      );
     });
   };
 
