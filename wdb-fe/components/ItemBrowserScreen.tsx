@@ -274,6 +274,7 @@ const ItemBrowserScreen = () => {
                 ...ButtonStyles.buttonPrimaryColor,
                 ...{ margin: 4 },
               }}
+              disabled={selectedItems.length === 0}
             />
           </View>
           <View style={styles.gridContainer}>
