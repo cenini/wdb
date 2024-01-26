@@ -2,7 +2,7 @@ import React, { useContext } from "react";
 import { View, StyleSheet } from "react-native";
 import { AuthContext } from "../App";
 import Button from "./Button";
-import { ButtonStyles } from "./Styles";
+import { ButtonStyles, CommonStyles } from "./Styles";
 
 const SettingsScreen = ({ navigation }) => {
   const { logout } = useContext(AuthContext);
@@ -30,6 +30,7 @@ const styles = StyleSheet.create({
     flex: 1,
     justifyContent: "center",
     alignItems: "center",
+    backgroundColor: CommonStyles.view.backgroundColor,
   },
 });
 

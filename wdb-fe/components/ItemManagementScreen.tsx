@@ -133,11 +133,11 @@ const ItemManagementScreen = ({
 const styles = StyleSheet.create({
   scrollView: {
     flex: 1,
-    backgroundColor: "#25292e",
+    backgroundColor: CommonStyles.view.backgroundColor,
   },
   container: {
     flex: 1,
-    backgroundColor: "#25292e",
+    backgroundColor: CommonStyles.view.backgroundColor,
     justifyContent: "center",
     alignItems: "center",
   },

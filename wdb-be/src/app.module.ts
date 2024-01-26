@@ -9,6 +9,7 @@ import { ItemModule } from './item/item.module';
 import { PhotoModule } from './photo/photo.module';
 import { AIModule } from './ai/ai.module';
 import { TagModule } from './tag/tag.module';
+import { OutfitModule } from './outfit/outfit.module';
 
 @Module({
   imports: [
@@ -19,6 +20,7 @@ import { TagModule } from './tag/tag.module';
     PhotoModule,
     AIModule,
     TagModule,
+    OutfitModule,
   ],
   controllers: [AppController],
   providers: [AppService, PrismaService],

@@ -58,7 +58,7 @@ export default function LoginScreen({ navigation }) {
 const styles = StyleSheet.create({
   container: {
     flex: 1,
-    backgroundColor: "#25292e",
+    backgroundColor: CommonStyles.view.backgroundColor,
     alignItems: "center",
     justifyContent: "flex-start", // Start aligning items from the top
   },

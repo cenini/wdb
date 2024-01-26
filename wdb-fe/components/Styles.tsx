@@ -13,23 +13,23 @@ export const CommonStyles = StyleSheet.create({
     // color: '#fff',
     // borderColor: '#fff',
   },
+  view: {
+    backgroundColor: "#25292e",
+  },
 });
 
 export const ButtonStyles = {
   buttonLarge: {
     width: 320,
     height: 68,
-    // margin: 20,
   },
   buttonMedium: {
     width: 160,
     height: 51,
-    // margin: 20,
   },
   buttonSmall: {
     width: 120,
     height: 34,
-    // margin: 20,
   },
   buttonPrimaryColor: {
     backgroundColor: "#EAECCC",

@@ -81,10 +81,6 @@ export default function HomeScreen({ navigation }) {
           symbol="picture-o"
           label="Add some images"
           onPress={pickImageAsync}
-          // style={CommonStyles.bigButton}
-          // width={320}
-          // height={68}
-          // margin={20}
           style={{
             ...ButtonStyles.buttonLarge,
             ...ButtonStyles.buttonPrimaryColor,
@@ -100,15 +96,9 @@ export default function HomeScreen({ navigation }) {
 const styles = StyleSheet.create({
   container: {
     flex: 1,
-    backgroundColor: "#25292e",
+    backgroundColor: CommonStyles.view.backgroundColor,
     alignItems: "center",
     justifyContent: "flex-start", // Start aligning items from the top
-  },
-  hamburgerButton: {
-    position: "absolute",
-    top: 40, // Adjust based on your status bar and layout
-    left: 40,
-    zIndex: 1, // Make sure it's above all other elements
   },
   headerContainer: {
     flex: 0.75,

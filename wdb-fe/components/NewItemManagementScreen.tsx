@@ -27,7 +27,7 @@ import { KvpTagModel, NameTagModel } from "../models/TagModel";
 import TagEditor from "./TagEditor";
 import ImageBox from "./ImageBox";
 import Button from "./Button";
-import { ButtonStyles } from "./Styles";
+import { ButtonStyles, CommonStyles } from "./Styles";
 
 export default function NewItemManagementScreen({ route, navigation }) {
   const { newItems, dispatch } = useContext(NewItemsContext);
@@ -190,7 +190,7 @@ export default function NewItemManagementScreen({ route, navigation }) {
     >
       <TextInput
         placeholder={titlePlaceholder}
-        style={styles.input}
+        style={CommonStyles.textInput}
         onChangeText={setTitle}
         value={title}
       />
@@ -226,7 +226,7 @@ export default function NewItemManagementScreen({ route, navigation }) {
 const styles = StyleSheet.create({
   scrollView: {
     flex: 1,
-    backgroundColor: "#fff",
+    backgroundColor: CommonStyles.view.backgroundColor,
   },
   container: {
     flexGrow: 1,
@@ -236,14 +236,6 @@ const styles = StyleSheet.create({
   text: {
     fontSize: 24,
     fontWeight: "bold",
-  },
-  input: {
-    height: 40,
-    margin: 12,
-    marginVertical: 5,
-    borderWidth: 1,
-    padding: 10,
-    width: 240,
   },
   buttonContainer: {
     width: 320,

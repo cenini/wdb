@@ -23,6 +23,7 @@ import ItemManagementScreen from "./ItemManagementScreen";
 import { KvpTagModel, NameTagModel } from "../models/TagModel";
 import Button from "./Button";
 import { useFocusEffect } from "@react-navigation/native";
+import { CreateOutfitWithItemsDto } from "../dto/OutfitDto";
 
 const ITEMS_PER_PAGE = 12;
 
@@ -36,6 +37,8 @@ const ItemBrowserScreen = () => {
   const [currentPage, setCurrentPage] = useState(0);
   const [hoveredItemId, setHoveredItemId] = useState(null);
   const [searchText, setSearchText] = useState("");
+  // const [selectedItems, setSelectedItems] = useState(new Set<ItemModel>());
+  const [selectedItems, setSelectedItems] = useState([] as ItemModel[]);
 
   useFocusEffect(
     React.useCallback(() => {
@@ -126,9 +129,36 @@ const ItemBrowserScreen = () => {
     }
   };
 
-  const handleImageClick = (item) => {
+  const handlePress = (item) => {
     setSelectedItem(item);
     // In the future, navigate to the item
+  };
+
+  const handleLongPress = (item: ItemModel) => {
+    setSelectedItems((prevSelectedItems) => {
+      // Check if the item is already in the selectedItems array
+      if (
+        !prevSelectedItems.some((selectedItem) => selectedItem.id === item.id)
+      ) {
+        // If not, add it to the array
+        return [...prevSelectedItems, item];
+      }
+      // Otherwise, return the array unchanged
+      return prevSelectedItems;
+    });
+  };
+
+  const handleCreateOutfit = async () => {
+    const dto = plainToClass(CreateOutfitWithItemsDto, {
+      name: "test",
+      itemIds: selectedItems.map((item) => item.id),
+    });
+    console.log(dto);
+    const outfit = await axios.post(
+      `${Constants.expoConfig.extra.env.EXPO_PUBLIC_API_URL}outfits/items`,
+      dto
+    );
+    setSelectedItems([]);
   };
 
   const handleItemClose = () => {
@@ -233,12 +263,24 @@ const ItemBrowserScreen = () => {
               ))}
             </View>
           </View>
+          <View style={styles.createOutfitContainer}>
+            <Button
+              label="Create outfit"
+              onPress={handleCreateOutfit}
+              style={{
+                ...ButtonStyles.buttonMedium,
+                ...ButtonStyles.buttonPrimaryColor,
+                ...{ margin: 4 },
+              }}
+            />
+          </View>
           <View style={styles.gridContainer}>
             <View style={styles.grid}>
               {paginatedItems.map((item, index) => (
                 <Pressable
                   key={index}
-                  onPress={() => handleImageClick(item)}
+                  onPress={() => handlePress(item)}
+                  onLongPress={() => handleLongPress(item)}
                   onHoverIn={() => handleHoverIn(item.id)}
                   onHoverOut={handleHoverOut}
                 >
@@ -246,6 +288,13 @@ const ItemBrowserScreen = () => {
                     source={{ uri: item.photos[0].url }}
                     style={styles.image}
                   />
+                  {selectedItems.some(
+                    (selectedItem) => selectedItem.id === item.id
+                  ) && (
+                    <View style={styles.selectedOverlay}>
+                      {/* You can add additional content here if needed */}
+                    </View>
+                  )}
                   {hoveredItemId === item.id && (
                     <View style={styles.overlay}>
                       <Text style={styles.overlayText}>{item.title}</Text>
@@ -295,7 +344,7 @@ const ItemBrowserScreen = () => {
 const styles = StyleSheet.create({
   mainScrollView: {
     flex: 1,
-    backgroundColor: "#25292e",
+    backgroundColor: CommonStyles.view.backgroundColor,
   },
   contentContainer: {
     flexGrow: 1,
@@ -303,11 +352,16 @@ const styles = StyleSheet.create({
   container: {
     justifyContent: "flex-start",
     padding: 10,
-    backgroundColor: "#25292e",
+    backgroundColor: CommonStyles.view.backgroundColor,
     width: "100%",
   },
   inputContainer: {
-    backgroundColor: "#25292e",
+    backgroundColor: CommonStyles.view.backgroundColor,
+    alignSelf: "center",
+    alignItems: "center",
+  },
+  createOutfitContainer: {
+    backgroundColor: CommonStyles.view.backgroundColor,
     alignSelf: "center",
     alignItems: "center",
   },
@@ -327,7 +381,7 @@ const styles = StyleSheet.create({
     flex: 1,
     padding: 20,
     alignSelf: "center",
-    backgroundColor: "#25292e",
+    backgroundColor: CommonStyles.view.backgroundColor,
     // Adjust width and height as needed
     width: "50%",
     height: "100%",
@@ -369,6 +423,16 @@ const styles = StyleSheet.create({
     backgroundColor: "#fff",
     alignSelf: "flex-start",
     margin: 2,
+  },
+  selectedOverlay: {
+    position: "absolute",
+    top: 0,
+    left: 0,
+    right: 0,
+    bottom: 0,
+    backgroundColor: "rgba(0, 0, 255, 0.5)", // Blue semi-transparent overlay
+    justifyContent: "center",
+    alignItems: "center",
   },
 });
 
