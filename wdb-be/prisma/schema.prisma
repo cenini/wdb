@@ -1,3 +1,5 @@
+// Distinguish between internal and external ids (internal ids should be bigint serials and primary keys, autoincremented, for the most part)
+
 generator client {
   provider = "prisma-client-js"
 }
@@ -16,6 +18,7 @@ model User {
   createdAt DateTime  @default(now())
   updatedAt DateTime?
   items     Item[]
+  outfits   Outfit[]
 }
 
 model Item {
@@ -69,11 +72,14 @@ enum TagType {
 }
 
 model Outfit {
-  id         String       @id @default(uuid())
-  createdAt  DateTime     @default(now())
-  wornAt     DateTime[]
-  name       String?
-  OutfitItem OutfitItem[]
+  id          String       @id @default(uuid())
+  ownerId     Int
+  createdAt   DateTime     @default(now())
+  wornAt      DateTime[]
+  name        String?
+  outfitItem  OutfitItem[]
+  outfitPhoto OutfitPhoto[]
+  owner       User         @relation(fields: [ownerId], references: [id], onDelete: Cascade)
 }
 
 model OutfitItem {
@@ -83,4 +89,14 @@ model OutfitItem {
   outfit   Outfit @relation(fields: [outfitId], references: [id])
 
   @@id([itemId, outfitId])
+}
+
+model OutfitPhoto {
+  id        String    @id @default(uuid())
+  url       String    @unique @db.VarChar(256)
+  publicId  String    @unique @db.VarChar(256)
+  outfitId  String
+  createdAt DateTime  @default(now())
+  updatedAt DateTime?
+  outfit    Outfit    @relation(fields: [outfitId], references: [id], onDelete: Cascade)
 }

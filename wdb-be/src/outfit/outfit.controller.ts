@@ -6,30 +6,45 @@ import {
   Patch,
   Param,
   Delete,
+  Request,
 } from '@nestjs/common';
 import { OutfitService } from './outfit.service';
 import {
   CreateOutfitDto,
   CreateOutfitWithItemsDto,
+  OutfitCreatedDto
 } from './dto/create-outfit.dto';
+import { CreateOutfit, CreateOutfitWithItems } from './entities/create-outfit.entity';
 import { UpdateOutfitDto } from './dto/update-outfit.dto';
+import { plainToInstance } from 'class-transformer';
 
 @Controller('v1/outfits')
 export class OutfitController {
   constructor(private readonly outfitService: OutfitService) {}
 
   @Post()
-  create(@Body() createOutfitDto: CreateOutfitDto) {
-    return this.outfitService.create(createOutfitDto);
+  async create(@Request() req, @Body() createOutfitDto: CreateOutfitDto) {
+    const owner = { ownerId: parseInt(req.user.sub)} 
+    const createOutfit = plainToInstance(CreateOutfit, { ...createOutfitDto, ...owner})
+    return plainToInstance(
+      OutfitCreatedDto,
+      await this.outfitService.create(createOutfit)
+    );
   }
 
   @Post('items')
-  createWithItems(@Body() createOutfitWithItemsDto: CreateOutfitWithItemsDto) {
-    return this.outfitService.createOutfitWithItems(createOutfitWithItemsDto);
+  async createWithItems(@Request() req, @Body() createOutfitWithItemsDto: CreateOutfitWithItemsDto) {
+    const owner = { ownerId: parseInt(req.user.sub)} 
+    const createOutfitWithItems = plainToInstance(CreateOutfitWithItems, { ...createOutfitWithItemsDto, ...owner})
+    return plainToInstance(
+      OutfitCreatedDto,
+      await this.outfitService.createOutfitWithItems(createOutfitWithItems)
+    );
   }
 
   @Get()
-  findAll() {
+  findAll(@Request() req) {
+    // const items = await this.itemService.getItemsByEmail(req.user.sub);
     return this.outfitService.findAll();
   }
 

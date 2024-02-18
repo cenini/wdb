@@ -6,19 +6,20 @@ import {
 import { UpdateOutfitDto } from './dto/update-outfit.dto';
 import { PrismaService } from '../prisma/prisma.service';
 import { Outfit } from '@prisma/client';
+import { CreateOutfit, CreateOutfitWithItems } from './entities/create-outfit.entity';
 
 @Injectable()
 export class OutfitService {
   constructor(private prisma: PrismaService) {}
 
-  async create(createOutfitDto: CreateOutfitDto): Promise<Outfit> {
-    return this.prisma.outfit.create({ data: createOutfitDto });
+  async create(createOutfit: CreateOutfit): Promise<Outfit> {
+    return this.prisma.outfit.create({ data: createOutfit });
   }
 
   async createOutfitWithItems(
-    createOutfitWithItemsDto: CreateOutfitWithItemsDto,
+    createOutfitWithItems: CreateOutfitWithItems,
   ): Promise<Outfit> {
-    const { itemIds, ...outfitData } = createOutfitWithItemsDto;
+    const { itemIds, ...outfitData } = createOutfitWithItems;
     const outfit = await this.prisma.outfit.create({
       data: outfitData,
     });
@@ -30,6 +31,32 @@ export class OutfitService {
       data: outfitItemsData,
     });
     return outfit;
+  }
+
+  async getOutfitsById(id: number) {
+    try {
+      const outfits = await this.prisma.outfit.findMany({
+        where: {
+          owner: {
+            id: id,
+          },
+        },
+        include: {
+          owner: false,
+          outfitPhoto: true,
+          // outfitTags: {
+          //   include: {
+          //     tag: true,
+          //   },
+          // },
+        },
+      });
+
+      return outfits;
+    } catch (error) {
+      console.error('Error fetching outfits:', error);
+      throw error;
+    }
   }
 
   findAll() {

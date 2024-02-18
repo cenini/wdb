@@ -6,3 +6,8 @@ export class CreateOutfitWithItemsDto {
   itemIds: string[];
   name: string;
 }
+
+export class OutfitCreatedDto {
+  id: string;
+  createdAt: Date;
+}
