@@ -75,6 +75,7 @@ model Outfit {
   id          String       @id @default(uuid())
   ownerId     Int
   createdAt   DateTime     @default(now())
+  updatedAt   DateTime?
   wornAt      DateTime[]
   name        String?
   outfitItem  OutfitItem[]

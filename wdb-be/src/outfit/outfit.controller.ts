@@ -43,14 +43,15 @@ export class OutfitController {
   }
 
   @Get()
-  findAll(@Request() req) {
-    // const items = await this.itemService.getItemsByEmail(req.user.sub);
-    return this.outfitService.findAll();
+  async findAll(@Request() req) {
+    const outfits = await this.outfitService.getOutfitsByOwnerId(parseInt(req.user.sub));
+    return outfits.map(outfit => this.outfitService.mapOutfitToDto(outfit));
   }
 
   @Get()
-  findByItemId(@Param('itemId') itemId: string) {
-    return this.outfitService.findByItemId(itemId);
+  async findByItemId(@Request() req, @Param('itemId') itemId: string) {
+    const outfits = await this.outfitService.findByItemId(itemId, parseInt(req.user.sub));
+    return outfits.map(outfit => this.outfitService.mapOutfitToDto(outfit));
   }
 
   @Get(':id')

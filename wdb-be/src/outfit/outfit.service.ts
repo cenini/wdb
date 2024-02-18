@@ -5,8 +5,9 @@ import {
 } from './dto/create-outfit.dto';
 import { UpdateOutfitDto } from './dto/update-outfit.dto';
 import { PrismaService } from '../prisma/prisma.service';
-import { Outfit } from '@prisma/client';
+import { Outfit, OutfitItem, OutfitPhoto } from '@prisma/client';
 import { CreateOutfit, CreateOutfitWithItems } from './entities/create-outfit.entity';
+import { OutfitDto, OutfitItemDto, OutfitPhotoDto } from './dto/get-outfit.dto';
 
 @Injectable()
 export class OutfitService {
@@ -33,7 +34,7 @@ export class OutfitService {
     return outfit;
   }
 
-  async getOutfitsById(id: number) {
+  async getOutfitsByOwnerId(id: number) {
     try {
       const outfits = await this.prisma.outfit.findMany({
         where: {
@@ -67,8 +68,33 @@ export class OutfitService {
     return `This action returns a #${id} outfit`;
   }
 
-  findByItemId(itemId: string) {
-    return `This action returns an outfit by item id`;
+  async findByItemId(itemId: string, ownerId: number) {
+    try {
+      const outfits = await this.prisma.outfit.findMany({
+        where: {
+          ownerId: ownerId,
+          outfitItem: {
+            some: {
+              itemId: itemId
+            }
+          }
+        },
+        include: {
+          owner: false,
+          outfitPhoto: true,
+          // outfitTags: {
+          //   include: {
+          //     tag: true,
+          //   },
+          // },
+        },
+      });
+
+      return outfits;
+    } catch (error) {
+      console.error('Error fetching outfits:', error);
+      throw error;
+    }
   }
 
   update(id: string, updateOutfitDto: UpdateOutfitDto) {
@@ -78,4 +104,32 @@ export class OutfitService {
   remove(id: string) {
     return `This action removes a #${id} outfit`;
   }
+
+  mapOutfitToDto(outfit: any): OutfitDto {
+    return {
+      id: outfit.id,
+      createdAt: outfit.createdAt,
+      wornAt: outfit.wornAt,
+      name: outfit.name ?? '',
+      updatedAt: outfit.updatedAt,
+      outfitItems: outfit.outfitItem.map(item => this.mapOutfitItemToDto(item)),
+      outfitPhotos: outfit.outfitPhoto.map(photo => this.mapOutfitPhotoToDto(photo)),
+    };
+  }
+
+  mapOutfitItemToDto(outfitItem: OutfitItem): OutfitItemDto {
+    return {
+      itemId: outfitItem.itemId,
+    };
+  }
+
+  mapOutfitPhotoToDto(outfitPhoto: OutfitPhoto): OutfitPhotoDto {
+    return {
+      publicId: outfitPhoto.publicId,
+      url: outfitPhoto.url,
+      createdAt: outfitPhoto.createdAt,
+      updatedAt: outfitPhoto.updatedAt,
+    };
+  }
 }
+
