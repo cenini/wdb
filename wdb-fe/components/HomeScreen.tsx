@@ -4,16 +4,16 @@ import * as ImagePicker from "expo-image-picker";
 import { StyleSheet, View, Text, Image } from "react-native";
 import { NewItemsContext } from "./AppScreen";
 import { AuthContext } from "../App";
-import { manipulateAsync, FlipType, SaveFormat } from "expo-image-manipulator";
 import { plainToInstance } from "class-transformer";
 import { ImageModel } from "../models/ImageModel";
 import Button from "./Button";
 import { ButtonStyles, CommonStyles } from "./Styles";
+import { MAX_IMAGE_SIZE_IN_PX } from "../utils/Constants";
+import { Resize } from "../utils/Image";
 
 export default function HomeScreen({ navigation }) {
   const { addImages } = useContext(NewItemsContext);
   const { userToken } = useContext(AuthContext);
-  const maxImageSize = 512;
 
   const pickImageAsync = async () => {
     if (userToken == null) {
@@ -34,26 +34,12 @@ export default function HomeScreen({ navigation }) {
 
     const images = await Promise.all(
       result.assets.map((image) =>
-        plainToInstance(ImageModel, resizeImage(image, maxImageSize))
+        plainToInstance(ImageModel, Resize(image, MAX_IMAGE_SIZE_IN_PX))
       )
     );
 
     await addImages(images);
   };
-
-  async function resizeImage(
-    image: ImagePicker.ImagePickerAsset,
-    maxSize: number
-  ) {
-    const resizeOptions =
-      image.width > image.height ? { width: maxSize } : { height: maxSize };
-    const manipulationResult = await manipulateAsync(
-      image.uri,
-      [{ resize: resizeOptions }],
-      { compress: 0.8, format: SaveFormat.JPEG, base64: true }
-    );
-    return manipulationResult;
-  }
 
   return (
     <View style={styles.container}>

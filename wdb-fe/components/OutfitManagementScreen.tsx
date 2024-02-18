@@ -7,9 +7,11 @@ import {
   Pressable,
   Alert,
 } from "react-native";
+import * as ImagePicker from "expo-image-picker";
 import Button from "./Button";
 import { ItemModel, PhotoModel, TagType } from "../models/ItemModel";
 import { useState } from "react";
+import Constants from "expo-constants";
 import ImageBox from "./ImageBox";
 import TagEditor from "./TagEditor";
 import { KvpTagModel, NameTagModel } from "../models/TagModel";
@@ -20,6 +22,12 @@ import {
 import { Entypo } from "@expo/vector-icons";
 import { ButtonStyles, CommonStyles } from "./Styles";
 import { OutfitModel, OutfitPhotoModel } from "../models/OutfitModel";
+import axios from "axios";
+import { CreateOutfitPhotoDto } from "../dto/OutfitDto";
+import { ImageModel } from "../models/ImageModel";
+import { MAX_IMAGE_SIZE_IN_PX } from "../utils/Constants";
+import { Resize } from "../utils/Image";
+import { plainToInstance } from "class-transformer";
 
 const SAMPLE_OUTFIT = "https://media.glamourmagazine.co.uk/photos/64469497fd405205dbee625c/16:9/w_2240,c_limit/OUTFIT%20IDEAS%20240423.jpg";
 
@@ -56,7 +64,29 @@ const OutfitManagementScreen = ({
     // }
   };
 
-  const addPhotos = (photos: OutfitPhotoModel[]) => {};
+  const addPhoto = async () => {
+    let result = await ImagePicker.launchImageLibraryAsync({
+      mediaTypes: ImagePicker.MediaTypeOptions.Images,
+      quality: 0,
+      base64: true,
+    });
+
+    if (result.canceled) {
+      return;
+    }
+
+    axios
+      .post(
+        `${Constants.expoConfig.extra.env.EXPO_PUBLIC_API_URL}outfits/${outfit.id}/photos`, 
+        plainToInstance(CreateOutfitPhotoDto, { base64photo: (await Resize(result.assets[0], MAX_IMAGE_SIZE_IN_PX)).uri })
+        )
+      .then((response) => {
+        // Do something?
+      })
+      .catch((err) => {
+        // Do something? 
+      });
+  };
 
   const handleDelete = async () => {
     // Alert.alert("Are you sure?", "Deletion can not be reverted", [
@@ -99,7 +129,7 @@ const OutfitManagementScreen = ({
         <Button
           label={"Add photos"}
           symbol={"picture-o"}
-          onPress={addPhotos}
+          onPress={addPhoto}
           style={{
             ...ButtonStyles.buttonLarge,
             ...ButtonStyles.buttonPrimaryColor,

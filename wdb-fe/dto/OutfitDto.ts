@@ -1,3 +1,5 @@
+import { IsBase64 } from "class-validator";
+
 export class CreateOutfitDto {
   name: string;
 }
@@ -26,4 +28,9 @@ export class OutfitPhotoDto {
   url: string;
   createdAt: Date;
   updatedAt: Date | null;
+}
+
+export class CreateOutfitPhotoDto {
+  @IsBase64()
+  readonly base64photo: string;
 }
