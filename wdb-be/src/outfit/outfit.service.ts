@@ -45,6 +45,7 @@ export class OutfitService {
         include: {
           owner: false,
           outfitPhoto: true,
+          outfitItem: true,
           // outfitTags: {
           //   include: {
           //     tag: true,
@@ -82,6 +83,7 @@ export class OutfitService {
         include: {
           owner: false,
           outfitPhoto: true,
+          outfitItem: true,
           // outfitTags: {
           //   include: {
           //     tag: true,
