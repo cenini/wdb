@@ -15,6 +15,7 @@ import { createBottomTabNavigator } from "@react-navigation/bottom-tabs";
 import SettingsScreen from "./components/SettingsScreen";
 import AuthScreen from "./components/AuthScreen";
 import ItemBrowserScreen from "./components/ItemBrowserScreen";
+import OutfitBrowserScreen from "./components/OutfitBrowserScreen";
 
 const Tab = createBottomTabNavigator();
 export const AuthContext = createContext(null);
@@ -179,7 +180,8 @@ export default function App() {
           ) : (
             <>
               <Tab.Screen name="Home" component={HomeScreen} />
-              <Tab.Screen name="Browse" component={ItemBrowserScreen} />
+              <Tab.Screen name="Clothes" component={ItemBrowserScreen} />
+              <Tab.Screen name="Outfits" component={OutfitBrowserScreen} />
               <Tab.Screen name="Settings" component={SettingsScreen} />
             </>
           )}
