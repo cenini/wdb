@@ -17,10 +17,17 @@ import {
 import { CreateOutfit, CreateOutfitWithItems } from './entities/create-outfit.entity';
 import { UpdateOutfitDto } from './dto/update-outfit.dto';
 import { plainToInstance } from 'class-transformer';
+import { CreateOutfitPhotoDto, PhotoDto } from './dto/create-photo.dto';
+import { PhotoService } from '../photo/photo.service';
+import { MediaService } from '../photo/media.service';
 
 @Controller('v1/outfits')
 export class OutfitController {
-  constructor(private readonly outfitService: OutfitService) {}
+  constructor(
+    private readonly outfitService: OutfitService,
+    private readonly photoService: PhotoService,
+    private readonly mediaService: MediaService,
+    ) {}
 
   @Post()
   async create(@Request() req, @Body() createOutfitDto: CreateOutfitDto) {
@@ -54,10 +61,44 @@ export class OutfitController {
     return outfits.map(outfit => this.outfitService.mapOutfitToDto(outfit));
   }
 
+  @Post(':outfitId/photos')
+  async createPhotoForOutfit(
+    @Request() req,
+    @Param('outfitId') outfitId,
+    @Body() dto: CreateOutfitPhotoDto,
+  ): Promise<PhotoDto> {
+    console.log('Creating photo for outfit...')
+    const uploadedImage = await this.mediaService.uploadOutfitImage(
+      dto.base64photo,
+      outfitId,
+      req.user.sub,
+    );
+    console.log(uploadedImage.publicId);
+    return plainToInstance(
+      PhotoDto,
+      await this.photoService.createOutfitPhoto({
+        url: uploadedImage.secureUrl,
+        publicId: uploadedImage.publicId,
+        outfit: {
+          connect: { id: outfitId },
+        },
+      }),
+    );
+  }
+
   @Get(':id')
   findOne(@Param('id') id: string) {
     return this.outfitService.findOne(id);
   }
+
+  // @Get(':id/items')
+  // async findItemsPartOfOutfit(
+  //   @Request() req,
+  //   @Param('id') id: string
+  // ) {
+  //   const outfits = await this.outfitService.getOutfitsByOwnerId(parseInt(req.user.sub));
+  //   return this.outfitService.findOne(id);
+  // }
 
   @Patch(':id')
   update(@Param('id') id: string, @Body() updateOutfitDto: UpdateOutfitDto) {

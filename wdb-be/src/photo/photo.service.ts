@@ -1,6 +1,6 @@
 import { Injectable } from '@nestjs/common';
 import { PrismaService } from '../prisma/prisma.service';
-import { Photo, Prisma } from '@prisma/client';
+import { OutfitPhoto, Photo, Prisma } from '@prisma/client';
 import { v2 as cloudinary } from 'cloudinary';
 import { MediaService } from './media.service';
 
@@ -11,6 +11,7 @@ export class PhotoService {
     private mediaService: MediaService,
   ) {}
 
+  // Photos for items
   async photo(
     photoWhereUniqueInput: Prisma.PhotoWhereUniqueInput,
   ): Promise<Photo | null> {
@@ -19,6 +20,7 @@ export class PhotoService {
     });
   }
 
+  // Photos for items
   async photos(params: {
     skip?: number;
     take?: number;
@@ -36,12 +38,12 @@ export class PhotoService {
     });
   }
 
+  // Photos for items
   async createPhoto(data: Prisma.PhotoCreateInput): Promise<Photo> {
-    return this.prisma.photo.create({
-      data,
-    });
+    return this.prisma.photo.create({data});
   }
 
+  // Photos for items
   async updatePhoto(params: {
     where: Prisma.PhotoWhereUniqueInput;
     data: Prisma.PhotoUpdateInput;
@@ -53,8 +55,30 @@ export class PhotoService {
     });
   }
 
+  // Photos for items
   async deletePhoto(where: Prisma.PhotoWhereUniqueInput): Promise<Photo> {
     return this.prisma.photo.delete({
+      where,
+    });
+  }
+
+  async createOutfitPhoto(data: Prisma.OutfitPhotoCreateInput): Promise<OutfitPhoto> {
+    return this.prisma.outfitPhoto.create({data})
+  }
+
+  async updateOutfitPhoto(params: {
+    where: Prisma.OutfitPhotoWhereUniqueInput;
+    data: Prisma.OutfitPhotoUpdateInput;
+  }): Promise<OutfitPhoto> {
+    const { where, data } = params;
+    return this.prisma.outfitPhoto.update({
+      data,
+      where,
+    });
+  }
+
+  async deleteOutfitPhoto(where: Prisma.OutfitPhotoWhereUniqueInput): Promise<OutfitPhoto> {
+    return this.prisma.outfitPhoto.delete({
       where,
     });
   }

@@ -7,7 +7,9 @@ import {
   HttpCode,
   HttpStatus,
   Param,
+  ParseArrayPipe,
   Post,
+  Query,
   Request,
   UseGuards,
 } from '@nestjs/common';
@@ -64,10 +66,33 @@ export class ItemController {
   }
 
   @Get('')
-  async getItems(@Request() req): Promise<ItemDto[]> {
-    const items = await this.itemService.getItemsByEmail(req['user'].username);
+  async getItems(
+    @Request() req,
+    @Query('ids', new ParseArrayPipe({ items: String, optional: true })) ids?: string[]
+  ): Promise<ItemDto[]> {
+    // console.log(ids)
+    const items = ids == null 
+      ? await this.itemService.getItemsByOwnerId(parseInt(req.user.sub)) 
+      : await this.itemService.getItemsByIdForOwner(ids, parseInt(req.user.sub));;
     return items.map((item) => mapItemToItemDto(item));
   }
+
+  // @Get('')
+  // async getItems(
+  //   @Request() req,
+  // ): Promise<ItemDto[]> {
+  //   const items = await this.itemService.getItemsByOwnerId(parseInt(req.user.sub)) 
+  //   return items.map((item) => mapItemToItemDto(item));
+  // }
+
+  // @Get('')
+  // async getItemsByIds(
+  //   @Request() req,
+  //   @Query('ids', new ParseArrayPipe({ items: Number, separator: ',' })) ids: string[]
+  // ): Promise<ItemDto[]> {
+  //   const items = await this.itemService.getItemsByIdForOwner(ids, parseInt(req.user.sub));
+  //   return items.map((item) => mapItemToItemDto(item));
+  // }
 
   @Get(':itemId')
   async getItem(@Request() req, @Param('itemId') itemId): Promise<ItemDto> {
@@ -123,12 +148,12 @@ export class ItemController {
     @Param('itemId') itemId,
     @Body() dto: CreateItemPhotoDto,
   ): Promise<PhotoDto> {
-    const uploadedImage = await this.mediaService.uploadImage(
+    const uploadedImage = await this.mediaService.uploadItemImage(
       dto.base64photo,
       itemId,
       req.user.sub,
     );
-    console.log(uploadedImage);
+    // console.log(uploadedImage);
     return plainToInstance(
       PhotoDto,
       await this.photoService.createPhoto({
@@ -166,7 +191,7 @@ export class ItemController {
         connect: { id: req.user.sub },
       },
     });
-    const uploadedImage = await this.mediaService.uploadImage(
+    const uploadedImage = await this.mediaService.uploadItemImage(
       dto.base64photo,
       item.id,
       req.user.sub,

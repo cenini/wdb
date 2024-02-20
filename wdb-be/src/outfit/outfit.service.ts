@@ -61,6 +61,34 @@ export class OutfitService {
     }
   }
 
+  async getOutfitByOwnerId(outfitId: string, ownerId: number) {
+    try {
+      const outfits = await this.prisma.outfit.findMany({
+        where: {
+          owner: {
+            id: ownerId,
+          },
+          id: outfitId
+        },
+        include: {
+          owner: false,
+          outfitPhoto: true,
+          outfitItem: true,
+          // outfitTags: {
+          //   include: {
+          //     tag: true,
+          //   },
+          // },
+        },
+      });
+
+      return outfits;
+    } catch (error) {
+      console.error('Error fetching outfits:', error);
+      throw error;
+    }
+  }
+
   findAll() {
     return `This action returns all outfit`;
   }

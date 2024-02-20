@@ -18,18 +18,43 @@ export class MediaService implements OnModuleInit {
     return `items/${userId}/${itemId}`;
   }
 
-  async uploadImage(
+  generateOutfitFolderPath(outfitId, userId) {
+    return `outfits/${userId}/${outfitId}`;
+  }
+
+  async uploadItemImage(
     base64Image: string,
     itemId: string,
     userId: string,
   ): Promise<UploadedImage> {
+    const folderPath = this.generateItemFolderPath(itemId, userId);
+    console.log(folderPath);
     const result = await cloudinary.uploader.upload(
       base64Image,
       {
-        folder: this.generateItemFolderPath(itemId, userId),
+        folder: folderPath,
       },
       function (error, result) {
-        // console.log(result);
+        console.log(result);
+      },
+    );
+    return { publicId: result.public_id, secureUrl: result.secure_url };
+  }
+
+  async uploadOutfitImage(
+    base64Image: string,
+    outfitId: string,
+    userId: string,
+  ): Promise<UploadedImage> {
+    const folderPath = this.generateOutfitFolderPath(outfitId, userId);
+    console.log(folderPath);
+    const result = await cloudinary.uploader.upload(
+      base64Image,
+      {
+        folder: folderPath,
+      },
+      function (error, result) {
+        console.log(result);
       },
     );
     return { publicId: result.public_id, secureUrl: result.secure_url };

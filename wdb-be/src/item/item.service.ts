@@ -83,6 +83,61 @@ export class ItemService {
     }
   }
 
+  async getItemsByOwnerId(ownerId: number) {
+    try {
+      const items = await this.prisma.item.findMany({
+        where: {
+          owner: {
+            id: ownerId,
+          },
+        },
+        include: {
+          owner: false,
+          photos: true,
+          itemTags: {
+            include: {
+              tag: true,
+            },
+          },
+        },
+      });
+
+      return items;
+    } catch (error) {
+      console.error('Error fetching items:', error);
+      throw error;
+    }
+  }
+
+  async getItemsByIdForOwner(ids: string[], ownerId: number) {
+    try {
+      const items = await this.prisma.item.findMany({
+        where: {
+          AND: [
+            { id: {
+              in: ids
+            }},
+            { owner: { id: ownerId }},
+          ]
+        },
+        include: {
+          owner: false,
+          photos: true,
+          itemTags: {
+            include: {
+              tag: true,
+            },
+          },
+        },
+      });
+
+      return items;
+    } catch (error) {
+      console.error('Error fetching items:', error);
+      throw error;
+    }
+  }
+
   async createItem(data: Prisma.ItemCreateInput): Promise<Item> {
     return this.prisma.item.create({
       data,
