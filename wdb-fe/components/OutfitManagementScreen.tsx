@@ -28,6 +28,7 @@ import { ImageModel } from "../models/ImageModel";
 import { MAX_IMAGE_SIZE_IN_PX } from "../utils/Constants";
 import { Resize } from "../utils/Image";
 import { plainToInstance } from "class-transformer";
+import OutfitItemViewer from "./OutfitItemViewer";
 
 const SAMPLE_OUTFIT = "https://media.glamourmagazine.co.uk/photos/64469497fd405205dbee625c/16:9/w_2240,c_limit/OUTFIT%20IDEAS%20240423.jpg";
 
@@ -146,6 +147,7 @@ const OutfitManagementScreen = ({
             ...{ margin: 10 },
           }}
         />
+        <OutfitItemViewer outfit={outfit} />
         {/* <TagEditor
           nameTags={nameTags}
           kvpTags={kvpTags}
