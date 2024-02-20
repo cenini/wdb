@@ -39,7 +39,7 @@ const OutfitItemViewer = ({
   // const [searchBlobs, setSearchBlobs] = useState([] as string[]);
   const [loading, setLoading] = useState(true);
   const [error, setError] = useState(null);
-  const [selectedItem, setSelectedItem] = useState(null);
+  const [selectedItem, setSelectedItem] = useState(null as ItemModel);
   const [currentPage, setCurrentPage] = useState(0);
   const [hoveredItemId, setHoveredItemId] = useState(null);
   // const [searchText, setSearchText] = useState("");
@@ -55,52 +55,6 @@ const OutfitItemViewer = ({
       };
     }, [])
   );
-
-  // useEffect(() => {
-  //   setItems(
-  //     initialItems.filter((item) => {
-  //       // Check for matching searchBlobs
-  //       const matchesSearchBlobs =
-  //         searchBlobs.length === 0 ||
-  //         searchBlobs.every(
-  //           (searchBlob) =>
-  //             item.tags.some(
-  //               (tag) =>
-  //                 (tag.type === TagType.NAME &&
-  //                   tag.name &&
-  //                   tag.name
-  //                     .toLowerCase()
-  //                     .includes(searchBlob.toLowerCase())) ||
-  //                 (tag.type !== TagType.NAME &&
-  //                   ((tag.key &&
-  //                     tag.key
-  //                       .toLowerCase()
-  //                       .includes(searchBlob.toLowerCase())) ||
-  //                     (tag.value &&
-  //                       tag.value
-  //                         .toLowerCase()
-  //                         .includes(searchBlob.toLowerCase()))))
-  //             ) || item.title.toLowerCase().includes(searchBlob.toLowerCase())
-  //         );
-
-  //       // Check for matching searchText
-  //       const matchesSearchText =
-  //         searchText === "" ||
-  //         item.tags.some((tag) =>
-  //           tag.type === TagType.NAME
-  //             ? tag.name &&
-  //               tag.name.toLowerCase().includes(searchText.toLowerCase())
-  //             : (tag.key &&
-  //                 tag.key.toLowerCase().includes(searchText.toLowerCase())) ||
-  //               (tag.value &&
-  //                 tag.value.toLowerCase().includes(searchText.toLowerCase()))
-  //         ) ||
-  //         item.title.toLowerCase().includes(searchText.toLowerCase());
-
-  //       return matchesSearchBlobs && matchesSearchText;
-  //     })
-  //   );
-  // }, [searchText, searchBlobs, initialItems]);
 
   const getItemsAsync = async () => {
     axios
@@ -147,19 +101,7 @@ const OutfitItemViewer = ({
   };
 
   const handleLongPress = (item: ItemModel) => {
-    // setSelectedItems((prevSelectedItems) => {
-    //   // Check if the item is already in the selectedItems array
-    //   if (
-    //     !prevSelectedItems.some((selectedItem) => selectedItem.id === item.id)
-    //   ) {
-    //     // If not, add it to the array
-    //     return [...prevSelectedItems, item];
-    //   }
-    //   // Otherwise, return the array without that item
-    //   return prevSelectedItems.filter(
-    //     (selectedItem) => selectedItem.id !== item.id
-    //   );
-    // });
+
   };
 
   const handleItemClose = () => {
@@ -221,124 +163,73 @@ const OutfitItemViewer = ({
     setHoveredItemId(null);
   };
 
-  // function addSearchBlob(
-  //   e: NativeSyntheticEvent<TextInputSubmitEditingEventData>
-  // ): void {
-  //   setSearchBlobs([searchText, ...searchBlobs]);
-  //   setSearchText("");
-  // }
-
   if (loading) return <Text>Loading...</Text>;
   if (error) return <Text>Error: {error}</Text>;
 
   return (
-    <ScrollView
-      style={styles.mainScrollView}
-      contentContainerStyle={styles.contentContainer}
-    >
+    <View>
       {selectedItem === null ? (
-        <View style={styles.container}>
-          {/* <View style={styles.inputContainer}>
-            <TextInput
-              style={CommonStyles.textInput}
-              placeholder="Search tags..."
-              value={searchText}
-              onChangeText={setSearchText}
-              onSubmitEditing={addSearchBlob}
-            />
-            <View style={styles.searchBlobsContainer}>
-              {searchBlobs.map((item, index) => (
-                <View style={styles.searchBlobContainer} key={index}>
+        <ScrollView
+          style={styles.mainScrollView}
+          contentContainerStyle={styles.contentContainer}
+        >
+          <View style={styles.container}>
+            <View style={styles.gridContainer}>
+              <View style={styles.grid}>
+                {paginatedItems.map((item, index) => (
                   <Pressable
-                    onPress={() => {
-                      setSearchBlobs(
-                        searchBlobs.filter(
-                          (searchBlob, blobIndex) => blobIndex !== index
-                        )
-                      );
-                    }}
+                    key={index}
+                    onPress={() => handlePress(item)}
+                    onLongPress={() => handleLongPress(item)}
+                    onHoverIn={() => handleHoverIn(item.id)}
+                    onHoverOut={handleHoverOut}
                   >
-                    <Text>{item}</Text>
+                    <Image
+                      source={{ uri: item.photos[0].url }}
+                      style={styles.image}
+                    />
+                    {hoveredItemId === item.id && (
+                      <View style={styles.overlay}>
+                        <Text style={styles.overlayText}>{item.title}</Text>
+                      </View>
+                    )}
                   </Pressable>
-                </View>
-              ))}
+                ))}
+              </View>
             </View>
-          </View> */}
-          {/* <View style={styles.createOutfitContainer}>
-            <Button
-              label="Create outfit"
-              onPress={handleCreateOutfit}
-              style={{
-                ...ButtonStyles.buttonMedium,
-                ...ButtonStyles.buttonPrimaryColor,
-                ...{ margin: 4 },
-              }}
-              disabled={selectedItems.length === 0}
-            />
-          </View> */}
-          <View style={styles.gridContainer}>
-            <View style={styles.grid}>
-              {paginatedItems.map((item, index) => (
-                <Pressable
-                  key={index}
-                  onPress={() => handlePress(item)}
-                  onLongPress={() => handleLongPress(item)}
-                  onHoverIn={() => handleHoverIn(item.id)}
-                  onHoverOut={handleHoverOut}
-                >
-                  <Image
-                    source={{ uri: item.photos[0].url }}
-                    style={styles.image}
-                  />
-                  {/* {selectedItems.some(
-                    (selectedItem) => selectedItem.id === item.id
-                  ) && (
-                    <View style={styles.selectedOverlay}>
-                    </View>
-                  )} */}
-                  {hoveredItemId === item.id && (
-                    <View style={styles.overlay}>
-                      <Text style={styles.overlayText}>{item.title}</Text>
-                    </View>
-                  )}
-                </Pressable>
-              ))}
+            <View style={styles.navigation}>
+              <Button
+                label="Previous"
+                onPress={goToPreviousPage}
+                disabled={currentPage === 0}
+                style={{
+                  ...ButtonStyles.buttonSmall,
+                  ...ButtonStyles.buttonPrimaryColor,
+                  ...{ margin: 4 },
+                }}
+              />
+              <Button
+                label="Next"
+                onPress={goToNextPage}
+                disabled={(currentPage + 1) * ITEMS_PER_PAGE >= items.length}
+                style={{
+                  ...ButtonStyles.buttonSmall,
+                  ...ButtonStyles.buttonPrimaryColor,
+                  ...{ margin: 4 },
+                }}
+              />
             </View>
           </View>
-          <View style={styles.navigation}>
-            <Button
-              label="Previous"
-              onPress={goToPreviousPage}
-              disabled={currentPage === 0}
-              style={{
-                ...ButtonStyles.buttonSmall,
-                ...ButtonStyles.buttonPrimaryColor,
-                ...{ margin: 4 },
-              }}
-            />
-            <Button
-              label="Next"
-              onPress={goToNextPage}
-              disabled={(currentPage + 1) * ITEMS_PER_PAGE >= items.length}
-              style={{
-                ...ButtonStyles.buttonSmall,
-                ...ButtonStyles.buttonPrimaryColor,
-                ...{ margin: 4 },
-              }}
-            />
-          </View>
-        </View>
+        </ScrollView>
       ) : (
-        <View style={styles.itemContainer}>
-          <ItemManagementScreen
-            item={selectedItem}
-            updateItem={updateItem}
-            deleteItem={deleteItem}
-            onClose={handleItemClose}
-          />
-        </View>
+        <ItemManagementScreen
+          item={selectedItem}
+          updateItem={updateItem}
+          deleteItem={deleteItem}
+          onClose={handleItemClose}
+        />
       )}
-    </ScrollView>
+    </View>
   );
 };
 

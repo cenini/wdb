@@ -147,7 +147,6 @@ const OutfitManagementScreen = ({
             ...{ margin: 10 },
           }}
         />
-        <OutfitItemViewer outfit={outfit} />
         {/* <TagEditor
           nameTags={nameTags}
           kvpTags={kvpTags}
@@ -161,6 +160,7 @@ const OutfitManagementScreen = ({
           setKvpTags={setKvpTags}
         /> */}
       </View>
+      <OutfitItemViewer outfit={outfit} />
     </View>
   );
 };
