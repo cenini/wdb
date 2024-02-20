@@ -6,77 +6,45 @@ import {
   StyleSheet,
   Text,
   Pressable,
-  Modal,
-  TextInput,
-  TextInputSubmitEditingEventData,
-  NativeSyntheticEvent,
-  FlatList,
-  GestureResponderEvent,
 } from "react-native";
-import axios, { HttpStatusCode } from "axios";
-import Constants from "expo-constants";
-import { plainToClass, plainToInstance } from "class-transformer";
-import { CreateItemTagsDto, ItemDto } from "../dto/ItemDto";
-import { ItemModel, TagType } from "../models/ItemModel";
+import { ItemModel } from "../models/ItemModel";
 import { ButtonStyles, CommonStyles } from "./Styles";
 import ItemManagementScreen from "./ItemManagementScreen";
-import { KvpTagModel, NameTagModel } from "../models/TagModel";
 import Button from "./Button";
-import { useFocusEffect } from "@react-navigation/native";
-import { CreateOutfitWithItemsDto } from "../dto/OutfitDto";
-import { OutfitModel } from "../models/OutfitModel";
-import qs from "qs";
 
 const ITEMS_PER_PAGE = 12;
 
 const OutfitItemViewer = ({ 
-    outfit 
-  } : {
-    outfit: OutfitModel;
-  }) => {
-  const [items, setItems] = useState([] as ItemModel[]);
-  // const [initialItems, setInitialItems] = useState([] as ItemModel[]);
-  // const [searchBlobs, setSearchBlobs] = useState([] as string[]);
-  const [loading, setLoading] = useState(true);
-  const [error, setError] = useState(null);
+    outfit,
+    items,
+    selectedItems,
+    updateItem,
+    deleteItem,
+    handleSelectItem
+  } 
+  // : {
+  //   outfit: OutfitModel;
+  //   items: ItemModel[];
+  //   selectedItems: ItemModel[];
+  //   handleSelectItem: (items: ItemModel) => void;
+  // }
+  ) => {
+  // const [items, setItems] = useState([] as ItemModel[]);
   const [selectedItem, setSelectedItem] = useState(null as ItemModel);
   const [currentPage, setCurrentPage] = useState(0);
   const [hoveredItemId, setHoveredItemId] = useState(null);
-  // const [searchText, setSearchText] = useState("");
-  // const [selectedItems, setSelectedItems] = useState(new Set<ItemModel>());
-  // const [selectedItems, setSelectedItems] = useState([] as ItemModel[]);
 
-  useFocusEffect(
-    React.useCallback(() => {
-      getItemsAsync();
+  // useFocusEffect(
+  //   React.useCallback(() => {
+  //     getItemsAsync();
 
-      return () => {
-        // Do something when the screen is unfocused
-      };
-    }, [])
-  );
+  //     return () => {
+  //       // Do something when the screen is unfocused
+  //     };
+  //   }, [])
+  // );
 
-  const getItemsAsync = async () => {
-    axios
-      .get(
-        `${Constants.expoConfig.extra.env.EXPO_PUBLIC_API_URL}items`, 
-        { 
-          params: { ids: outfit.outfitItems.map(item => item.itemId) },
-          paramsSerializer: params => {
-            return qs.stringify(params)
-          }
-        })
-      .then((response) => {
-        const items = plainToInstance(ItemModel, response.data as ItemDto[]);
-        console.log(items);
-        setItems([...items]);
-        setLoading(false);
-      })
-      .catch((err) => {
-        setError(err.message);
-        setLoading(false);
-      });
-  };
+
 
   const paginatedItems = items.slice(
     currentPage * ITEMS_PER_PAGE,
@@ -95,64 +63,21 @@ const OutfitItemViewer = ({
     }
   };
 
-  const handlePress = (item) => {
+  async function handleDeleteItem(deletedItem: ItemModel): Promise<void> {
+    await deleteItem(deletedItem)
+    setCurrentPage(0);
+  }
+
+  const handlePress = (item: ItemModel) => {
     setSelectedItem(item);
-    // In the future, navigate to the item
   };
 
   const handleLongPress = (item: ItemModel) => {
-
+    handleSelectItem(item);
   };
 
   const handleItemClose = () => {
     setSelectedItem(null);
-  };
-
-  const updateItem = async (
-    itemToUpdate: ItemModel,
-    title: string,
-    nameTags: NameTagModel[],
-    kvpTags: KvpTagModel[]
-  ) => {
-    const tagsResponse = await axios.post(
-      `${Constants.expoConfig.extra.env.EXPO_PUBLIC_API_URL}items/${itemToUpdate.id}/tags`,
-      plainToClass(CreateItemTagsDto, {
-        nameTags: nameTags.filter((nameTag) => nameTag.name !== ""),
-        kvpTags: kvpTags.filter(
-          (kvpTag) => kvpTag.key !== "" && kvpTag.value !== ""
-        ),
-      })
-    );
-    axios
-      .get(
-        `${Constants.expoConfig.extra.env.EXPO_PUBLIC_API_URL}items/${itemToUpdate.id}`
-      )
-      .then((response) => {
-        const updatedItem = plainToInstance(
-          ItemModel,
-          response.data as ItemDto
-        );
-        const updatedItems = items.map((item) => {
-          if (item.id === updatedItem.id) {
-            return updatedItem;
-          }
-          return item;
-        });
-        setItems(updatedItems);
-      })
-      .catch((err) => {
-        console.log(err);
-        setError(err.message);
-        setLoading(false);
-      });
-  };
-
-  const deleteItem = async (deletedItem: ItemModel) => {
-    const deleteResponse = await axios.delete(
-      `${Constants.expoConfig.extra.env.EXPO_PUBLIC_API_URL}items/${deletedItem.id}`
-    );
-    setItems(items.filter((item) => item.id !== deletedItem.id));
-    setCurrentPage(0);
   };
 
   const handleHoverIn = (itemId) => {
@@ -162,9 +87,6 @@ const OutfitItemViewer = ({
   const handleHoverOut = () => {
     setHoveredItemId(null);
   };
-
-  if (loading) return <Text>Loading...</Text>;
-  if (error) return <Text>Error: {error}</Text>;
 
   return (
     <View>
@@ -188,6 +110,12 @@ const OutfitItemViewer = ({
                       source={{ uri: item.photos[0].url }}
                       style={styles.image}
                     />
+                    {selectedItems.some(
+                      (selectedItem) => selectedItem.id === item.id
+                    ) && (
+                      <View style={styles.selectedOverlay}>
+                      </View>
+                    )}
                     {hoveredItemId === item.id && (
                       <View style={styles.overlay}>
                         <Text style={styles.overlayText}>{item.title}</Text>
@@ -225,7 +153,7 @@ const OutfitItemViewer = ({
         <ItemManagementScreen
           item={selectedItem}
           updateItem={updateItem}
-          deleteItem={deleteItem}
+          deleteItem={handleDeleteItem}
           onClose={handleItemClose}
         />
       )}

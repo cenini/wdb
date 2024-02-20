@@ -7,6 +7,8 @@ import {
   Param,
   Delete,
   Request,
+  ParseArrayPipe,
+  Query,
 } from '@nestjs/common';
 import { OutfitService } from './outfit.service';
 import {
@@ -61,6 +63,12 @@ export class OutfitController {
     return outfits.map(outfit => this.outfitService.mapOutfitToDto(outfit));
   }
 
+  @Get(':outfitId')
+  async findById(@Request() req, @Param('outfitId') outfitId: string) {
+    const outfits = await this.outfitService.findByOutfitId(outfitId, parseInt(req.user.sub));
+    return outfits.map(outfit => this.outfitService.mapOutfitToDto(outfit));
+  }
+
   @Post(':outfitId/photos')
   async createPhotoForOutfit(
     @Request() req,
@@ -84,6 +92,18 @@ export class OutfitController {
         },
       }),
     );
+  }
+
+  @Delete(':outfitId/items')
+  async deleteOutfitItems(
+    @Request() req,
+    @Param('outfitId') outfitId,
+    @Query('ids', new ParseArrayPipe({ items: String })) itemIds: string[]
+  ): Promise<void> {
+    console.log(`Itemids: ${itemIds.toString()}`);
+    console.log(`Outfitid: ${outfitId.toString()}`);
+    const result = await this.outfitService.deleteOutfitItemsById(parseInt(req.user.sub), outfitId, itemIds)
+    console.log(result)
   }
 
   @Get(':id')

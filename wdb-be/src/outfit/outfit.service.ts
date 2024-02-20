@@ -127,12 +127,56 @@ export class OutfitService {
     }
   }
 
+  async findByOutfitId(outfitId: string, ownerId: number) {
+    try {
+      const outfits = await this.prisma.outfit.findMany({
+        where: {
+          ownerId: ownerId,
+          id: outfitId
+        },
+        include: {
+          owner: false,
+          outfitPhoto: true,
+          outfitItem: true,
+          // outfitTags: {
+          //   include: {
+          //     tag: true,
+          //   },
+          // },
+        },
+      });
+
+      return outfits;
+    } catch (error) {
+      console.error('Error fetching outfits:', error);
+      throw error;
+    }
+  }
+
   update(id: string, updateOutfitDto: UpdateOutfitDto) {
     return `This action updates a #${id} outfit`;
   }
 
   remove(id: string) {
     return `This action removes a #${id} outfit`;
+  }
+
+  async deleteOutfitItemsById(ownerId: number, outfitId: string, itemIds: string[]){
+    try {
+      const outfits = await this.prisma.outfitItem.deleteMany({
+        where: {
+          AND: [
+            { itemId: { in: itemIds } },
+            { outfit: { ownerId: ownerId }},
+            { outfitId: outfitId }
+          ]
+        },
+      });
+      return outfits;
+    } catch (error) {
+      console.error('Error fetching outfits:', error);
+      throw error;
+    }
   }
 
   mapOutfitToDto(outfit: any): OutfitDto {

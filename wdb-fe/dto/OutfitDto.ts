@@ -1,4 +1,4 @@
-import { IsBase64 } from "class-validator";
+import { IsBase64, IsUUID } from "class-validator";
 
 export class CreateOutfitDto {
   name: string;
@@ -33,4 +33,9 @@ export class OutfitPhotoDto {
 export class CreateOutfitPhotoDto {
   @IsBase64()
   readonly base64photo: string;
+}
+
+export class DeleteOutfitItemsDto {
+  @IsUUID()
+  readonly itemIds: string[];
 }

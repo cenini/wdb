@@ -25,6 +25,8 @@ import { useFocusEffect } from "@react-navigation/native";
 import { CreateOutfitWithItemsDto, OutfitDto } from "../dto/OutfitDto";
 import { OutfitModel } from "../models/OutfitModel";
 import OutfitManagementScreen from "./OutfitManagementScreen";
+import { ItemModel } from "../models/ItemModel";
+import qs from "qs";
 
 const OUTFITS_PER_PAGE = 12;
 const SAMPLE_OUTFIT = "https://media.glamourmagazine.co.uk/photos/64469497fd405205dbee625c/16:9/w_2240,c_limit/OUTFIT%20IDEAS%20240423.jpg";
@@ -42,7 +44,7 @@ const OutfitBrowserScreen = () => {
 
   useFocusEffect(
     React.useCallback(() => {
-      getOutfitsAsync();
+      getOutfits();
 
       return () => {
         // Do something when the screen is unfocused
@@ -50,7 +52,7 @@ const OutfitBrowserScreen = () => {
     }, [])
   );
 
-  const getOutfitsAsync = async () => {
+  const getOutfits = async () => {
     axios
       .get(`${Constants.expoConfig.extra.env.EXPO_PUBLIC_API_URL}outfits`)
       .then((response) => {
@@ -65,6 +67,35 @@ const OutfitBrowserScreen = () => {
         setLoading(false);
       });
   };
+
+  // async function reloadOutfit(outfitId: string): Promise<void> {
+  //   axios
+  //   .get(`${Constants.expoConfig.extra.env.EXPO_PUBLIC_API_URL}outfits/${outfitId}`)
+  //   .then((response) => {
+  //   const outfit = plainToInstance(OutfitModel, response.data as OutfitDto);
+   
+  //   // Find the index of the outfit with the same id
+  //   let outfitIndex = outfits.findIndex((o) => o.id === outfitId);
+    
+  //   if (outfitIndex !== -1) {
+  //     // If the outfit already exists, then replace it
+  //     outfits[outfitIndex] = outfit;
+  //   } else {
+  //     // If the outfit does not exist, append to the list
+  //     outfits.push(outfit);
+  //   }
+    
+  //   console.log(outfits);
+  //   setOutfits([...outfits]);
+  //   setInitialOutfits([...outfits]);
+  //   setLoading(false);
+  //   })
+  //   .catch((err) => {
+  //     setError(err.message);
+  //     setLoading(false);
+  //   });
+  // }
+   
 
   const paginatedOutfits = outfits.slice(
     currentPage * OUTFITS_PER_PAGE,
@@ -83,9 +114,8 @@ const OutfitBrowserScreen = () => {
     }
   };
 
-  const handlePress = (item) => {
-    setSelectedOutfit(item);
-    // In the future, navigate to the item
+  const handlePress = (outfit: OutfitModel) => {
+    setSelectedOutfit(outfit);
   };
 
   const handleItemClose = () => {
@@ -199,7 +229,6 @@ const OutfitBrowserScreen = () => {
                 <Pressable
                   key={index}
                   onPress={() => handlePress(outfit)}
-                  // onLongPress={() => handleLongPress(item)}
                   onHoverIn={() => handleHoverIn(outfit.id)}
                   onHoverOut={handleHoverOut}
                 >
@@ -245,6 +274,7 @@ const OutfitBrowserScreen = () => {
             outfit={selectedOutfit}
             updateOutfit={updateOutfit}
             deleteOutfit={deleteOutfit}
+            // reloadOutfit={reloadOutfit}
             onClose={handleItemClose}
           />
         </View>
