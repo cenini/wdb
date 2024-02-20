@@ -86,8 +86,8 @@ model Outfit {
 model OutfitItem {
   itemId   String
   outfitId String
-  item     Item   @relation(fields: [itemId], references: [id])
-  outfit   Outfit @relation(fields: [outfitId], references: [id])
+  item     Item   @relation(fields: [itemId], references: [id], onDelete: Cascade)
+  outfit   Outfit @relation(fields: [outfitId], references: [id], onDelete: Cascade)
 
   @@id([itemId, outfitId])
 }
