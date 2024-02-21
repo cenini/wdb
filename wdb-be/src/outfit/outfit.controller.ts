@@ -22,6 +22,7 @@ import { plainToInstance } from 'class-transformer';
 import { CreateOutfitPhotoDto, PhotoDto } from './dto/create-photo.dto';
 import { PhotoService } from '../photo/photo.service';
 import { MediaService } from '../photo/media.service';
+import { CreateOutfitWornAtDateDto } from './dto/create-outfit-worn-at-date.dto';
 
 @Controller('v1/outfits')
 export class OutfitController {
@@ -72,7 +73,7 @@ export class OutfitController {
   @Post(':outfitId/photos')
   async createPhotoForOutfit(
     @Request() req,
-    @Param('outfitId') outfitId,
+    @Param('outfitId') outfitId: string,
     @Body() dto: CreateOutfitPhotoDto,
   ): Promise<PhotoDto> {
     console.log('Creating photo for outfit...')
@@ -92,6 +93,14 @@ export class OutfitController {
         },
       }),
     );
+  }
+
+  @Post(':outfitId/worn-at-dates')
+  async updateWornAtDateForOutfit(@Request() req, @Param('outfitId') outfitId: string, @Body() dto: CreateOutfitWornAtDateDto) {
+    const updatedOutfit = await this.outfitService.updateWornAtDate(
+      new Date((new Date(dto.date)).toDateString()), outfitId, parseInt(req.user.sub));
+    console.log(updatedOutfit);
+    return this.outfitService.mapOutfitToDto(updatedOutfit);
   }
 
   @Delete(':outfitId/items')

@@ -6,6 +6,7 @@ import {
   StyleSheet,
   Pressable,
   Alert,
+  Switch,
 } from "react-native";
 import * as ImagePicker from "expo-image-picker";
 import Button from "./Button";
@@ -23,7 +24,7 @@ import { Entypo } from "@expo/vector-icons";
 import { ButtonStyles, CommonStyles } from "./Styles";
 import { OutfitModel, OutfitPhotoModel } from "../models/OutfitModel";
 import axios from "axios";
-import { CreateOutfitPhotoDto, DeleteOutfitItemsDto } from "../dto/OutfitDto";
+import { CreateOutfitPhotoDto, CreateOutfitWornAtDateDto, DeleteOutfitItemsDto, OutfitDto } from "../dto/OutfitDto";
 import { ImageModel } from "../models/ImageModel";
 import { MAX_IMAGE_SIZE_IN_PX } from "../utils/Constants";
 import { Resize } from "../utils/Image";
@@ -36,23 +37,31 @@ import React from "react";
 
 const SAMPLE_OUTFIT = "https://media.glamourmagazine.co.uk/photos/64469497fd405205dbee625c/16:9/w_2240,c_limit/OUTFIT%20IDEAS%20240423.jpg";
 
+function isToday(date: Date) {
+  const today = new Date()
+  return new Date(today.toDateString()) !== new Date((new Date(date)).toDateString())
+}
+
 const OutfitManagementScreen = ({
   outfit,
   updateOutfit,
   deleteOutfit,
-  // reloadOutfit,
+  // TODO: Should be a function like "handleItemRemovedFromOutfit" or something instead
+  reloadOutfits, 
   onClose,
 }: {
   outfit: OutfitModel;
   updateOutfit: (
   ) => Promise<void>;
   deleteOutfit: (outfit: OutfitModel) => Promise<void>;
-  // reloadOutfit: (outfitId: string) => Promise<void>;
+  reloadOutfits: () => Promise<void>;
   onClose: () => void;
 }) => {
   const [name, setName] = useState(outfit.name);
   const [items, setItems] = useState([] as ItemModel[]);
   const [selectedItems, setSelectedItems] = useState([] as ItemModel[]);
+  const [wornToday, setWornToday] = useState(outfit.wornAt.length !== 0 ? isToday(outfit.wornAt[outfit.wornAt.length - 1]) : false);
+  const [isToggleWornEnabled, setIsToggleWornEnabled] = useState(true);
   const [error, setError] = useState(null);
 
   useFocusEffect(
@@ -72,6 +81,28 @@ const OutfitManagementScreen = ({
     //   setKvpTags([...kvpTags, tag]);
     // }
   };
+
+  function toggleWornToday() {
+    setIsToggleWornEnabled(false);
+    axios
+      .post(
+        `${Constants.expoConfig.extra.env.EXPO_PUBLIC_API_URL}outfits/${outfit.id}/worn-at-dates`, 
+        plainToInstance(CreateOutfitWornAtDateDto, { date: new Date() })
+      )
+      .then((response) => {
+        // (response.data as OutfitDto)
+        const updatedOutfit = response.data as OutfitDto;
+        setWornToday(updatedOutfit.wornAt.length !== 0 && isToday(updatedOutfit.wornAt[updatedOutfit.wornAt.length - 1]))
+        // if (updatedOutfit.wornAt.length !== 0 ? isToday(updatedOutfit.wornAt[updatedOutfit.wornAt.length - 1]) : false) {
+        //   setWornToday()
+        //   // setWornToday(previousState => !previousState);
+        // }
+      })
+      .catch((err) => {
+        setError(err.message);
+      });
+    setIsToggleWornEnabled(true);
+  }
 
   const getItemsAsync = async () => {
     console.log("Getting items for outfit...")
@@ -194,26 +225,6 @@ const OutfitManagementScreen = ({
     onClose();
   };
 
-  // async function removeItemsFromOutfit(outfit: OutfitModel, selectedItems: ItemModel[]): Promise<void> {
-  //   console.log("hello world")
-  //   axios
-  //   .delete(
-  //     `${Constants.expoConfig.extra.env.EXPO_PUBLIC_API_URL}outfits/${outfit.id}/items`, 
-  //     { 
-  //       params: { ids: selectedItems.map(item => item.id) },
-  //       paramsSerializer: params => {
-  //         return qs.stringify(params)
-  //       }
-  //     })
-  //   .then((response) => {
-  //     // setItems(items.filter((item) => selectedItems.map(selectedItem => selectedItem.id).includes(item.id)));
-  //   })
-  //   .catch((err) => {
-  //     // Do something? 
-  //   });
-  // }
-
-  // const removeItemsFromOutfit = async (outfit: OutfitModel, selectedItems: ItemModel[]) : Promise<void> => {
   async function removeItemsFromOutfit(): Promise<void> {
     console.log("hello world")
     axios
@@ -228,7 +239,7 @@ const OutfitManagementScreen = ({
     .then((response) => {
       setItems(items.filter((item) => !selectedItems.map(selectedItem => selectedItem.id).includes(item.id)));
       setSelectedItems([]);
-      // reloadOutfit(outfit.id);
+      reloadOutfits();
     })
     .catch((err) => {
       // Do something? 
@@ -263,6 +274,16 @@ const OutfitManagementScreen = ({
         value={name}
       />
       <ImageBox imageUri={outfit.outfitPhotos.length > 0 ? outfit.outfitPhotos[0].url : SAMPLE_OUTFIT} onSaveTag={handleTagBoxSave} />
+      <View style={[styles.wornAtContainer]}>
+        <Switch
+          trackColor={{false: '#767577', true: '#81b0ff'}}
+          thumbColor={wornToday ? '#f5dd4b' : '#f4f3f4'}
+          ios_backgroundColor="#3e3e3e"
+          onValueChange={toggleWornToday}
+          value={wornToday}
+          disabled={!isToggleWornEnabled}
+        />
+      </View>
       <View style={[styles.buttonContainer]}>
         <Button
           label={"Add photos"}
@@ -326,6 +347,11 @@ const styles = StyleSheet.create({
   text: {
     fontSize: 24,
     fontWeight: "bold",
+  },
+  wornAtContainer: {
+    alignItems: "center",
+    padding: 3,
+    marginVertical: 5,
   },
   buttonContainer: {
     alignItems: "center",

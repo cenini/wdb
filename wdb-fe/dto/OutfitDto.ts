@@ -1,4 +1,4 @@
-import { IsBase64, IsUUID } from "class-validator";
+import { IsBase64, IsDate, IsUUID } from "class-validator";
 
 export class CreateOutfitDto {
   name: string;
@@ -38,4 +38,9 @@ export class CreateOutfitPhotoDto {
 export class DeleteOutfitItemsDto {
   @IsUUID()
   readonly itemIds: string[];
+}
+
+export class CreateOutfitWornAtDateDto {
+  @IsDate()
+  readonly date: Date;
 }

@@ -34,6 +34,38 @@ export class OutfitService {
     return outfit;
   }
 
+  async updateWornAtDate(date: Date, outfitId: string, ownerId: number) {
+    try {
+      const outfit = await this.prisma.outfit.findUnique({
+        where: { id: outfitId, ownerId: ownerId},
+        include: { outfitItem: true, outfitPhoto: true }
+      });
+  
+      if (!outfit) throw new Error('Outfit not found');
+  
+      const targetDate = date.toISOString().split('T')[0]; // Convert target date to ISO string
+      let updatedWornAt;
+  
+      if (outfit.wornAt.map((date) => date.toISOString().split('T')[0]).includes(targetDate)) {
+        // If date exists, remove it from the array
+        updatedWornAt = outfit.wornAt.filter((wornDate) => wornDate.toISOString().split('T')[0] !== targetDate);
+      } else {
+        // If date doesn't exist, add it to the array
+        updatedWornAt = [...outfit.wornAt, date];
+      }
+  
+      const updatedOutfit = await this.prisma.outfit.update({
+        where: { id: outfitId },
+        data: { wornAt: updatedWornAt },
+        include: { outfitItem: true, outfitPhoto: true }
+      });
+  
+      return updatedOutfit;
+    } catch (error) {
+      throw error;
+    }
+  }
+
   async getOutfitsByOwnerId(id: number) {
     try {
       const outfits = await this.prisma.outfit.findMany({

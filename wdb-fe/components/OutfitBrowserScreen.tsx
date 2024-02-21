@@ -68,6 +68,8 @@ const OutfitBrowserScreen = () => {
       });
   };
 
+  async function reloadOutfits(): Promise<void>{await getOutfits()}
+
   // async function reloadOutfit(outfitId: string): Promise<void> {
   //   axios
   //   .get(`${Constants.expoConfig.extra.env.EXPO_PUBLIC_API_URL}outfits/${outfitId}`)
@@ -274,7 +276,7 @@ const OutfitBrowserScreen = () => {
             outfit={selectedOutfit}
             updateOutfit={updateOutfit}
             deleteOutfit={deleteOutfit}
-            // reloadOutfit={reloadOutfit}
+            reloadOutfits={reloadOutfits}
             onClose={handleItemClose}
           />
         </View>
