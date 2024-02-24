@@ -35,7 +35,6 @@ export default function HomeScreen() {
   // Should probably be called like the home screen or something
   const { userToken } = useContext(AuthContext);
 
-
   const [state, dispatch] = useReducer(
     (state, action) => {
       switch (action.type) {
@@ -49,6 +48,7 @@ export default function HomeScreen() {
               })
             ),
           ];
+
           return {
             ...state,
             newItems: newItems,
@@ -83,7 +83,6 @@ export default function HomeScreen() {
     [dispatch]
   );
 
-
   const pickImageAsync = async () => {
     if (userToken == null) {
       router.replace('/login');
@@ -108,6 +107,10 @@ export default function HomeScreen() {
     );
 
     await addItemsContext.addImages(images);
+    router.navigate({
+      pathname: "/clothes/new",
+      params: { imageUris: images.map(image => image.uri) }
+    })
   };
 
 

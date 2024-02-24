@@ -98,10 +98,12 @@ const ClothesBrowserScreen = () => {
   }, [searchText, searchBlobs, initialItems]);
 
   const getItemsAsync = async () => {
+    console.log("Getting items")
     axios
       .get(`${process.env.EXPO_PUBLIC_API_URL}items`)
       .then((response) => {
         const items = plainToInstance(ItemModel, response.data as ItemDto[]);
+        console.log("Got items")
         console.log(items);
         setItems([...items]);
         setInitialItems([...items]);
@@ -236,109 +238,119 @@ const ClothesBrowserScreen = () => {
   if (error) return <Text>Error: {error}</Text>;
 
   return (
-    <ScrollView
-      style={styles.mainScrollView}
-      contentContainerStyle={styles.contentContainer}
-    >
-      <View style={styles.container}>
-        <View style={styles.inputContainer}>
-          <TextInput
-            style={CommonStyles.textInput}
-            placeholder="Search tags..."
-            value={searchText}
-            onChangeText={setSearchText}
-            onSubmitEditing={addSearchBlob}
-          />
-          <View style={styles.searchBlobsContainer}>
-            {searchBlobs.map((item, index) => (
-              <View style={styles.searchBlobContainer} key={index}>
-                <Pressable
-                  onPress={() => {
-                    setSearchBlobs(
-                      searchBlobs.filter(
-                        (searchBlob, blobIndex) => blobIndex !== index
-                      )
-                    );
-                  }}
-                >
-                  <Text>{item}</Text>
-                </Pressable>
+    <>
+      { items.length === 0 
+        ? (<></>) 
+        : (
+          <ScrollView
+          style={styles.mainScrollView}
+          contentContainerStyle={styles.contentContainer}
+          >
+            <View style={styles.container}>
+              <View style={styles.inputContainer}>
+                <TextInput
+                  style={CommonStyles.textInput}
+                  placeholder="Search tags..."
+                  value={searchText}
+                  onChangeText={setSearchText}
+                  onSubmitEditing={addSearchBlob}
+                />
+                <View style={styles.searchBlobsContainer}>
+                  {searchBlobs.map((item, index) => (
+                    <View style={styles.searchBlobContainer} key={index}>
+                      <Pressable
+                        onPress={() => {
+                          setSearchBlobs(
+                            searchBlobs.filter(
+                              (searchBlob, blobIndex) => blobIndex !== index
+                            )
+                          );
+                        }}
+                      >
+                        <Text>{item}</Text>
+                      </Pressable>
+                    </View>
+                  ))}
+                </View>
               </View>
-            ))}
-          </View>
-        </View>
-        <View style={styles.createOutfitContainer}>
-          <Button
-            label="Create outfit"
-            onPress={handleCreateOutfit}
-            style={{
-              ...ButtonStyles.buttonMedium,
-              ...ButtonStyles.buttonPrimaryColor,
-              ...{ margin: 4 },
-            }}
-            disabled={selectedItems.length === 0}
-          />
-        </View>
-        <View style={styles.gridContainer}>
-          <View style={styles.grid}>
-            {paginatedItems.map((item, index) => (
-              <Link href={{
-                pathname: "/clothes/[id]",
-                params: { id: item.id }
-              }} 
-                key={index}
-                asChild>
-                <Pressable
-                  // key={index}
-                  onPress={() => handlePress(item)}
-                  onLongPress={() => handleLongPress(item)}
-                  onHoverIn={() => handleHoverIn(item.id)}
-                  onHoverOut={handleHoverOut}
-                >
-                  <Image
-                    source={{ uri: item.photos[0].url }}
-                    style={styles.image}
-                  />
-                  {selectedItems.some(
-                    (selectedItem) => selectedItem.id === item.id
-                  ) && (
-                    <View style={styles.selectedOverlay}>
-                    </View>
-                  )}
-                  {hoveredItemId === item.id && (
-                    <View style={styles.overlay}>
-                      <Text style={styles.overlayText}>{item.title}</Text>
-                    </View>
-                  )}
-                </Pressable>
-              </Link>
-            ))}
-          </View>
-        </View>
-        <View style={styles.navigation}>
-          <Button
-            label="Previous"
-            onPress={goToPreviousPage}
-            disabled={currentPage === 0}
-            style={{
-              ...ButtonStyles.buttonSmall,
-              ...ButtonStyles.buttonPrimaryColor,
-              ...{ margin: 4 },
-            }}
-          />
-          <Button
-            label="Next"
-            onPress={goToNextPage}
-            disabled={(currentPage + 1) * ITEMS_PER_PAGE >= items.length}
-            style={{
-              ...ButtonStyles.buttonSmall,
-              ...ButtonStyles.buttonPrimaryColor,
-              ...{ margin: 4 },
-            }}
-          />
-        </View>
-      </View>
-    </ScrollView>
+              <View style={styles.createOutfitContainer}>
+                <Button
+                  label="Create outfit"
+                  onPress={handleCreateOutfit}
+                  style={{
+                    ...ButtonStyles.buttonMedium,
+                    ...ButtonStyles.buttonPrimaryColor,
+                    ...{ margin: 4 },
+                  }}
+                  disabled={selectedItems.length === 0}
+                />
+              </View>
+              <View style={styles.gridContainer}>
+                <View style={styles.grid}>
+                  {paginatedItems.map((item, index) => (
+                    <Link href={{
+                      pathname: "/clothes/[id]",
+                      params: { id: item.id }
+                    }} 
+                      key={index}
+                      asChild>
+                      <Pressable
+                        onPress={() => handlePress(item)}
+                        onLongPress={() => handleLongPress(item)}
+                        onHoverIn={() => handleHoverIn(item.id)}
+                        onHoverOut={handleHoverOut}
+                      >
+                        { item.photos?.length > 0 
+                          ? (
+                          <Image
+                            source={{ uri: item.photos[0].url }}
+                            style={styles.image}
+                          />) 
+                          : <></> }
+                        {selectedItems.some(
+                          (selectedItem) => selectedItem.id === item.id
+                        ) && (
+                          <View style={styles.selectedOverlay}>
+                          </View>
+                        )}
+                        {hoveredItemId === item.id && (
+                          <View style={styles.overlay}>
+                            <Text style={styles.overlayText}>{item.title}</Text>
+                          </View>
+                        )}
+                      </Pressable>
+                    </Link>
+                  ))}
+                </View>
+              </View>
+              <View style={styles.navigation}>
+                <Button
+                  label="Previous"
+                  onPress={goToPreviousPage}
+                  disabled={currentPage === 0}
+                  style={{
+                    ...ButtonStyles.buttonSmall,
+                    ...ButtonStyles.buttonPrimaryColor,
+                    ...{ margin: 4 },
+                  }}
+                />
+                <Button
+                  label="Next"
+                  onPress={goToNextPage}
+                  disabled={(currentPage + 1) * ITEMS_PER_PAGE >= items.length}
+                  style={{
+                    ...ButtonStyles.buttonSmall,
+                    ...ButtonStyles.buttonPrimaryColor,
+                    ...{ margin: 4 },
+                  }}
+                />
+              </View>
+            </View>
+          </ScrollView>
+        )
+      }
+    </>
+
   );
 };
 
