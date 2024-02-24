@@ -9,42 +9,61 @@ import {
 } from "react-native";
 import { ItemModel } from "../models/ItemModel";
 import { ButtonStyles, CommonStyles } from "./Styles";
-import ItemManagementScreen from "./ItemManagementScreen";
 import Button from "./Button";
+import { Link, router, useFocusEffect } from "expo-router";
+import { OutfitModel } from "../models/OutfitModel";
+import axios from "axios";
+import { plainToInstance } from "class-transformer";
+import { ItemDto } from "../dto/ItemDto";
+import qs from "qs";
 
 const ITEMS_PER_PAGE = 12;
 
-const OutfitItemViewer = ({ 
-    outfit,
-    items,
-    selectedItems,
-    updateItem,
-    deleteItem,
-    handleSelectItem
-  } 
-  // : {
-  //   outfit: OutfitModel;
-  //   items: ItemModel[];
-  //   selectedItems: ItemModel[];
-  //   handleSelectItem: (items: ItemModel) => void;
-  // }
-  ) => {
-  // const [items, setItems] = useState([] as ItemModel[]);
-  const [selectedItem, setSelectedItem] = useState(null as ItemModel);
+// const OutfitItemViewer = ({ 
+//     items
+//   } : {
+//     items: ItemModel[];
+//   }) => {
+  const OutfitItemViewer = ({ 
+    outfit
+  } : {
+    outfit: OutfitModel;
+  }) => {
+  const [items, setItems] = useState([] as ItemModel[])
   const [currentPage, setCurrentPage] = useState(0);
   const [hoveredItemId, setHoveredItemId] = useState(null);
 
-  // useFocusEffect(
-  //   React.useCallback(() => {
-  //     getItemsAsync();
+  useFocusEffect(
+    React.useCallback(() => {
+      getItemsAsync(outfit);
 
-  //     return () => {
-  //       // Do something when the screen is unfocused
-  //     };
-  //   }, [])
-  // );
+      return () => {
+        // Do something when the screen is unfocused
+      };
+    }, [])
+  );
 
-
+  const getItemsAsync = async (outfit: OutfitModel) => {
+    console.log("Getting items for outfit...")
+    console.log(outfit)
+    axios
+      .get(
+        `${process.env.EXPO_PUBLIC_API_URL}items`, 
+        { 
+          params: { ids: outfit.outfitItems.map(item => item.itemId) },
+          paramsSerializer: params => {
+            return qs.stringify(params)
+          }
+        })
+      .then((response) => {
+        console.log("Retrieved items...")
+        const items = plainToInstance(ItemModel, response.data as ItemDto[]);
+        console.log(items);
+        setItems([...items]);
+      })
+      .catch((err) => {
+      });
+  };
 
   const paginatedItems = items.slice(
     currentPage * ITEMS_PER_PAGE,
@@ -63,23 +82,6 @@ const OutfitItemViewer = ({
     }
   };
 
-  async function handleDeleteItem(deletedItem: ItemModel): Promise<void> {
-    await deleteItem(deletedItem)
-    setCurrentPage(0);
-  }
-
-  const handlePress = (item: ItemModel) => {
-    setSelectedItem(item);
-  };
-
-  const handleLongPress = (item: ItemModel) => {
-    handleSelectItem(item);
-  };
-
-  const handleItemClose = () => {
-    setSelectedItem(null);
-  };
-
   const handleHoverIn = (itemId) => {
     setHoveredItemId(itemId);
   };
@@ -89,75 +91,97 @@ const OutfitItemViewer = ({
   };
 
   return (
-    <View>
-      {selectedItem === null ? (
-        <ScrollView
-          style={styles.mainScrollView}
-          contentContainerStyle={styles.contentContainer}
-        >
-          <View style={styles.container}>
-            <View style={styles.gridContainer}>
-              <View style={styles.grid}>
-                {paginatedItems.map((item, index) => (
+    <>
+      { items.length === 0 ? (<></>) : (
+      <ScrollView
+        style={styles.mainScrollView}
+        contentContainerStyle={styles.contentContainer}
+      >
+        <View style={styles.container}>
+          <View style={styles.gridContainer}>
+            <View style={styles.grid}>
+              {paginatedItems.map((item, index) => (
+                // <Pressable
+                //   key={index}
+                //   onPress={() => handlePress(item)}
+                //   onLongPress={() => handleLongPress(item)}
+                //   onHoverIn={() => handleHoverIn(item.id)}
+                //   onHoverOut={handleHoverOut}
+                // >
+                //   { item.photos?.length > 0 
+                //     ? (
+                //     <Image
+                //       source={{ uri: item.photos[0].url }}
+                //       style={styles.image}
+                //     />) 
+                //     : <></> }
+                //   {selectedItems.some(
+                //     (selectedItem) => selectedItem.id === item.id
+                //   ) && (
+                //     <View style={styles.selectedOverlay}>
+                //     </View>
+                //   )}
+                //   {hoveredItemId === item.id && (
+                //     <View style={styles.overlay}>
+                //       <Text style={styles.overlayText}>{item.title}</Text>
+                //     </View>
+                //   )}
+                // </Pressable>
+                <Link 
+                  href={{
+                    pathname: "/clothes/[id]",
+                    params: { id: item.id }
+                  }}
+                  key={index} 
+                  asChild
+                >
                   <Pressable
-                    key={index}
-                    onPress={() => handlePress(item)}
-                    onLongPress={() => handleLongPress(item)}
                     onHoverIn={() => handleHoverIn(item.id)}
                     onHoverOut={handleHoverOut}
                   >
-                    <Image
-                      source={{ uri: item.photos[0].url }}
-                      style={styles.image}
-                    />
-                    {selectedItems.some(
-                      (selectedItem) => selectedItem.id === item.id
-                    ) && (
-                      <View style={styles.selectedOverlay}>
-                      </View>
-                    )}
+                    { item.photos?.length > 0 
+                      ? (
+                      <Image
+                        source={{ uri: item.photos[0].url }}
+                        style={styles.image}
+                      />) 
+                      : <></> }
                     {hoveredItemId === item.id && (
                       <View style={styles.overlay}>
                         <Text style={styles.overlayText}>{item.title}</Text>
                       </View>
                     )}
                   </Pressable>
-                ))}
-              </View>
-            </View>
-            <View style={styles.navigation}>
-              <Button
-                label="Previous"
-                onPress={goToPreviousPage}
-                disabled={currentPage === 0}
-                style={{
-                  ...ButtonStyles.buttonSmall,
-                  ...ButtonStyles.buttonPrimaryColor,
-                  ...{ margin: 4 },
-                }}
-              />
-              <Button
-                label="Next"
-                onPress={goToNextPage}
-                disabled={(currentPage + 1) * ITEMS_PER_PAGE >= items.length}
-                style={{
-                  ...ButtonStyles.buttonSmall,
-                  ...ButtonStyles.buttonPrimaryColor,
-                  ...{ margin: 4 },
-                }}
-              />
+                </Link>
+              ))}
             </View>
           </View>
-        </ScrollView>
-      ) : (
-        <ItemManagementScreen
-          item={selectedItem}
-          updateItem={updateItem}
-          deleteItem={handleDeleteItem}
-          onClose={handleItemClose}
-        />
+          <View style={styles.navigation}>
+            <Button
+              label="Previous"
+              onPress={goToPreviousPage}
+              disabled={currentPage === 0}
+              style={{
+                ...ButtonStyles.buttonSmall,
+                ...ButtonStyles.buttonPrimaryColor,
+                ...{ margin: 4 },
+              }}
+            />
+            <Button
+              label="Next"
+              onPress={goToNextPage}
+              disabled={(currentPage + 1) * ITEMS_PER_PAGE >= items.length}
+              style={{
+                ...ButtonStyles.buttonSmall,
+                ...ButtonStyles.buttonPrimaryColor,
+                ...{ margin: 4 },
+              }}
+            />
+          </View>
+        </View>
+      </ScrollView>
       )}
-    </View>
+    </>
   );
 };
 

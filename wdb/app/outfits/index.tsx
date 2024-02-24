@@ -28,6 +28,7 @@ import OutfitManagementScreen from "../../components/OutfitManagementScreen";
 import { ItemModel } from "../../models/ItemModel";
 import qs from "qs";
 import { ButtonStyles, CommonStyles } from "../../components/Styles";
+import { Link } from "expo-router";
 
 const OUTFITS_PER_PAGE = 12;
 const SAMPLE_OUTFIT = "https://media.glamourmagazine.co.uk/photos/64469497fd405205dbee625c/16:9/w_2240,c_limit/OUTFIT%20IDEAS%20240423.jpg";
@@ -128,53 +129,6 @@ const OutfitBrowserScreen = () => {
   const updateOutfit = async () => {}
   const deleteOutfit = async (outfit: OutfitModel) => {}
 
-  // const updateOutfit = async (
-  //   outfitToUpdate: OutfitModel,
-  //   name: string,
-  //   nameTags: NameTagModel[],
-  //   kvpTags: KvpTagModel[]
-  // ) => {
-  //   const tagsResponse = await axios.post(
-  //     `${process.env.EXPO_PUBLIC_API_URL}items/${outfitToUpdate.id}/tags`,
-  //     plainToClass(CreateItemTagsDto, {
-  //       nameTags: nameTags.filter((nameTag) => nameTag.name !== ""),
-  //       kvpTags: kvpTags.filter(
-  //         (kvpTag) => kvpTag.key !== "" && kvpTag.value !== ""
-  //       ),
-  //     })
-  //   );
-  //   axios
-  //     .get(
-  //       `${process.env.EXPO_PUBLIC_API_URL}items/${outfitToUpdate.id}`
-  //     )
-  //     .then((response) => {
-  //       const updatedItem = plainToInstance(
-  //         OutfitModel,
-  //         response.data as OutfitDto
-  //       );
-  //       const updatedItems = outfits.map((item) => {
-  //         if (item.id === updatedItem.id) {
-  //           return updatedItem;
-  //         }
-  //         return item;
-  //       });
-  //       setOutfits(updatedItems);
-  //     })
-  //     .catch((err) => {
-  //       console.log(err);
-  //       setError(err.message);
-  //       setLoading(false);
-  //     });
-  // };
-
-  // const deleteOutfit = async (deletedItem: OutfitModel) => {
-  //   const deleteResponse = await axios.delete(
-  //     `${process.env.EXPO_PUBLIC_API_URL}items/${deletedItem.id}`
-  //   );
-  //   setOutfits(outfits.filter((item) => item.id !== deletedItem.id));
-  //   setCurrentPage(0);
-  // };
-
   const handleHoverIn = (outfitId) => {
     setHoveredOutfitId(outfitId);
   };
@@ -198,39 +152,45 @@ const OutfitBrowserScreen = () => {
       style={styles.mainScrollView}
       contentContainerStyle={styles.contentContainer}
     >
-      {selectedOutfit === null ? (
-        <View style={styles.container}>
-          <View style={styles.inputContainer}>
-            <TextInput
-              style={CommonStyles.textInput}
-              placeholder="Search tags..."
-              value={searchText}
-              onChangeText={setSearchText}
-              onSubmitEditing={addSearchBlob}
-            />
-            <View style={styles.searchBlobsContainer}>
-              {searchBlobs.map((outfit, index) => (
-                <View style={styles.searchBlobContainer} key={index}>
-                  <Pressable
-                    onPress={() => {
-                      setSearchBlobs(
-                        searchBlobs.filter(
-                          (searchBlob, blobIndex) => blobIndex !== index
-                        )
-                      );
-                    }}
-                  >
-                    <Text>{outfit}</Text>
-                  </Pressable>
-                </View>
-              ))}
-            </View>
-          </View>
-          <View style={styles.gridContainer}>
-            <View style={styles.grid}>
-              {paginatedOutfits.map((outfit, index) => (
+      <View style={styles.container}>
+        <View style={styles.inputContainer}>
+          <TextInput
+            style={CommonStyles.textInput}
+            placeholder="Search tags..."
+            value={searchText}
+            onChangeText={setSearchText}
+            onSubmitEditing={addSearchBlob}
+          />
+          <View style={styles.searchBlobsContainer}>
+            {searchBlobs.map((outfit, index) => (
+              <View style={styles.searchBlobContainer} key={index}>
                 <Pressable
-                  key={index}
+                  onPress={() => {
+                    setSearchBlobs(
+                      searchBlobs.filter(
+                        (searchBlob, blobIndex) => blobIndex !== index
+                      )
+                    );
+                  }}
+                >
+                  <Text>{outfit}</Text>
+                </Pressable>
+              </View>
+            ))}
+          </View>
+        </View>
+        <View style={styles.gridContainer}>
+          <View style={styles.grid}>
+            {paginatedOutfits.map((outfit, index) => (
+              <Link 
+                href={{
+                  pathname: "/outfits/[id]",
+                  params: { id: outfit.id }
+                }}
+                key={index} 
+                asChild
+              >
+                <Pressable
                   onPress={() => handlePress(outfit)}
                   onHoverIn={() => handleHoverIn(outfit.id)}
                   onHoverOut={handleHoverOut}
@@ -245,43 +205,33 @@ const OutfitBrowserScreen = () => {
                     </View>
                   )}
                 </Pressable>
-              ))}
-            </View>
-          </View>
-          <View style={styles.navigation}>
-            <Button
-              label="Previous"
-              onPress={goToPreviousPage}
-              disabled={currentPage === 0}
-              style={{
-                ...ButtonStyles.buttonSmall,
-                ...ButtonStyles.buttonPrimaryColor,
-                ...{ margin: 4 },
-              }}
-            />
-            <Button
-              label="Next"
-              onPress={goToNextPage}
-              disabled={(currentPage + 1) * OUTFITS_PER_PAGE >= outfits.length}
-              style={{
-                ...ButtonStyles.buttonSmall,
-                ...ButtonStyles.buttonPrimaryColor,
-                ...{ margin: 4 },
-              }}
-            />
+              </Link>
+            ))}
           </View>
         </View>
-      ) : (
-        <View style={styles.itemContainer}>
-          <OutfitManagementScreen
-            outfit={selectedOutfit}
-            updateOutfit={updateOutfit}
-            deleteOutfit={deleteOutfit}
-            reloadOutfits={reloadOutfits}
-            onClose={handleItemClose}
+        <View style={styles.navigation}>
+          <Button
+            label="Previous"
+            onPress={goToPreviousPage}
+            disabled={currentPage === 0}
+            style={{
+              ...ButtonStyles.buttonSmall,
+              ...ButtonStyles.buttonPrimaryColor,
+              ...{ margin: 4 },
+            }}
+          />
+          <Button
+            label="Next"
+            onPress={goToNextPage}
+            disabled={(currentPage + 1) * OUTFITS_PER_PAGE >= outfits.length}
+            style={{
+              ...ButtonStyles.buttonSmall,
+              ...ButtonStyles.buttonPrimaryColor,
+              ...{ margin: 4 },
+            }}
           />
         </View>
-      )}
+      </View>
     </ScrollView>
   );
 };
