@@ -55,7 +55,7 @@ export default function NewItemManagementScreen({ route, navigation }) {
       TitleAndDescriptionDto,
       (
         await axios.post(
-          `${Constants.expoConfig.extra.env.EXPO_PUBLIC_API_URL}ai/titleAndDescription`,
+          `${process.env.EXPO_PUBLIC_API_URL}ai/titleAndDescription`,
           plainToClass(TitleAndDescribeItemDto, {
             title: title,
             base64photo: newItems[0].image.uri,
@@ -142,7 +142,7 @@ export default function NewItemManagementScreen({ route, navigation }) {
 
   async function createItem(event: GestureResponderEvent): Promise<void> {
     const itemResponse = await axios.post(
-      `${Constants.expoConfig.extra.env.EXPO_PUBLIC_API_URL}items`,
+      `${process.env.EXPO_PUBLIC_API_URL}items`,
       plainToClass(CreateItemDto, {
         title: title === "" ? titlePlaceholder : title,
       })
@@ -153,11 +153,11 @@ export default function NewItemManagementScreen({ route, navigation }) {
     }
     const item = plainToClass(ItemCreatedDto, itemResponse.data);
     const photoResponse = await axios.post(
-      `${Constants.expoConfig.extra.env.EXPO_PUBLIC_API_URL}items/${item.id}/photos`,
+      `${process.env.EXPO_PUBLIC_API_URL}items/${item.id}/photos`,
       plainToClass(CreateItemPhotoDto, { base64photo: newItems[0].image.uri })
     );
     const tagsResponse = await axios.post(
-      `${Constants.expoConfig.extra.env.EXPO_PUBLIC_API_URL}items/${item.id}/tags`,
+      `${process.env.EXPO_PUBLIC_API_URL}items/${item.id}/tags`,
       plainToClass(CreateItemTagsDto, {
         nameTags: nameTags.filter((nameTag) => nameTag.name !== ""),
         kvpTags: kvpTags.filter(

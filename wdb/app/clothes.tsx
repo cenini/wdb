@@ -27,7 +27,7 @@ import { CreateOutfitWithItemsDto } from "../dto/OutfitDto";
 
 const ITEMS_PER_PAGE = 12;
 
-const Clothes = () => {
+const ClothesBrowserScreen = () => {
   const [items, setItems] = useState([] as ItemModel[]);
   const [initialItems, setInitialItems] = useState([] as ItemModel[]);
   const [searchBlobs, setSearchBlobs] = useState([] as string[]);
@@ -98,7 +98,7 @@ const Clothes = () => {
 
   const getItemsAsync = async () => {
     axios
-      .get(`${Constants.expoConfig.extra.env.EXPO_PUBLIC_API_URL}items`)
+      .get(`${process.env.EXPO_PUBLIC_API_URL}items`)
       .then((response) => {
         const items = plainToInstance(ItemModel, response.data as ItemDto[]);
         console.log(items);
@@ -157,7 +157,7 @@ const Clothes = () => {
     });
     console.log(dto);
     const outfit = await axios.post(
-      `${Constants.expoConfig.extra.env.EXPO_PUBLIC_API_URL}outfits/items`,
+      `${process.env.EXPO_PUBLIC_API_URL}outfits/items`,
       dto
     );
     setSelectedItems([]);
@@ -174,7 +174,7 @@ const Clothes = () => {
     kvpTags: KvpTagModel[]
   ) => {
     const tagsResponse = await axios.post(
-      `${Constants.expoConfig.extra.env.EXPO_PUBLIC_API_URL}items/${itemToUpdate.id}/tags`,
+      `${process.env.EXPO_PUBLIC_API_URL}items/${itemToUpdate.id}/tags`,
       plainToClass(CreateItemTagsDto, {
         nameTags: nameTags.filter((nameTag) => nameTag.name !== ""),
         kvpTags: kvpTags.filter(
@@ -184,7 +184,7 @@ const Clothes = () => {
     );
     axios
       .get(
-        `${Constants.expoConfig.extra.env.EXPO_PUBLIC_API_URL}items/${itemToUpdate.id}`
+        `${process.env.EXPO_PUBLIC_API_URL}items/${itemToUpdate.id}`
       )
       .then((response) => {
         const updatedItem = plainToInstance(
@@ -208,7 +208,7 @@ const Clothes = () => {
 
   const deleteItem = async (deletedItem: ItemModel) => {
     const deleteResponse = await axios.delete(
-      `${Constants.expoConfig.extra.env.EXPO_PUBLIC_API_URL}items/${deletedItem.id}`
+      `${process.env.EXPO_PUBLIC_API_URL}items/${deletedItem.id}`
     );
     setItems(items.filter((item) => item.id !== deletedItem.id));
     setCurrentPage(0);
@@ -439,4 +439,4 @@ const styles = StyleSheet.create({
   },
 });
 
-export default Clothes;
+export default ClothesBrowserScreen;

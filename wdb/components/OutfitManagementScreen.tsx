@@ -86,7 +86,7 @@ const OutfitManagementScreen = ({
     setIsToggleWornEnabled(false);
     axios
       .post(
-        `${Constants.expoConfig.extra.env.EXPO_PUBLIC_API_URL}outfits/${outfit.id}/worn-at-dates`, 
+        `${process.env.EXPO_PUBLIC_API_URL}outfits/${outfit.id}/worn-at-dates`, 
         plainToInstance(CreateOutfitWornAtDateDto, { date: new Date() })
       )
       .then((response) => {
@@ -109,7 +109,7 @@ const OutfitManagementScreen = ({
     console.log(outfit)
     axios
       .get(
-        `${Constants.expoConfig.extra.env.EXPO_PUBLIC_API_URL}items`, 
+        `${process.env.EXPO_PUBLIC_API_URL}items`, 
         { 
           params: { ids: outfit.outfitItems.map(item => item.itemId) },
           paramsSerializer: params => {
@@ -133,7 +133,7 @@ const OutfitManagementScreen = ({
     kvpTags: KvpTagModel[]
   ) => {
     const tagsResponse = await axios.post(
-      `${Constants.expoConfig.extra.env.EXPO_PUBLIC_API_URL}items/${itemToUpdate.id}/tags`,
+      `${process.env.EXPO_PUBLIC_API_URL}items/${itemToUpdate.id}/tags`,
       plainToInstance(CreateItemTagsDto, {
         nameTags: nameTags.filter((nameTag) => nameTag.name !== ""),
         kvpTags: kvpTags.filter(
@@ -143,7 +143,7 @@ const OutfitManagementScreen = ({
     );
     axios
       .get(
-        `${Constants.expoConfig.extra.env.EXPO_PUBLIC_API_URL}items/${itemToUpdate.id}`
+        `${process.env.EXPO_PUBLIC_API_URL}items/${itemToUpdate.id}`
       )
       .then((response) => {
         const updatedItem = plainToInstance(
@@ -166,7 +166,7 @@ const OutfitManagementScreen = ({
 
   const deleteItem = async (deletedItem: ItemModel) => {
     const deleteResponse = await axios.delete(
-      `${Constants.expoConfig.extra.env.EXPO_PUBLIC_API_URL}items/${deletedItem.id}`
+      `${process.env.EXPO_PUBLIC_API_URL}items/${deletedItem.id}`
     );
     console.log("Items before")
     console.log(items)
@@ -189,7 +189,7 @@ const OutfitManagementScreen = ({
 
     axios
       .post(
-        `${Constants.expoConfig.extra.env.EXPO_PUBLIC_API_URL}outfits/${outfit.id}/photos`, 
+        `${process.env.EXPO_PUBLIC_API_URL}outfits/${outfit.id}/photos`, 
         plainToInstance(CreateOutfitPhotoDto, { base64photo: (await Resize(result.assets[0], MAX_IMAGE_SIZE_IN_PX)).uri })
         )
       .then((response) => {
@@ -229,7 +229,7 @@ const OutfitManagementScreen = ({
     console.log("hello world")
     axios
     .delete(
-      `${Constants.expoConfig.extra.env.EXPO_PUBLIC_API_URL}outfits/${outfit.id}/items`, 
+      `${process.env.EXPO_PUBLIC_API_URL}outfits/${outfit.id}/items`, 
       { 
         params: { ids: selectedItems.map(item => item.id) },
         paramsSerializer: params => {

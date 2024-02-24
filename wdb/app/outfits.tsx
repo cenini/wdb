@@ -18,13 +18,13 @@ import Constants from "expo-constants";
 import { plainToClass, plainToInstance } from "class-transformer";
 // import { CreateItemTagsDto, ItemDto } from "../dto/ItemDto";
 // import { OutfitModel, TagType } from "../models/OutfitModel";
-import { ButtonStyles, CommonStyles } from "./Styles";
+import { ButtonStyles, CommonStyles } from "../components/Styles";
 import { KvpTagModel, NameTagModel } from "../models/TagModel";
-import Button from "./Button";
+import Button from "../components/Button";
 import { useFocusEffect } from "@react-navigation/native";
 import { CreateOutfitWithItemsDto, OutfitDto } from "../dto/OutfitDto";
 import { OutfitModel } from "../models/OutfitModel";
-import OutfitManagementScreen from "./OutfitManagementScreen";
+import OutfitManagementScreen from "../components/OutfitManagementScreen";
 import { ItemModel } from "../models/ItemModel";
 import qs from "qs";
 

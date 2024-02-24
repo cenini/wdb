@@ -222,21 +222,11 @@ function RootLayoutNav() {
       </Stack> */}
     <>
       <Tabs>
-      {userToken == null ? (
-        <>
-          <Tabs.Screen name="Home" />
-          <Tabs.Screen name="Login" />
-          <Tabs.Screen name="Signup" options={{href: null}} />
-          <Tabs.Screen name="Clothes" options={{href: null}} />
-        </>
-      ) : (
-        <>
-          <Tabs.Screen name="Home" />
-          <Tabs.Screen name="Login" options={{href: null}}  />
-          <Tabs.Screen name="Signup" options={{href: null}} />
-          <Tabs.Screen name="Clothes" />
-        </>
-      )}
+        <Tabs.Screen name="home" />
+        <Tabs.Screen name="login" options={{href: userToken == null ? "/login" : null}} />
+        <Tabs.Screen name="signup" options={{href: userToken == null ? null : null}} />
+        <Tabs.Screen name="clothes" options={{href: userToken == null ? null : "clothes"}} />
+        <Tabs.Screen name="outfits" options={{href: userToken == null ? null : "outfits"}} />
       </Tabs>
       {/* <Header /> */}
       {/* <Slot /> */}

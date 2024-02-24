@@ -21,7 +21,6 @@ import React from "react";
 import { NewItemModel } from "../models/ItemModel";
 import { NameTagModel } from "../models/TagModel";
 import { Stack, router } from "expo-router";
-import Welcome from "./welcome";
 import { ImageModel } from "../models/ImageModel";
 import { AuthContext } from "./_layout";
 import { MAX_IMAGE_SIZE_IN_PX } from "../utils/Constants";
