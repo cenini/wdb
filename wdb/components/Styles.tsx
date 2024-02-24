@@ -8,7 +8,7 @@ export const CommonStyles = StyleSheet.create({
     borderWidth: 1,
     padding: 10,
     textDecorationColor: "#fff",
-    placeholderTextColor: "#fff",
+    // placeholderTextColor: "#fff",
     color: "#fff",
     // color: '#fff',
     // borderColor: '#fff',

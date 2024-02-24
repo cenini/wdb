@@ -16,14 +16,15 @@ import {
 import axios, { HttpStatusCode } from "axios";
 import Constants from "expo-constants";
 import { plainToClass, plainToInstance } from "class-transformer";
-import { CreateItemTagsDto, ItemDto } from "../dto/ItemDto";
-import { ItemModel, TagType } from "../models/ItemModel";
-import { ButtonStyles, CommonStyles } from "../components/Styles";
-import ItemManagementScreen from "../components/ItemManagementScreen";
-import { KvpTagModel, NameTagModel } from "../models/TagModel";
-import Button from "../components/Button";
+import { CreateItemTagsDto, ItemDto } from "../../dto/ItemDto";
+import { ItemModel, TagType } from "../../models/ItemModel";
+import { ButtonStyles, CommonStyles } from "../../components/Styles";
+import ItemManagementScreen from "../../components/ItemManagementScreen";
+import { KvpTagModel, NameTagModel } from "../../models/TagModel";
+import Button from "../../components/Button";
 import { useFocusEffect } from "@react-navigation/native";
-import { CreateOutfitWithItemsDto } from "../dto/OutfitDto";
+import { CreateOutfitWithItemsDto } from "../../dto/OutfitDto";
+import { Link, router } from 'expo-router';
 
 const ITEMS_PER_PAGE = 12;
 
@@ -130,6 +131,8 @@ const ClothesBrowserScreen = () => {
   };
 
   const handlePress = (item) => {
+    // router.push({ pathname: 'clothes', params: { id: item.id } } as never)
+    // router.push(`${item.id}` as RelativePathString);
     setSelectedItem(item);
     // In the future, navigate to the item
   };
@@ -237,51 +240,56 @@ const ClothesBrowserScreen = () => {
       style={styles.mainScrollView}
       contentContainerStyle={styles.contentContainer}
     >
-      {selectedItem === null ? (
-        <View style={styles.container}>
-          <View style={styles.inputContainer}>
-            <TextInput
-              style={CommonStyles.textInput}
-              placeholder="Search tags..."
-              value={searchText}
-              onChangeText={setSearchText}
-              onSubmitEditing={addSearchBlob}
-            />
-            <View style={styles.searchBlobsContainer}>
-              {searchBlobs.map((item, index) => (
-                <View style={styles.searchBlobContainer} key={index}>
-                  <Pressable
-                    onPress={() => {
-                      setSearchBlobs(
-                        searchBlobs.filter(
-                          (searchBlob, blobIndex) => blobIndex !== index
-                        )
-                      );
-                    }}
-                  >
-                    <Text>{item}</Text>
-                  </Pressable>
-                </View>
-              ))}
-            </View>
-          </View>
-          <View style={styles.createOutfitContainer}>
-            <Button
-              label="Create outfit"
-              onPress={handleCreateOutfit}
-              style={{
-                ...ButtonStyles.buttonMedium,
-                ...ButtonStyles.buttonPrimaryColor,
-                ...{ margin: 4 },
-              }}
-              disabled={selectedItems.length === 0}
-            />
-          </View>
-          <View style={styles.gridContainer}>
-            <View style={styles.grid}>
-              {paginatedItems.map((item, index) => (
+      <View style={styles.container}>
+        <View style={styles.inputContainer}>
+          <TextInput
+            style={CommonStyles.textInput}
+            placeholder="Search tags..."
+            value={searchText}
+            onChangeText={setSearchText}
+            onSubmitEditing={addSearchBlob}
+          />
+          <View style={styles.searchBlobsContainer}>
+            {searchBlobs.map((item, index) => (
+              <View style={styles.searchBlobContainer} key={index}>
                 <Pressable
-                  key={index}
+                  onPress={() => {
+                    setSearchBlobs(
+                      searchBlobs.filter(
+                        (searchBlob, blobIndex) => blobIndex !== index
+                      )
+                    );
+                  }}
+                >
+                  <Text>{item}</Text>
+                </Pressable>
+              </View>
+            ))}
+          </View>
+        </View>
+        <View style={styles.createOutfitContainer}>
+          <Button
+            label="Create outfit"
+            onPress={handleCreateOutfit}
+            style={{
+              ...ButtonStyles.buttonMedium,
+              ...ButtonStyles.buttonPrimaryColor,
+              ...{ margin: 4 },
+            }}
+            disabled={selectedItems.length === 0}
+          />
+        </View>
+        <View style={styles.gridContainer}>
+          <View style={styles.grid}>
+            {paginatedItems.map((item, index) => (
+              <Link href={{
+                pathname: "/clothes/[id]",
+                params: { id: item.id }
+              }} 
+                key={index}
+                asChild>
+                <Pressable
+                  // key={index}
                   onPress={() => handlePress(item)}
                   onLongPress={() => handleLongPress(item)}
                   onHoverIn={() => handleHoverIn(item.id)}
@@ -295,7 +303,6 @@ const ClothesBrowserScreen = () => {
                     (selectedItem) => selectedItem.id === item.id
                   ) && (
                     <View style={styles.selectedOverlay}>
-                      {/* You can add additional content here if needed */}
                     </View>
                   )}
                   {hoveredItemId === item.id && (
@@ -304,42 +311,33 @@ const ClothesBrowserScreen = () => {
                     </View>
                   )}
                 </Pressable>
-              ))}
-            </View>
-          </View>
-          <View style={styles.navigation}>
-            <Button
-              label="Previous"
-              onPress={goToPreviousPage}
-              disabled={currentPage === 0}
-              style={{
-                ...ButtonStyles.buttonSmall,
-                ...ButtonStyles.buttonPrimaryColor,
-                ...{ margin: 4 },
-              }}
-            />
-            <Button
-              label="Next"
-              onPress={goToNextPage}
-              disabled={(currentPage + 1) * ITEMS_PER_PAGE >= items.length}
-              style={{
-                ...ButtonStyles.buttonSmall,
-                ...ButtonStyles.buttonPrimaryColor,
-                ...{ margin: 4 },
-              }}
-            />
+              </Link>
+            ))}
           </View>
         </View>
-      ) : (
-        <View style={styles.itemContainer}>
-          <ItemManagementScreen
-            item={selectedItem}
-            updateItem={updateItem}
-            deleteItem={deleteItem}
-            onClose={handleItemClose}
+        <View style={styles.navigation}>
+          <Button
+            label="Previous"
+            onPress={goToPreviousPage}
+            disabled={currentPage === 0}
+            style={{
+              ...ButtonStyles.buttonSmall,
+              ...ButtonStyles.buttonPrimaryColor,
+              ...{ margin: 4 },
+            }}
+          />
+          <Button
+            label="Next"
+            onPress={goToNextPage}
+            disabled={(currentPage + 1) * ITEMS_PER_PAGE >= items.length}
+            style={{
+              ...ButtonStyles.buttonSmall,
+              ...ButtonStyles.buttonPrimaryColor,
+              ...{ margin: 4 },
+            }}
           />
         </View>
-      )}
+      </View>
     </ScrollView>
   );
 };

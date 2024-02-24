@@ -86,7 +86,6 @@ export default function HomeScreen() {
 
   const pickImageAsync = async () => {
     if (userToken == null) {
-      // navigation.navigate("Login");
       router.replace('/login');
       return;
     }

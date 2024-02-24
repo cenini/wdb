@@ -29,7 +29,7 @@ import ImageBox from "./ImageBox";
 import Button from "./Button";
 import { ButtonStyles, CommonStyles } from "./Styles";
 
-export default function NewItemManagementScreen({ route, navigation }) {
+export default function NewItemManagementScreen({ navigation }) {
   const { newItems, dispatch } = useContext(NewItemsContext);
   const [nameTags, setNameTags] = useState<NameTagModel[]>([]);
   const [kvpTags, setKvpTags] = useState<KvpTagModel[]>([]);
