@@ -25,22 +25,6 @@ import React from "react";
 import { CreateItemTagsDto, ItemDto } from "../../dto/ItemDto";
 import { plainToClass, plainToInstance } from "class-transformer";
 
-// const ItemManagementScreen = ({
-//   item,
-//   updateItem,
-//   deleteItem,
-//   onClose,
-// }: {
-//   item: ItemModel;
-//   updateItem: (
-//     item: ItemModel,
-//     title: string,
-//     nameTags: NameTagModel[],
-//     kvpTags: KvpTagModel[]
-//   ) => Promise<void>;
-//   deleteItem: (item: ItemModel) => Promise<void>;
-//   onClose: () => void;
-// }) => {
   const ItemManagementScreen = () => {
   const params = useLocalSearchParams();
   const { id } = params;

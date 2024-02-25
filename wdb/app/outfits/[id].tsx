@@ -109,29 +109,6 @@ const OutfitManagementScreen = () => {
       });
   };
 
-  const getItemsAsync = async (outfit: OutfitModel) => {
-    console.log("Getting items for outfit...")
-    console.log(outfit)
-    axios
-      .get(
-        `${process.env.EXPO_PUBLIC_API_URL}items`, 
-        { 
-          params: { ids: outfit.outfitItems.map(item => item.itemId) },
-          paramsSerializer: params => {
-            return qs.stringify(params)
-          }
-        })
-      .then((response) => {
-        console.log("Retrieved items...")
-        const items = plainToInstance(ItemModel, response.data as ItemDto[]);
-        console.log(items);
-        setItems([...items]);
-      })
-      .catch((err) => {
-        setError(err.message);
-      });
-  };
-
   const addPhoto = async () => {
     let result = await ImagePicker.launchImageLibraryAsync({
       mediaTypes: ImagePicker.MediaTypeOptions.Images,
@@ -194,7 +171,7 @@ const OutfitManagementScreen = () => {
       { isLoading ? (
         <></>
       ) : (
-        <View style={styles.container}>
+        <ScrollView style={styles.scrollView} contentContainerStyle={styles.container}>
           <Pressable onPress={handleClose} style={styles.crossStyle}>
             <Entypo name="cross" size={24} color="#fff" />
           </Pressable>
@@ -250,9 +227,7 @@ const OutfitManagementScreen = () => {
             /> */}
           </View>
           { outfit === null ? (<></>) : <OutfitItemViewer outfit={outfit} /> }
-          {/* <OutfitItemViewer outfit={outfit} /> */}
-          {/* <OutfitItemViewer outfit={new OutfitModel} /> */}
-        </View>
+        </ScrollView>
       )}
     </>
   );
@@ -260,11 +235,9 @@ const OutfitManagementScreen = () => {
 
 const styles = StyleSheet.create({
   scrollView: {
-    flex: 1,
     backgroundColor: CommonStyles.view.backgroundColor,
   },
   container: {
-    flex: 1,
     backgroundColor: CommonStyles.view.backgroundColor,
     justifyContent: "center",
     alignItems: "center",

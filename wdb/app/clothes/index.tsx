@@ -19,7 +19,6 @@ import { plainToClass, plainToInstance } from "class-transformer";
 import { CreateItemTagsDto, ItemDto } from "../../dto/ItemDto";
 import { ItemModel, TagType } from "../../models/ItemModel";
 import { ButtonStyles, CommonStyles } from "../../components/Styles";
-import ItemManagementScreen from "../../components/ItemManagementScreen";
 import { KvpTagModel, NameTagModel } from "../../models/TagModel";
 import Button from "../../components/Button";
 import { useFocusEffect } from "@react-navigation/native";
@@ -34,11 +33,9 @@ const ClothesBrowserScreen = () => {
   const [searchBlobs, setSearchBlobs] = useState([] as string[]);
   const [loading, setLoading] = useState(true);
   const [error, setError] = useState(null);
-  const [selectedItem, setSelectedItem] = useState(null);
   const [currentPage, setCurrentPage] = useState(0);
   const [hoveredItemId, setHoveredItemId] = useState(null);
   const [searchText, setSearchText] = useState("");
-  // const [selectedItems, setSelectedItems] = useState(new Set<ItemModel>());
   const [selectedItems, setSelectedItems] = useState([] as ItemModel[]);
 
   useFocusEffect(
@@ -132,13 +129,6 @@ const ClothesBrowserScreen = () => {
     }
   };
 
-  const handlePress = (item) => {
-    // router.push({ pathname: 'clothes', params: { id: item.id } } as never)
-    // router.push(`${item.id}` as RelativePathString);
-    setSelectedItem(item);
-    // In the future, navigate to the item
-  };
-
   const handleLongPress = (item: ItemModel) => {
     setSelectedItems((prevSelectedItems) => {
       // Check if the item is already in the selectedItems array
@@ -166,57 +156,6 @@ const ClothesBrowserScreen = () => {
       dto
     );
     setSelectedItems([]);
-  };
-
-  const handleItemClose = () => {
-    setSelectedItem(null);
-  };
-
-  const updateItem = async (
-    itemToUpdate: ItemModel,
-    title: string,
-    nameTags: NameTagModel[],
-    kvpTags: KvpTagModel[]
-  ) => {
-    const tagsResponse = await axios.post(
-      `${process.env.EXPO_PUBLIC_API_URL}items/${itemToUpdate.id}/tags`,
-      plainToClass(CreateItemTagsDto, {
-        nameTags: nameTags.filter((nameTag) => nameTag.name !== ""),
-        kvpTags: kvpTags.filter(
-          (kvpTag) => kvpTag.key !== "" && kvpTag.value !== ""
-        ),
-      })
-    );
-    axios
-      .get(
-        `${process.env.EXPO_PUBLIC_API_URL}items/${itemToUpdate.id}`
-      )
-      .then((response) => {
-        const updatedItem = plainToInstance(
-          ItemModel,
-          response.data as ItemDto
-        );
-        const updatedItems = items.map((item) => {
-          if (item.id === updatedItem.id) {
-            return updatedItem;
-          }
-          return item;
-        });
-        setItems(updatedItems);
-      })
-      .catch((err) => {
-        console.log(err);
-        setError(err.message);
-        setLoading(false);
-      });
-  };
-
-  const deleteItem = async (deletedItem: ItemModel) => {
-    const deleteResponse = await axios.delete(
-      `${process.env.EXPO_PUBLIC_API_URL}items/${deletedItem.id}`
-    );
-    setItems(items.filter((item) => item.id !== deletedItem.id));
-    setCurrentPage(0);
   };
 
   const handleHoverIn = (itemId) => {
@@ -295,7 +234,6 @@ const ClothesBrowserScreen = () => {
                       key={index}
                       asChild>
                       <Pressable
-                        onPress={() => handlePress(item)}
                         onLongPress={() => handleLongPress(item)}
                         onHoverIn={() => handleHoverIn(item.id)}
                         onHoverOut={handleHoverOut}

@@ -28,6 +28,7 @@ export default function NewItemManagementScreen() {
   if (typeof imageUris === 'string') {
     imageUris = [imageUris];
   }
+  // console.log(imageUris)
   const [ newImageUris, setNewImageUris ] = useState<string[]>(imageUris);
   const [nameTags, setNameTags] = useState<NameTagModel[]>([]);
   const [kvpTags, setKvpTags] = useState<KvpTagModel[]>([]);
@@ -35,8 +36,8 @@ export default function NewItemManagementScreen() {
     []
   );
   const [kvpTagSuggestions, setKvpTagSuggestions] = useState<KvpTagModel[]>([]);
-  const [title, setTitle] = React.useState("");
-  const [titlePlaceholder, setTitlePlaceholder] = React.useState("Title");
+  const [title, setTitle] = useState("");
+  const [titlePlaceholder, setTitlePlaceholder] = useState("Title");
   const [initialNameTagSuggestions, setInitialNameTagSuggestions] = useState<
     NameTagModel[]
   >([]);
@@ -139,21 +140,26 @@ export default function NewItemManagementScreen() {
   }
 
   async function createItem(event: GestureResponderEvent): Promise<void> {
+    console.log("Creating item")
     const itemResponse = await axios.post(
       `${process.env.EXPO_PUBLIC_API_URL}items`,
       plainToClass(CreateItemDto, {
         title: title === "" ? titlePlaceholder : title,
       })
     );
+    console.log("Created item")
     if (itemResponse.status != HttpStatusCode.Created) {
       // show some error
       return;
     }
     const item = plainToClass(ItemCreatedDto, itemResponse.data);
+    console.log("Creating photo")
     const photoResponse = await axios.post(
       `${process.env.EXPO_PUBLIC_API_URL}items/${item.id}/photos`,
       plainToClass(CreateItemPhotoDto, { base64photo: newImageUris[0] })
     );
+    console.log("Created photo")
+    console.log("Creating tags")
     const tagsResponse = await axios.post(
       `${process.env.EXPO_PUBLIC_API_URL}items/${item.id}/tags`,
       plainToClass(CreateItemTagsDto, {
@@ -163,6 +169,7 @@ export default function NewItemManagementScreen() {
         ),
       })
     );
+    console.log("Created tags")
     resetTags();
     setNewImageUris(prevState => {
       const updatedState = prevState.slice(1);
