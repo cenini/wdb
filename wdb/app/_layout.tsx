@@ -220,19 +220,17 @@ function RootLayoutNav() {
         <Stack.Screen name="(tabs)" options={{ headerShown: false }} />
         <Stack.Screen name="modal" options={{ presentation: 'modal' }} />
       </Stack> */}
-    <>
       <Tabs>
-        <Tabs.Screen name="home" />
+        <Tabs.Screen name="home" options={{headerShown: false}} />
         {/* <Tabs.Screen name="login" options={{href: userToken == null ? "/login" : null}} /> */}
-        <Tabs.Screen name="login" options={{href: userToken == null ? "/login" : "/login"}} />
-        <Tabs.Screen name="signup" options={{href: userToken == null ? null : null}} />
-        <Tabs.Screen name="clothes" options={{href: userToken == null ? null : "clothes"}} />
-        <Tabs.Screen name="outfits" options={{href: userToken == null ? null : "outfits"}} />
+        <Tabs.Screen name="login" options={{headerShown: false, href: userToken == null ? "/login" : "/login"}} />
+        <Tabs.Screen name="signup" options={{headerShown: false, href: userToken == null ? null : null}} />
+        <Tabs.Screen name="clothes" options={{headerShown: false, href: userToken == null ? null : "clothes"}} />
+        <Tabs.Screen name="outfits" options={{headerShown: false, href: userToken == null ? null : "outfits"}} />
       </Tabs>
       {/* <Header /> */}
       {/* <Slot /> */}
       {/* <Footer /> */}
-    </>
     </ThemeProvider>
   );
 }
