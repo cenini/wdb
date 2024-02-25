@@ -11,7 +11,7 @@ import {
 import * as ImagePicker from "expo-image-picker";
 import Button from "../../components/Button";
 import { ItemModel, PhotoModel, TagType } from "../../models/ItemModel";
-import { useState } from "react";
+import { useEffect, useState } from "react";
 import Constants from "expo-constants";
 import ImageBox from "../../components/ImageBox";
 import TagEditor from "../../components/TagEditor";
@@ -50,11 +50,12 @@ const OutfitManagementScreen = () => {
   const [items, setItems] = useState([] as ItemModel[]);
   const [wornToday, setWornToday] = useState(false);
   const [isToggleWornEnabled, setIsToggleWornEnabled] = useState(true);
-  const [error, setError] = useState(null);
+  const [error, setError] = useState("");
+  const [isLoading, setIsLoading] = useState(true);
 
   useFocusEffect(
     React.useCallback(() => {
-      getOutfitAsync();
+      getOutfitAsync().then(() => {setIsLoading(false)});
 
       return () => {
         // Do something when the screen is unfocused
@@ -96,14 +97,23 @@ const OutfitManagementScreen = () => {
 
   const getOutfitAsync = async () => {
     axios
-      .get(
-        `${process.env.EXPO_PUBLIC_API_URL}outfits/${id}`)
+      .get(`${process.env.EXPO_PUBLIC_API_URL}outfits/${id}`)
       .then(async (response) => {
         const retrievedOutfit = plainToInstance(OutfitModel, response.data as OutfitDto);
-        // await getItemsAsync(retrievedOutfit);
-        setOutfit(retrievedOutfit);
-        setName(retrievedOutfit.name);
-        setWornTodayFromOutfit(retrievedOutfit);
+        console.log("Retrieved an outfit")
+        console.log(retrievedOutfit)
+  
+        if (Array.isArray(retrievedOutfit)) {
+          setOutfit(retrievedOutfit[0]);
+          setName(retrievedOutfit[0].name);
+          setWornTodayFromOutfit(retrievedOutfit[0]);
+          console.log("Set the outfit")
+          console.log(retrievedOutfit[0])
+        } else {
+          setOutfit(retrievedOutfit);
+          setName(retrievedOutfit.name);
+          setWornTodayFromOutfit(retrievedOutfit);
+        }
       })
       .catch((err) => {
         setError(err.message);
@@ -192,7 +202,7 @@ const OutfitManagementScreen = () => {
 
   return (
     <>
-      { outfit === null ? (
+      { isLoading ? (
         <></>
       ) : (
         <View style={styles.container}>
@@ -250,8 +260,9 @@ const OutfitManagementScreen = () => {
               setKvpTags={setKvpTags}
             /> */}
           </View>
-          {/* { outfit === null ? (<></>) : <OutfitItemViewer outfit={outfit} /> } */}
+          { outfit === null ? (<></>) : <OutfitItemViewer outfit={outfit} /> }
           {/* <OutfitItemViewer outfit={outfit} /> */}
+          {/* <OutfitItemViewer outfit={new OutfitModel} /> */}
         </View>
       )}
     </>

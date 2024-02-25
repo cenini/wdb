@@ -24,18 +24,19 @@ const ITEMS_PER_PAGE = 12;
 //   } : {
 //     items: ItemModel[];
 //   }) => {
-  const OutfitItemViewer = ({ 
-    outfit
-  } : {
-    outfit: OutfitModel;
-  }) => {
+const OutfitItemViewer = ({ 
+  outfit
+} : {
+  outfit: OutfitModel;
+}) => {
   const [items, setItems] = useState([] as ItemModel[])
   const [currentPage, setCurrentPage] = useState(0);
   const [hoveredItemId, setHoveredItemId] = useState(null);
+  const [isLoading, setIsLoading] = useState(true);
 
   useFocusEffect(
     React.useCallback(() => {
-      getItemsAsync(outfit);
+      getItemsAsync(outfit).then(() => {setIsLoading(false)});
 
       return () => {
         // Do something when the screen is unfocused
@@ -101,32 +102,6 @@ const ITEMS_PER_PAGE = 12;
           <View style={styles.gridContainer}>
             <View style={styles.grid}>
               {paginatedItems.map((item, index) => (
-                // <Pressable
-                //   key={index}
-                //   onPress={() => handlePress(item)}
-                //   onLongPress={() => handleLongPress(item)}
-                //   onHoverIn={() => handleHoverIn(item.id)}
-                //   onHoverOut={handleHoverOut}
-                // >
-                //   { item.photos?.length > 0 
-                //     ? (
-                //     <Image
-                //       source={{ uri: item.photos[0].url }}
-                //       style={styles.image}
-                //     />) 
-                //     : <></> }
-                //   {selectedItems.some(
-                //     (selectedItem) => selectedItem.id === item.id
-                //   ) && (
-                //     <View style={styles.selectedOverlay}>
-                //     </View>
-                //   )}
-                //   {hoveredItemId === item.id && (
-                //     <View style={styles.overlay}>
-                //       <Text style={styles.overlayText}>{item.title}</Text>
-                //     </View>
-                //   )}
-                // </Pressable>
                 <Link 
                   href={{
                     pathname: "/clothes/[id]",
