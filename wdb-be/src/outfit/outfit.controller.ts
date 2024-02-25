@@ -23,6 +23,7 @@ import { CreateOutfitPhotoDto, PhotoDto } from './dto/create-photo.dto';
 import { PhotoService } from '../photo/photo.service';
 import { MediaService } from '../photo/media.service';
 import { CreateOutfitWornAtDateDto } from './dto/create-outfit-worn-at-date.dto';
+import { OutfitDto } from './dto/get-outfit.dto';
 
 @Controller('v1/outfits')
 export class OutfitController {
@@ -65,9 +66,9 @@ export class OutfitController {
   }
 
   @Get(':outfitId')
-  async findById(@Request() req, @Param('outfitId') outfitId: string) {
-    const outfits = await this.outfitService.findByOutfitId(outfitId, parseInt(req.user.sub));
-    return outfits.map(outfit => this.outfitService.mapOutfitToDto(outfit));
+  async findById(@Request() req, @Param('outfitId') outfitId: string) : Promise<OutfitDto> {
+    const outfit = await this.outfitService.findByOutfitId(outfitId, parseInt(req.user.sub));
+    return this.outfitService.mapOutfitToDto(outfit);
   }
 
   @Post(':outfitId/photos')

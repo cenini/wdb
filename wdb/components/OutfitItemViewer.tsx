@@ -91,6 +91,13 @@ const OutfitItemViewer = ({
     setHoveredItemId(null);
   };
 
+  const handleItemPress = (item) => {
+    router.push({
+      pathname: "/clothes/[id]",
+      params: { id: item.id }
+    })
+  }
+
   return (
     <>
       { items.length === 0 ? (<></>) : (
@@ -111,6 +118,7 @@ const OutfitItemViewer = ({
                   asChild
                 >
                   <Pressable
+                    onPress={() => handleItemPress(item)}
                     onHoverIn={() => handleHoverIn(item.id)}
                     onHoverOut={handleHoverOut}
                   >

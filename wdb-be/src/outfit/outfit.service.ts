@@ -161,7 +161,7 @@ export class OutfitService {
 
   async findByOutfitId(outfitId: string, ownerId: number) {
     try {
-      const outfits = await this.prisma.outfit.findMany({
+      const outfit = await this.prisma.outfit.findFirstOrThrow({
         where: {
           ownerId: ownerId,
           id: outfitId
@@ -178,7 +178,7 @@ export class OutfitService {
         },
       });
 
-      return outfits;
+      return outfit;
     } catch (error) {
       console.error('Error fetching outfits:', error);
       throw error;

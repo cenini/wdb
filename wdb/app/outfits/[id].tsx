@@ -100,20 +100,9 @@ const OutfitManagementScreen = () => {
       .get(`${process.env.EXPO_PUBLIC_API_URL}outfits/${id}`)
       .then(async (response) => {
         const retrievedOutfit = plainToInstance(OutfitModel, response.data as OutfitDto);
-        console.log("Retrieved an outfit")
-        console.log(retrievedOutfit)
-  
-        if (Array.isArray(retrievedOutfit)) {
-          setOutfit(retrievedOutfit[0]);
-          setName(retrievedOutfit[0].name);
-          setWornTodayFromOutfit(retrievedOutfit[0]);
-          console.log("Set the outfit")
-          console.log(retrievedOutfit[0])
-        } else {
-          setOutfit(retrievedOutfit);
-          setName(retrievedOutfit.name);
-          setWornTodayFromOutfit(retrievedOutfit);
-        }
+        setOutfit(retrievedOutfit);
+        setName(retrievedOutfit.name);
+        setWornTodayFromOutfit(retrievedOutfit);  
       })
       .catch((err) => {
         setError(err.message);
